@@ -12,7 +12,7 @@ for label in "${labels[@]}"; do
 		 mkdir $WD/$label_lower
 	fi
     	grep -w "$label" $WD/all_anc_all_chr.txt > $WD/$label_lower/"$label_lower"_all.txt
-	for chr in {1..8}; do
+	for chr in {1..22}; do
 		OUTPUT=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $WD/$label_lower/"$label_lower"_all.txt | sort -n -k 3,3 -k 4,4r | awk '!seen[$3]++')
 		if [ -n "$OUTPUT" ]; then
         	echo "$OUTPUT" > $WD/$label_lower/chr_"${chr}"_"${label_lower}"_sorted.txt
