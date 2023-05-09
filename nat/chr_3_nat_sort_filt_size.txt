@@ -1,1 +1,1 @@
-teste1 3 9 15 6 NAT
+teste1 3 9 15 0.006 NAT

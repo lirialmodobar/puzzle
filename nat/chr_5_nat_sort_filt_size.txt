@@ -1,2 +1,2 @@
-teste3 5 28 31 3 NAT
-teste1 5 50 60 10 NAT
+teste3 5 28 31 0.003 NAT
+teste1 5 50 60 0.01 NAT
