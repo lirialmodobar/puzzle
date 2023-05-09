@@ -1,6 +1,5 @@
-2	10	16	AFR
-7	30	60	AFR
-4	2	20	AFR
-1	40	70	AFR
-2	30	31	AFR
-3	30	27	AFR
+teste	7	30	60	AFR
+teste1	4	2	20	AFR
+teste3	1	40	70	AFR
+teste3	2	30	31	AFR
+teste3	3	30	27	AFR
