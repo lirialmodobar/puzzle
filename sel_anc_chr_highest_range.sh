@@ -2,7 +2,7 @@ INPUT_FILES=/home/santoro-lab/teste_dir/simulados
 WD=/home/santoro-lab/teste_dir #sets the working directory
 ls $INPUT_FILES  > $WD/collapse_results.txt
 while read collapse; do
-	FILE_NAME=$(echo $collapse | head -n 1)
+	FILE_NAME=$(echo $collapse | head -n 1 | sed "s/.bed//g")
 	cut -f1-4 $INPUT_FILES/$collapse | cat | sed "s/^/$FILE_NAME\t/"  >> $WD/all_anc_all_chr.txt
 done < $WD/collapse_results.txt
 labels=("NAT" "EUR" "AFR" "UNK")
