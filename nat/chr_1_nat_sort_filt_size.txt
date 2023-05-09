@@ -1,0 +1,3 @@
+teste 1 2 9 7 NAT
+teste 1 3 5 2 NAT
+teste 1 10 18 8 NAT

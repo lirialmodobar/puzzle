@@ -1,2 +1,0 @@
-teste1	6	3	15	NAT
-teste3	6	27	32	NAT

@@ -1,0 +1,3 @@
+teste1 8 5 16 11 EUR
+teste 8 9 15 6 EUR
+teste3 8 40 77 37 EUR
