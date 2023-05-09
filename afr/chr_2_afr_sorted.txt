@@ -1,2 +1,1 @@
-2	10	16	AFR
-2	30	31	AFR
+teste3	2	30	31	AFR

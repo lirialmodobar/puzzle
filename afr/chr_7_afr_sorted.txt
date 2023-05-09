@@ -1,1 +1,1 @@
-7	30	60	AFR
+teste	7	30	60	AFR
