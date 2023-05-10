@@ -1,1 +1,1 @@
-teste1 1 10 30 0.02 EUR
+teste1 1 10 30 0.02 NA EUR

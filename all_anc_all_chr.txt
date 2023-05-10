@@ -3,6 +3,7 @@ teste	1	10	15	NAT
 teste	1	3	4	NAT
 teste	1	3	5	NAT
 teste	1	2	9	NAT
+teste	1	1	15	NAT
 teste	6	20	30	EUR
 teste	7	30	60	AFR
 teste	8	9	15	EUR

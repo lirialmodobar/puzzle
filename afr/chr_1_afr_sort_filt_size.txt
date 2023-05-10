@@ -1,1 +1,1 @@
-teste3 1 40 70 0.03 AFR
+teste3 1 40 70 0.03 NA AFR
