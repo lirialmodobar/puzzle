@@ -1,1 +1,1 @@
-teste 7 30 60 0.03 NA AFR
+teste 7 30 60 0,03 NA AFR

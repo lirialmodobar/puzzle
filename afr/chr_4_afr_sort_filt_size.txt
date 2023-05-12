@@ -1,1 +1,1 @@
-teste1 4 2 20 0.018 NA AFR
+teste1 4 2 20 0,02 NA AFR

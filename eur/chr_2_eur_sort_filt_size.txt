@@ -1,1 +1,1 @@
-teste1 2 50 55 0.005 NA EUR
+teste1 2 50 55 0,01 NA EUR

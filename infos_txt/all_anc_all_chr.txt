@@ -1,6 +1,6 @@
-teste	1	10	18	NAT
-teste	1	10	15	NAT
-teste	1	3	4	NAT
+teste	1	10	2489564	NAT
+teste	1	10	2489	NAT
+teste	1	3	24	NAT
 teste	1	3	5	NAT
 teste	1	2	9	NAT
 teste	1	1	15	NAT
