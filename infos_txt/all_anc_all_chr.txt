@@ -17,7 +17,7 @@ teste1	7	4	11	NAT
 teste1	8	5	16	EUR
 teste3	1	40	70	AFR
 teste3	2	30	31	AFR
-teste3	3	30	27	AFR
+teste3	3	30	32	AFR
 teste3	4	80	100	EUR
 teste3	5	28	31	NAT
 teste3	6	27	32	NAT
