@@ -8,7 +8,7 @@ library(karyoploteR)
 dados <- read.table("nat/chr_1_nat_sort_filt_size_gap.txt", header = FALSE, sep=' ')
 positions <- dados[2:4]
 positions[,1] <- paste0("chr", positions[,1])
-
+print(positions)
 # Extract the chromosome from your data (assuming all values in the second column are the same)
 chromosome <- positions[1, 1]
 
@@ -17,6 +17,6 @@ pdf("karyotype_plot.pdf")
 kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 
 # Add genomic regions of the specified chromosome to the plot
-kpPlotRegions(kp, data=positions, col="#FFEECC", border="#FFCCAA", r0=0.3, r1=0.55)
+kpPlotRegions(kp, data=positions)
 dev.off()
 
