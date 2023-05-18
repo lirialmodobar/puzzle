@@ -18,6 +18,6 @@ pdf("karyotype_plot.pdf")
 kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 
 # Add genomic regions of the specified chromosome to the plot
-kpPlotRegions(kp, data=positions, col="#FFEECC", border="#FFCCAA", r0=0.3, r1=0.55)
+kpPlotRegions(kp, data=positions, col="#FFEECC", border="#FFCCAA")
 dev.off()
 
