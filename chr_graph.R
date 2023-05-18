@@ -29,6 +29,12 @@ for (i in 1:num_fragments) {
   r0 <- i * height
   r1 <- r0 + height
   kpPlotRegions(kp, data = positions[i, ], col = "#EEFFCC", border = darker("#EEFFCC"), r0 = r0, r1 = r1)
+  
+  # Calculate the center position of the fragment
+  center <- (positions[i, "start"] + positions[i, "end"]) / 2
+  
+  # Add text labels for start and end positions at the center of each fragment
+  kpText(kp, labels = c(positions[i, "start"], positions[i, "end"]), x = center, y = r0 + height / 2, col = "black", cex = 0.8)
 }
 
 dev.off()
