@@ -10,11 +10,11 @@ positions <- dados[2:4]
 positions[,1] <- paste0("chr", positions[,1])
 colnames(positions) <- c("chr", "start", "end")
 print(positions)
-positions <- data.frame(chr=c("chr1", "chr1", "chr1"), start=c(1, 17000, 31000), end=c(16000, 30000, 40000))
+positions <- data.frame(chr=c("chr1", "chr1", "chr1"), start=c(30e6, 70e6, 150e6), end=c(50e6, 90e6, 170e6))
 # Extract the chromosome from your data (assuming all values in the second column are the same)
 chromosome <- positions[1, 1]
 
-pdf("some_plot.pdf")
+pdf("karyotype_plot.pdf")
 # Create a karyotype object for chromosome drawing with the extracted chromosome
 kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 
@@ -22,6 +22,6 @@ kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 num_fragments <- nrow(positions)
 
 # Add genomic regions of the specified chromosome to the plot, one above the other
-kpPlotRegions(kp, data = positions, col = "#EEFFCC", border = darker("#EEFFCC"), r0 = 0.3)
+kpPlotRegions(kp, data = positions, col = "#EEFFCC", border = darker("#EEFFCC"))
 
 dev.off()
