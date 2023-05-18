@@ -25,10 +25,5 @@ num_fragments <- nrow(positions)
 height <- 0.1
 
 # Add genomic regions of the specified chromosome to the plot, one above the other
-for (i in 1:num_fragments) {
-  r0 <- i * height
-  r1 <- r0 + height
-  kpPlotRegions(kp, data = positions[i, ], col = "#EEFFCC", border = darker("#EEFFCC"), r0 = r0, r1 = r1)
-}
-
+kpPlotRegions(kp, data = positions, col = "#EEFFCC", border = darker("#EEFFCC"), r0 = 0.3, r1 = 0.55)
 dev.off()
