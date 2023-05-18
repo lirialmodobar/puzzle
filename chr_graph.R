@@ -22,6 +22,6 @@ kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 num_fragments <- nrow(positions)
 
 # Add genomic regions of the specified chromosome to the plot, one above the other
-kpPlotRegions(kp, data = positions, col = "#EEFFCC", border = darker("#EEFFCC"))
+kpPlotRegions(kp, data = positions, col = "#EEFFCC", border = darker("#EEFFCC"), r0 = 0.3)
 
 dev.off()
