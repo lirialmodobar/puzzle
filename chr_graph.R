@@ -18,7 +18,17 @@ pdf("karyotype_plot.pdf")
 # Create a karyotype object for chromosome drawing with the extracted chromosome
 kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 
-# Add genomic regions of the specified chromosome to the plot
-kpPlotRegions(kp, data=positions, col="#EEFFCC", border=darker("#EEFFCC"), r0=0.6, r1=0.85)
-dev.off()
+# Calculate the number of fragments
+num_fragments <- nrow(positions)
 
+# Calculate the height for each fragment
+height <- 0.1
+
+# Add genomic regions of the specified chromosome to the plot, one above the other
+for (i in 1:num_fragments) {
+  r0 <- i * height
+  r1 <- r0 + height
+  kpPlotRegions(kp, data = positions[i, ], col = "#EEFFCC", border = darker("#EEFFCC"), r0 = r0, r1 = r1)
+}
+
+dev.off()
