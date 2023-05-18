@@ -7,12 +7,12 @@ library(karyoploteR)
 # Read the data file
 dados <- read.table("nat/chr_1_nat_sort_filt_size_gap.txt", header = FALSE, sep=' ')
 positions <- dados[2:4]
-positions[,1] <- paste0("chr", positions[,1])
 colnames(positions) <- c("chr", "start", "end")
 print(positions)
+class(positions)
 #positions <- data.frame(chr=c("chr1", "chr1", "chr1", "chr1"), start=c(30e6, 70e6, 150e6, 180e6), end=c(50e6, 90e6, 170e6, 200e6))
 # Extract the chromosome from your data (assuming all values in the second column are the same)
-chromosome <- positions[1, 1]
+chromosome <- paste0("chr", positions[1,1])
 
 pdf("karyotype_plot.pdf")
 # Create a karyotype object for chromosome drawing with the extracted chromosome
