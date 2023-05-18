@@ -14,7 +14,7 @@ positions <- data.frame(chr=c("chr1", "chr1", "chr1"), start=c(1, 17000, 31000),
 # Extract the chromosome from your data (assuming all values in the second column are the same)
 chromosome <- positions[1, 1]
 
-pdf("karyotype_plot.pdf")
+pdf("some_plot.pdf")
 # Create a karyotype object for chromosome drawing with the extracted chromosome
 kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 
