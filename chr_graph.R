@@ -8,9 +8,10 @@ library(karyoploteR)
 dados <- read.table("nat/chr_1_nat_sort_filt_size_gap.txt", header = FALSE, sep=' ')
 positions <- dados[2:4]
 positions[,1] <- paste0("chr", positions[,1])
-colnames(positions) <- c("chr", "start", "end")
-print(positions)
-positions <- data.frame(chr=c("chr1", "chr1", "chr1", "chr1"), start=c(1, 150, 400, 900), end=c(150, 300, 500, 1000))
+start <- positions[[2]]
+end <- positions[[3]]
+#print(positions)
+#positions <- data.frame(chr=c("chr1", "chr1", "chr1", "chr1"), start=c(1, 150, 400, 900), end=c(150, 300, 500, 1000))
 # Extract the chromosome from your data (assuming all values in the second column are the same)
 chromosome <- positions[1, 1]
 
@@ -22,6 +23,6 @@ kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 num_fragments <- nrow(positions)
 
 # Add genomic regions of the specified chromosome to the plot, one above the other
-kpPlotRegions(kp, data = positions, col = "#EEFFCC", border = darker("#EEFFCC"). non.overlapping = FALSE)
+kpRect(kp, chr=chromosome, x0=start, x1=end, y0=0.2, y1=0.8)
 
 dev.off()
