@@ -1,4 +1,4 @@
-teste 1 1 15 0,01 NA NAT
-teste 1 15 30 0,01 0 NAT
-teste 1 30 40 0,00 0 NAT
-teste 1 50 70 2489,55 1 NAT
+teste 1 1 15 0.01 NA NAT
+teste 1 2 9 0.01 0 NAT
+teste 1 3 5 0.00 0 NAT
+teste 1 10 2489564 2489.55 1 NAT

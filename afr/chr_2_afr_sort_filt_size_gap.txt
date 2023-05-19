@@ -1,1 +1,1 @@
-teste3 2 30 31 0,00 NA AFR
+teste3 2 30 31 0.00 NA AFR

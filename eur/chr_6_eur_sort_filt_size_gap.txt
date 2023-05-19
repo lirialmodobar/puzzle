@@ -1,1 +1,1 @@
-teste 6 20 30 0,01 NA EUR
+teste 6 20 30 0.01 NA EUR
