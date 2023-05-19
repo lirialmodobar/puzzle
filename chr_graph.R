@@ -19,7 +19,7 @@ kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 kpPlotRegions(kp, data = positions)
 
 # Add labels for x-axis and y-axis
-kpText(kp, chr=chromosome, text = "Chromosome", x = 0.5, y = -1, size = 12, hjust = 0.5)
-kpText(kp, chr=chromosome, text = "Fragments", x = -0.1, y = 0.5, size = 12, hjust = 1, rot = 90)
+kpAxis(kp, side = "bottom", labels = "Chromosome", tickpad = 2, labelpad = 10)
+kpAxis(kp, side = "left", labels = "Fragments", tickpad = 2, labelpad = 10, rot = 90)
 
 dev.off()
