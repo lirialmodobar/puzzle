@@ -14,12 +14,9 @@ chromosome <- positions[1, 1]
 pdf("karyotype_plot.pdf")
 # Create a karyotype object for chromosome drawing with the extracted chromosome
 kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
+kpAddLabels(kp, labels="fragments")
 
 # Add genomic regions of the specified chromosome to the plot, one above the other
 kpPlotRegions(kp, data = positions)
-
-# Add labels for x-axis and y-axis
-kpAxis(kp, side = "bottom", labels = "Chromosome", tickpad = 2, labelpad = 10)
-kpAxis(kp, side = "left", labels = "Fragments", tickpad = 2, labelpad = 10, rot = 90)
 
 dev.off()
