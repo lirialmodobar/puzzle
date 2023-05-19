@@ -26,7 +26,7 @@ pdf(pdf_file)
 
 # Create a karyotype object for chromosome drawing with the extracted chromosome
 kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
-kpAddLabels(kp, labels = "fragments", r0 = 0.33, r1 = 0.63)
+kpAddLabels(kp, labels = "frag")
 
 # Define the number of fragments
 num_fragments <- nrow(positions)
