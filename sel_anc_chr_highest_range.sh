@@ -1,4 +1,4 @@
-WD=/home/yuri/liri/puzzle #sets the working directory
+WD=./ #sets the working directory
 INPUT_FILES=$WD/simulados
 ls $INPUT_FILES > $WD/collapse_results.txt
 if [ ! -d $WD/infos_txt ]; then

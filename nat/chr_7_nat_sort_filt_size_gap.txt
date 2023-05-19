@@ -1,2 +1,2 @@
-teste1 7 4 11 0.01 NA NAT
-teste3 7 40 45 0.01 1 NAT
+teste1	7	4	11	0.01	NA	NAT
+teste3	7	40	45	0.01	1	NAT
