@@ -11,7 +11,7 @@ positions[,1] <- paste0("chr", positions[,1])
 start <- positions[[2]]
 end <- positions[[3]]
 #print(positions)
-#positions <- data.frame(chr=c("chr1", "chr1", "chr1", "chr1"), start=c(1, 150, 400, 900), end=c(150, 300, 500, 1000))
+positions <- data.frame(chr=c("chr1", "chr1", "chr1", "chr1"), start=c(1, 15, 40, 50), end=c(150, 300, 500, 1000))
 # Extract the chromosome from your data (assuming all values in the second column are the same)
 chromosome <- positions[1, 1]
 
