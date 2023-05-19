@@ -1,7 +1,6 @@
 # Load the required packages
 library(karyoploteR)
-library(viridisLite)
-
+library(RColorBrewer)
 # Get command line arguments
 #args <- commandArgs(trailingOnly = TRUE)
 
@@ -32,7 +31,7 @@ kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 num_fragments <- nrow(positions)
 
 # Generate a pastel color palette based on the number of fragments using the viridis palette
-colors <- viridis(num_fragments, option = "D", begin = 0.6, end = 0.9)
+colors <- brewer.pal(num_fragments, "Pastel1")
 
 # Add genomic regions of the specified chromosome to the plot, one above the other, with different colors
 kpPlotRegions(kp, data = positions, col = colors)
