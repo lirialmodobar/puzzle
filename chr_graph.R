@@ -9,7 +9,7 @@ dados <- read.table("nat/chr_1_nat_sort_filt_size_gap.txt", header = FALSE, sep=
 positions <- dados[2:4]
 positions[,1] <- paste0("chr", positions[,1])
 print(positions)
-positions <- data.frame(chr=c("chr1", "chr1", "chr1", "chr1"), start=c(1, 15, 30, 50), end=c(1500, 3000, 4000, 7000))
+positions <- data.frame(chr=c("chr1", "chr1", "chr1", "chr1"), start=c(1, 15, 30, 50), end=c(150000, 300000, 400000, 700000))
 # Extract the chromosome from your data (assuming all values in the second column are the same)
 chromosome <- positions[1, 1]
 
