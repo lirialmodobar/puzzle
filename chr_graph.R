@@ -8,8 +8,6 @@ library(karyoploteR)
 dados <- read.table("nat/chr_1_nat_sort_filt_size_gap.txt", header = FALSE, sep=' ')
 positions <- dados[2:4]
 positions[,1] <- paste0("chr", positions[,1])
-print(positions)
-positions <- data.frame(chr=c("chr1", "chr1", "chr1", "chr1"), start=c(1, 15, 30, 50), end=c(150000, 300000, 400000, 700000))
 # Extract the chromosome from your data (assuming all values in the second column are the same)
 chromosome <- positions[1, 1]
 
@@ -17,10 +15,11 @@ pdf("karyotype_plot.pdf")
 # Create a karyotype object for chromosome drawing with the extracted chromosome
 kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
 
-# Calculate the number of fragments
-num_fragments <- nrow(positions)
-
 # Add genomic regions of the specified chromosome to the plot, one above the other
 kpPlotRegions(kp, data = positions)
+
+# Add labels for x-axis and y-axis
+kpText(kp, chr=chromosome, text = "Chromosome", x = 0.5, y = -1, size = 12, hjust = 0.5)
+kpText(kp, chr=chromosome, text = "Fragments", x = -0.1, y = 0.5, size = 12, hjust = 1, rot = 90)
 
 dev.off()
