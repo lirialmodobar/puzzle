@@ -18,7 +18,7 @@ pdf_file <- paste("karyotype_plot", ".pdf")
 dados <- read.table(positions_file, header = FALSE, sep = " ")
 positions <- dados[2:4]
 positions[, 1] <- paste0("chr", positions[, 1])
-
+positions <- data.frame(chr=c("chr1", "chr1", "chr1"), start=c(30e6, 70e6, 150e6), end=c(50e6, 90e6, 170e6))
 # Extract the chromosome from your data (assuming all values in the second column are the same)
 chromosome <- positions[1, 1]
 
