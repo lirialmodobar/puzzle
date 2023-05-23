@@ -29,7 +29,7 @@ for label in "${labels[@]}"; do
         CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $WD/$label_lower/"$label_lower"_all.txt | sort -n -k 3,3 -k 4,4r | awk '!seen[$3]++')
         if [ -n "$CHRS" ]; then
             echo "$CHRS" | awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%.2f\tNA\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, $5; next} {printf "%s\t%d\t%d\t%d\t%.2f\t%d\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, ($3 <= a) ? 0 : 1, $5; a=$4}' > $WD/$label_lower/chr_"${chr}"_"${label_lower}"_sort_filt_size_gap.txt
-	    #Rscript $WD/chr_fragments_plot.R $WD/$label_lower/chr_"${chr}"_"${label_lower}"_sort_filt_size_gap.txt $WD/$label_lower/chr_"$chr"_"$label_lower"_plot_fragments
+	    #Rscript $WD/scripts/chr_fragments_plot.R $WD/$label_lower/chr_"${chr}"_"${label_lower}"_sort_filt_size_gap.txt $WD/$label_lower/chr_"$chr"_"$label_lower"_plot_fragments
 	    if [[ -v chr_pos["chr$chr"] ]]; then
                 initial_pos_hg38=$(echo "${chr_pos["chr$chr"]}" | awk '{print $1}')
                 final_pos_hg38=$(echo "${chr_pos["chr$chr"]}" | awk '{print $2}')
