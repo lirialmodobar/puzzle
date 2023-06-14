@@ -1,3 +1,5 @@
+#Load project environment
+renv::restore()
 # Load the required packages
 library(karyoploteR)
 library(RColorBrewer)
@@ -38,3 +40,6 @@ kpPlotRegions(kp, data = positions, col = colors)
 
 # End PDF device
 dev.off()
+
+#Save current environment
+renv::snapshot()
