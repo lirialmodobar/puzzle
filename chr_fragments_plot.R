@@ -1,4 +1,9 @@
 #Load project environment
+if (!requireNamespace("renv", quietly = TRUE)) {
+  # Install renv and its dependencies
+  install.packages("renv", dependencies = TRUE)
+}
+library(renv)
 renv::restore()
 # Load the required packages
 library(karyoploteR)
