@@ -21,8 +21,14 @@ for (i in 1:length(labels)) {
   label <- labels[i]
   color <- colors[i]
   for (chr in 1:22) {
-    positions_file <- file.path(wd, label, paste0("chr_", chr, "_", label, "_sort_filt_size_gap.txt"))
-    pdf_file <- file.path(wd, label,  paste0("chr_", chr, "_", label, "_plot_fragments.pdf"))
+    label_dir <- file.path(wd, label)
+    graph_dir <- "frags_plots"
+    if (!file.exists(file.path(label_dir, graph_dir))) {
+    dir.create(file.path(label_dir, graph_dir))
+    }
+    file_name_prefix <- paste0("chr_", chr, "_", label)
+    positions_file <- file.path(label_dir, paste0(file_name_prefix, "_sort_filt_size_gap.txt"))
+    pdf_file <- file.path(label_dir, graph_dir, paste0(file_name_prefix, "_plot_fragments.pdf"))
     # Read the data file
     dados <- read.table(positions_file, header = FALSE, sep = "\t")
     positions <- dados[2:4]
