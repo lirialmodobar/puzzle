@@ -27,6 +27,8 @@ done < $WD/collapse_results.txt
 # Remove the temporary file 'collapse_results.txt'
 rm $WD/collapse_results.txt
 
+read -p "For fragments starting at the same position, select only the largest ones? (y/n): " answer
+
 # Define an array of labels
 labels=("NAT" "EUR" "AFR" "UNK")
 
@@ -46,11 +48,25 @@ for label in "${labels[@]}"; do
     # Process each chromosome (1 to 22)
     for chr in {1..22}; do
         # Filter lines by chromosome, sort them, remove duplicates, and perform additional processing
-        CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $WD/$label_lower/"$label_lower"_all.txt | sort -n -k 3,3 -k 4,4r | awk '!seen[$3]++')
+	output_parent_dirs=$WD/$label_lower
+	output_prefix="chr_${chr}_${label_lower}_sort"
+        output_sufix="size_gap.txt"
+
+	if [[ $answer == "y" ]]; then
+    	CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $WD/$label_lower/"$label_lower"_all.txt | sort -n -k 3,3 -k 4,4r | awk '!seen[$3]++')
+	output_dir=$output_parent_dirs/"chr_info_filt_largest_frag"; [ ! -d "$output_dir" ] && mkdir "$output_dir"
+	output=$output_dir/"$output_prefix"_filt_$output_sufix
+
+	else
+    	CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $WD/$label_lower/"$label_lower"_all.txt | sort -n -k 3,3 -k 4,4r)
+	output_dir=$output_parent_dirs/"chr_info_unfilt"; [ ! -d "$output_dir" ] && mkdir "$output_dir"
+	output=$output_dir/"$output_prefix"_unfilt_$output_sufix
+	fi
+
 
         # If there are matching lines, save the results to a file
         if [ -n "$CHRS" ]; then
-            echo "$CHRS" | awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%.2f\tNA\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, $5; next} {printf "%s\t%d\t%d\t%d\t%.2f\t%d\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, ($3 <= a) ? 0 : 1, $5; a=$4}' > $WD/$label_lower/chr_"${chr}"_"${label_lower}"_sort_filt_size_gap.txt
+		echo "$CHRS" | awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%.2f\tNA\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, $5; next} {printf "%s\t%d\t%d\t%d\t%.2f\t%d\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, ($3 <= a) ? 0 : 1, $5; a=$4}' > $output
         fi
     done
 done
