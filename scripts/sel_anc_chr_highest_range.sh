@@ -21,7 +21,7 @@ while read collapse; do
     FILE_NAME=$(echo $collapse | head -n 1 | sed "s/.bed//g")
 
     # Extract columns 1-4 from the file and append them to 'all_anc_all_chr.txt'
-    cut -f1-4 $INPUT_FILES/$collapse | cat | sed "s/^/$FILE_NAME\t/" >> $INFOS_TXT/all_anc_all_chr.txt
+    [ ! -f $INFOS_TXT/all_anc_all_chr.txt ] && cut -f1-4 $INPUT_FILES/$collapse | sed "s/^/$FILE_NAME\t/" >> $INFOS_TXT/all_anc_all_chr.txt
 done < $WD/collapse_results.txt
 
 # Remove the temporary file 'collapse_results.txt'
@@ -42,24 +42,25 @@ for label in "${labels[@]}"; do
         mkdir $WD/$label_lower
     fi
 
-    # Filter lines with the label and save them to a file
-    grep -w "$label" $INFOS_TXT/all_anc_all_chr.txt > $WD/$label_lower/"$label_lower"_all.txt
+ANC_DIR=$WD/$label_lower
+
+# Filter lines with the label
+[ ! -f $ANC_DIR/"$label_lower"_all.txt ] && grep -w "$label" $INFOS_TXT/all_anc_all_chr.txt > $ANC_DIR/"$label_lower"_all.txt
 
     # Process each chromosome (1 to 22)
     for chr in {1..22}; do
-        # Filter lines by chromosome, sort them, remove duplicates, and perform additional processing
-	output_parent_dirs=$WD/$label_lower
-	output_prefix="chr_${chr}_${label_lower}_sort"
+	# Filter lines by chromosome, sort them, remove duplicates, and perform additional processing
+       	output_prefix="chr_${chr}_${label_lower}_sort"
         output_sufix="size_gap.txt"
 
 	if [[ $answer == "y" ]]; then
-    	CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $WD/$label_lower/"$label_lower"_all.txt | sort -n -k 3,3 -k 4,4r | awk '!seen[$3]++')
-	output_dir=$output_parent_dirs/"chr_info_filt_largest_frag"; [ ! -d "$output_dir" ] && mkdir "$output_dir"
+    	CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $ANC_DIR/"$label_lower"_all.txt | sort -k3,3nb -k4,4nbr | awk '!seen[$3]++')
+	output_dir=$ANC_DIR/"chr_info_filt_largest_frag"; [ ! -d "$output_dir" ] && mkdir "$output_dir"
 	output=$output_dir/"$output_prefix"_filt_$output_sufix
 
 	else
-    	CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $WD/$label_lower/"$label_lower"_all.txt | sort -n -k 3,3 -k 4,4r)
-	output_dir=$output_parent_dirs/"chr_info_unfilt"; [ ! -d "$output_dir" ] && mkdir "$output_dir"
+    	CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $ANC_DIR/"$label_lower"_all.txt | sort -k3,3nb -k4,4nbr)
+	output_dir=$ANC_DIR/"chr_info_unfilt"; [ ! -d "$output_dir" ] && mkdir "$output_dir"
 	output=$output_dir/"$output_prefix"_unfilt_$output_sufix
 	fi
 
