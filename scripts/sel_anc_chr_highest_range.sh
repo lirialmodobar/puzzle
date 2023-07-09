@@ -17,7 +17,7 @@ INFOS_TXT=$WD/infos_txt
 
 # Process each file listed in 'collapse_results.txt'
 while read collapse; do
-    # Extract the file name without the '.bed' extension
+    # Extract the file name (ID) without the '.bed' extension
     FILE_NAME=$(echo $collapse | head -n 1 | sed "s/.bed//g")
 
     # Extract columns 1-4 from the file and append them to 'all_anc_all_chr.txt'
@@ -44,20 +44,21 @@ for label in "${labels[@]}"; do
 
 ANC_DIR=$WD/$label_lower
 
-# Filter lines with the label
+# Filter lines with the label (generates file with all the ids, chrs and frags start and ending positions for that label)
 [ ! -f $ANC_DIR/"$label_lower"_all.txt ] && grep -w "$label" $INFOS_TXT/all_anc_all_chr.txt > $ANC_DIR/"$label_lower"_all.txt
 
     # Process each chromosome (1 to 22)
-    for chr in {1..22}; do
-	# Filter lines by chromosome, sort them, remove duplicates, and perform additional processing
+    for chr in {1..2}; do
        	output_prefix="chr_${chr}_${label_lower}_sort"
         output_sufix="size_gap.txt"
 
+        # Filter lines of the file with all chrs and frags by chromosome, sort them, remove duplicates
 	if [[ $answer == "y" ]]; then
     	CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $ANC_DIR/"$label_lower"_all.txt | sort -k3,3nb -k4,4nbr | awk '!seen[$3]++')
 	output_dir=$ANC_DIR/"chr_info_filt_largest_frag"; [ ! -d "$output_dir" ] && mkdir "$output_dir"
 	output=$output_dir/"$output_prefix"_filt_$output_sufix
 
+        # Filter lines of the file with all chrs and frags by chromosome, sort them
 	else
     	CHRS=$(awk -v chr=$chr '{ if ($2 == chr) {print}}' $ANC_DIR/"$label_lower"_all.txt | sort -k3,3nb -k4,4nbr)
 	output_dir=$ANC_DIR/"chr_info_unfilt"; [ ! -d "$output_dir" ] && mkdir "$output_dir"
@@ -65,7 +66,7 @@ ANC_DIR=$WD/$label_lower
 	fi
 
 
-        # If there are matching lines, save the results to a file
+        # Calculate frag size and check for gaps, generating one file per chr within the label with all the info related to the frags
         if [ -n "$CHRS" ]; then
 		echo "$CHRS" | awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%.2f\tNA\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, $5; next} {printf "%s\t%d\t%d\t%d\t%.2f\t%d\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, ($3 <= a) ? 0 : 1, $5; a=$4}' > $output
         fi
@@ -73,4 +74,3 @@ ANC_DIR=$WD/$label_lower
 done
 
 # End of the script
-
