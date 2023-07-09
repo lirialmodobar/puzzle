@@ -21,7 +21,7 @@ for (i in 1:length(labels)) {
   label <- labels[i]
   color <- colors[i]
   for (chr in 1:22) {
-    label_dir <- file.path(wd, label)
+    label_dir <- file.path(wd, label, "chr_info_filt_largest_frag")
     graph_dir <- "frags_plots"
     if (!file.exists(file.path(label_dir, graph_dir))) {
     dir.create(file.path(label_dir, graph_dir))
