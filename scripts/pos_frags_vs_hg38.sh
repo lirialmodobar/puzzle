@@ -19,11 +19,11 @@ for label in "${labels[@]}"; do
         chr_dir=${chr_dirs[$i]}
         output_prefix=${output_file_prefix[$i]}
 
-        output_file="$WD/$label_lower/${output_prefix}_${label_lower}_comp_hg38.txt"
+        output_file="$WD/$label_lower/$chr_dir/${output_prefix}_${label_lower}_comp_hg38.txt"
 
         # Check if the output file is empty and add the header if needed
         if [ ! -s "$output_file" ]; then
-            echo -e "chr\tdist_start_hg38\tdist_hg38_end" > "$output_file"
+            echo -e "chr\tfirst_bp_gap\tlast_bp_gap\t1st_dist_start_hg38_2nd_dist_hg38_end" > "$output_file"
         fi
 
         for chr in {1..22}; do
@@ -42,7 +42,7 @@ for label in "${labels[@]}"; do
                     dist_ini_chr_hg38=$(awk -v initial_pos_chr=$initial_pos_chr -v initial_pos_hg38=$initial_pos_hg38 'BEGIN { printf "%.2f", (initial_pos_chr - initial_pos_hg38) / 1000 }')
                     dist_final_hg38_chr=$(awk -v final_pos_hg38=$final_pos_hg38 -v final_pos_chr=$final_pos_chr 'BEGIN { printf "%.2f", (final_pos_hg38 - final_pos_chr) / 1000 }')
 
-                    echo -e "$chr\t$dist_ini_chr_hg38\t$dist_final_hg38_chr" >> "$output_file"
+                    echo -e "$chr\t$initial_pos_hg38\t$initial_pos_chr\t$dist_ini_chr_hg38\n$chr\t$final_pos_chr\t$final_pos_hg38\t$dist_final_hg38_chr" >> "$output_file"
                 fi
             fi
         done
