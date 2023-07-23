@@ -32,8 +32,9 @@ for label in "${labels[@]}"; do
         #process_chr_file "$label_lower" "$CHRS_UNFILT" "$chr" "unfilt"
 	#awk -F'\t' '$6 == 1 {print prev; print} {prev=$0}' "$WD/${label_lower}/$CHRS_FILT/chr_${chr}_${label_lower}_sort_filt_size_gap.txt"  >> "$WD/$label_lower/$CHRS_FILT/info_gap_filt_frags_${label_lower}.txt"
 	awk -F'\t' -v chr="$chr" '($2 == chr) && !found {start=$4; found=1; next} ($2 == chr) {end=$3; printf "%d\t%d\t%d\n", chr, start, end; start=$4}' "$WD/$label_lower/$CHRS_FILT/info_gap_filt_frags_${label_lower}.txt" >> "$WD/$label_lower/$CHRS_FILT/ref_${label_lower}_start_end_gap.txt"
+	awk -v chr="$chr" '{if ($1 == chr) {printf "%d\t%d\t%d\n", $1,$2,$3}}' $WD/$label_lower/$CHRS_FILT/filt_"$label_lower"_comp_hg38.txt >> "$WD/$label_lower/$CHRS_FILT/ref_${label_lower}_start_end_gap.txt"
     done
-##gap between chrs == hg 38 pos file actually
+
 ##Compare the gap files
 #diff $WD/$label_lower/$CHRS_FILT/gap_filt_frags_"$label_lower".txt $WD/$label_lower/$CHRS_UNFILT/gap_unfilt_frags_"$label_lower".txt > $WD/$label_lower/diff_gap_filt_unfilt_"$label_lower".txt
 done
