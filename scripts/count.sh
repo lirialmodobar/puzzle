@@ -29,16 +29,18 @@ labels=("NAT" "EUR" "AFR" "UNK")
 for label in "${labels[@]}"; do
     ## Convert label to lowercase
     label_lower="${label,,}"
-
+    ##Process file with label frag infos
+    cut -f 2,3,4 $WD/$label_lower/"$label_lower"_all.txt | sort -k1,1nb > $WD/$label_lower/pos_sort_"$label_lower"_all.txt
     ##Generate file with gap infos per label
     #for chr in {1..22}; do
 	#awk -F'\t' '$6 == 1 {print prev; print} {prev=$0}' "$WD/${label_lower}/$CHRS_FILT/chr_${chr}_${label_lower}_sort_filt_size_gap.txt"  >> "$WD/$label_lower/$CHRS_FILT/info_gap_filt_frags_${label_lower}.txt"
 	#awk -F'\t' -v chr="$chr" '($2 == chr) && !found {start=$4; found=1; next} ($2 == chr) {end=$3; printf "%d\t%d\t%d\n", chr, start, end; start=$4}' "$WD/$label_lower/$CHRS_FILT/info_gap_filt_frags_${label_lower}.txt" >> "$WD/$label_lower/$CHRS_FILT/ref_${label_lower}_start_end_gap.txt"
 	#awk -v chr="$chr" '{if ($1 == chr) {printf "%d\t%d\t%d\n", $1,$2,$3}}' $WD/$label_lower/$CHRS_FILT/filt_"$label_lower"_comp_hg38.txt >> "$WD/$label_lower/$CHRS_FILT/ref_${label_lower}_start_end_gap.txt"
     #done
-find_vars_within_pos_range "$WD/$label_lower/$CHRS_FILT/ref_${label_lower}_start_end_gap.txt" "$WD/infos_txt/para_para_teste.bim" "$WD/$label_lower/$CHRS_FILT/var_range_info_${label_lower}.txt"
+find_vars_within_pos_range "$WD/$label_lower/$CHRS_FILT/ref_${label_lower}_start_end_gap.txt" "$WD/infos_txt/BHRC_Probands_filt.bim" "$WD/$label_lower/$CHRS_FILT/gap_var_range_info_${label_lower}.txt"
+find_vars_within_pos_range "$WD/$label_lower/pos_sort_${label_lower}_all.txt" "$WD/infos_txt/BHRC_Probands_filt.bim" "$WD/$label_lower/$CHRS_UNFILT/var_range_info_${label_lower}.txt" 
 #Count vars in gap
-awk -F'\t' '{ n_vars = split($4, vars, ","); print $1, $2, $3, $4, n_vars }' "$WD/$label_lower/$CHRS_FILT/var_range_info_${label_lower}.txt" > "$WD/$label_lower/$CHRS_FILT/n_vars_in_gap_${label_lower}.txt"
+awk -F'\t' -v OFS="\t" '{ n_vars = split($4, vars, ","); print $1, $2, $3, $4, n_vars }' "$WD/$label_lower/$CHRS_FILT/gap_var_range_info_${label_lower}.txt" > "$WD/$label_lower/$CHRS_FILT/n_vars_in_gap_${label_lower}.txt"
 # Count the occurrences of each var in the entire output file and save the result
-awk -F'\t' -v OFS="\t" '{split($4,variants,","); for(i=2;i<=length(variants);i++) count[variants[i]]++} END {for(var in count)print var,count[var]}' "$WD/${label_lower}/$CHRS_FILT/var_range_info_${label_lower}.txt" > "$WD/$label_lower/$CHRS_FILT/var_count_${label_lower}.txt"
+awk -F'\t' -v OFS="\t" '{split($4,variants,","); for(i=2;i<=length(variants);i++) count[variants[i]]++} END {for(var in count)print var,count[var]}' "$WD/${label_lower}/$CHRS_UNFILT/var_range_info_${label_lower}.txt" > "$WD/$label_lower/$CHRS_UNFILT/var_count_${label_lower}.txt"
 done
