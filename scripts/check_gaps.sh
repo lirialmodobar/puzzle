@@ -4,7 +4,7 @@ COLLAPSE=$WD/output_collapse
 INFOS_TXT=$WD/infos_txt
 CHRS_UNFILT="chr_info_unfilt"
 CHRS_FILT="chr_info_filt_largest_frag"
-#Check which file should be used as reference for start and end bp for gaps (filt or unfilt)
+#Check which file should be used as reference for start and end bp for gaps (filt or unfilt). Hypothesis is the filt since it gets the largest frags.
 process_chr_file() {
     local label_lower="$1"
     local dir="$2"
@@ -31,6 +31,6 @@ for label in "${labels[@]}"; do
         process_chr_file "$label_lower" "$CHRS_UNFILT" "$chr" "unfilt"
     done
 
-##Compare the gap files
+##Compare the gap files to check if the extra ones that unfilt has are in fact covered by the filt
 diff $WD/$label_lower/$CHRS_FILT/gap_filt_frags_"$label_lower".txt $WD/$label_lower/$CHRS_UNFILT/gap_unfilt_frags_"$label_lower".txt > $WD/$label_lower/diff_gap_filt_unfilt_"$label_lower".txt
 done
