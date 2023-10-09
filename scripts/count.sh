@@ -62,6 +62,7 @@ for label in "${labels[@]}"; do
                 echo "finished counting" "$var" "for chr" "$chr">> $WD/infos_txt/log_count.txt
         done < "$WD/var_info_entrada.txt"
         echo "finished counting all vars" $label_lower >> $WD/infos_txt/log_count.txt
+	rm "$WD/$label_lower/$CHRS_UNFILT/chr_1_var_range_info_${label_lower}.txt" 
         rm "$WD/var_info_entrada.txt"
     #done
 done
