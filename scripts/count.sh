@@ -66,22 +66,20 @@ for label in "${labels[@]}"; do
         rm "$WD/var_info_entrada.txt"
     #done
 done
+
+
 #Total occurences per chr across all labels
 echo "calculating total occurences" >> $WD/infos_txt/log_count.txt
+
+
 join_and_sum_pairwise() {
     join -a 1 -a 2 -e 0 -o 1.1 1.2 1.3 2.1 2.2 2.3 1.4 2.4 "$1" "$2" > merge_temp
     sed -i 's/0 0 0 //1' merge_temp
     awk 'NF == 8 { print $4, $5, $6, ($7+$8) } NF == 5 { print $1, $2, $3, ($4+$5) }' merge_temp > "$3"
     rm merge_temp
 }
-##Total occurences per chr across all labels
-echo "calculating total occurences" >> $WD/infos_txt/log_count.txt
-join_and_sum_pairwise() {
-    join -a 1 -a 2 -e 0 -o 1.1 1.2 1.3 2.1 2.2 2.3 1.4 2.4 "$1" "$2" > merge_temp
-    sed -i 's/0 0 0 //1' merge_temp
-    awk 'NF == 8 { print $4, $5, $6, ($7+$8) } NF == 5 { print $1, $2, $3, ($4+$5) }' merge_temp > "$3"
-    rm merge_temp
-}
+
+
 #for chr in {1..22}; do
         join_and_sum_pairwise "$WD/eur/$CHRS_UNFILT/count_info/sort_pos_count_chr_1_eur.txt" "$WD/nat/$CHRS_UNFILT/count_info/sort_pos_count_chr_1_nat.txt"  "$INFOS_TXT/sort_pos_count_chr_1_eur_nat.txt"
         join_and_sum_pairwise "$WD/afr/$CHRS_UNFILT/count_info/sort_pos_count_chr_1_afr.txt" "$WD/unk/$CHRS_UNFILT/count_info/sort_pos_count_chr_1_unk.txt"  "$INFOS_TXT/count_info/sort_pos_count_chr_1_afr_unk.txt"
@@ -90,4 +88,6 @@ join_and_sum_pairwise() {
         rm "$INFOS_TXT/sort_pos_count_chr_1_eur_nat.txt"
         rm "$INFOS_TXT/sort_pos_count_chr_1_afr_unk.txt"
 #done
+
+
 echo "done" >> $WD/infos_txt/log_count.txt
