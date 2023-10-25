@@ -30,6 +30,9 @@ create_fragments_plot <- function(label, label_dir, color, chr, n_rows) {
 	dados <- read.table(positions_file, header = FALSE, sep = "\t")
 	positions <- dados[2:4]
 	positions[, 1] <- paste0("chr", positions[, 1])
+	set.seed(123)
+        random_indices <- sample(1:n_rows, n_rows)
+        positions <- positions[random_indices, ]
 	# Extract the chromosome from your data (assuming all values in the second column are the same)
 	chromosome <- positions[1, 1]
 	# Start PDF device
