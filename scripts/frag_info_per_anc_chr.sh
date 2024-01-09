@@ -1,5 +1,5 @@
 # Set the working directory
-WD=/mnt/genetica_1/liriel/liri_dell/teste_dir
+WD=/home/yuri/liri/puzzle
 
 # Define the input files directory
 INPUT_FILES=$WD/output_collapse
@@ -8,12 +8,12 @@ INPUT_FILES=$WD/output_collapse
 ls $INPUT_FILES > $WD/collapse_results.txt
 
 # Create the 'infos' directory if it doesn't exist
-if [ ! -d $WD/teste/infos ]; then
-    mkdir $WD/teste/infos
+if [ ! -d $WD/infos ]; then
+    mkdir $WD/infos
 fi
 
 # Set the 'infos' directory path
-INFOS=$WD/teste/infos
+INFOS=$WD/infos
 
 # Process each file listed in 'collapse_results.txt'
 while read collapse; do
@@ -26,7 +26,7 @@ while read collapse; do
 done < $WD/collapse_results.txt
 
 # Remove the temporary file 'collapse_results.txt'
-#rm $WD/collapse_results.txt
+rm $WD/collapse_results.txt
 
 # Define an array of labels
 labels=("NAT" "EUR" "AFR" "UNK")
@@ -37,21 +37,21 @@ for label in "${labels[@]}"; do
         label_lower="${label,,}"
 
         #Create a directory for the label if it doesn't exist
-        if [ ! -d $WD/teste/$label_lower ]; then
-                mkdir $WD/teste/$label_lower
+        if [ ! -d $WD/$label_lower ]; then
+                mkdir $WD/$label_lower
         fi
-        ANC_DIR=$WD/teste/$label_lower
-        if [ ! -d $WD/teste/$label_lower/chr_info_filt ]; then
-                mkdir $WD/teste/$label_lower/chr_info_filt
+        ANC_DIR=$WD/$label_lower
+        if [ ! -d $WD/$label_lower/chr_info_filt ]; then
+                mkdir $WD/$label_lower/chr_info_filt
         fi
-        if [ ! -d $WD/teste/$label_lower/chr_info_unfilt ]; then
-                mkdir $WD/teste/$label_lower/chr_info_unfilt
+        if [ ! -d $WD/$label_lower/chr_info_unfilt ]; then
+                mkdir $WD/$label_lower/chr_info_unfilt
         fi
 	# Filter lines with the label (generates file with all the ids, chrs and frags start and ending positions for that label)
 	#[ ! -f $ANC_DIR/"$label_lower"_all.txt ] && 
 	grep -w "$label" $INFOS/all_anc_all_chr.txt > $ANC_DIR/"$label_lower"_all.txt
 	# Process each chromosome (1 to 22)
-        for chr in {1..22}; do
+        	chr=1
                 awk -v chr="$chr" -v OFS="\t" '{ if ($2 == chr) {print}}' "${ANC_DIR}/${label_lower}_all.txt" | sort -k3,3nb -k4,4nbr > $WD/"$chr"_"$label_lower"_temp.txt
                 # Calculate frag size and check for gaps, generating one file per chr within the label with all the info related to the frags
                 if [ -f $WD/"$chr"_"$label_lower"_temp.txt ]; then
@@ -59,5 +59,4 @@ for label in "${labels[@]}"; do
                         awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%.2f\tNA\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, $5; next} {printf "%s\t%d\t%d\t%d\t%.2f\t%d\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, ($3 <= a) ? 0 : 1, $5; a=$4}' $WD/"$chr"_"$label_lower"_temp.txt > "$ANC_DIR/chr_info_unfilt/chr_${chr}_${label_lower}_sort_unfilt_size_gap.txt"
                 fi
 		rm $WD/"$chr"_"$label_lower"_temp.txt
-        done
 done
