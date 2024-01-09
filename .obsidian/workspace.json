@@ -1,0 +1,181 @@
+{
+  "main": {
+    "id": "7219ddab76d48c9c",
+    "type": "split",
+    "children": [
+      {
+        "id": "2c1d1a0b36912ad7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "543cff005b24675a",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "1dfb76c6db324d66",
+    "type": "split",
+    "children": [
+      {
+        "id": "2b3a3a9f5b346fb8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "50dbb980ef8847fa",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "69c8c4cd3695e63c",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "ddb379e3e54853a2",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "8b98fc6b52e57aea",
+    "type": "split",
+    "children": [
+      {
+        "id": "0b56d7df7328962b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5eb67865e4dc65f5",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "48a11f8e9161037e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "64777c7747e9cca5",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "8bf26870dfe33da9",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "543cff005b24675a",
+  "lastOpenFiles": [
+    "Untitled 1.canvas",
+    "Untitled.canvas",
+    "utilitarios/Token git.md",
+    "scripts/pos_frags_vs_hg38.sh",
+    "scripts/frag_info_per_anc_chr.sh",
+    "scripts/filter_bim.sh",
+    "scripts/count.sh",
+    "scripts/collapse_loop.sh",
+    "scripts/chr_fragments_plot.R",
+    "scripts/check_largest_region.sh",
+    "scripts/check_gaps.sh",
+    "scripts",
+    "https:/github.com/lirialmodobar/puzzle.git",
+    "geral/Status do projeto (codigo vs objetivo).md",
+    "Untitled.md",
+    "geral/Planejamento geral (ate fim de fev).md",
+    "geral/Objetivos do projeto.md",
+    "geral/Objetivos de melhoria de codigo Liri.md",
+    "geral/Objetivos adicionais projeto Marquinhos e congressos.md",
+    "geral/Fluxo geral do codigo.md",
+    "status/frag_info_per_anc_chr.sh.md",
+    "aleatorios/aleatorios (quando der tempo ou problema).md",
+    "status/count.sh.md",
+    "status/filter_bim.sh.md",
+    "status/plotgardener.Rmd.md",
+    "status/pos_frags_vs_hg38.sh.md",
+    "status/chr_fragments_plot.R.md",
+    "status/check_largest_region.sh.md",
+    "geral/imagens/Pasted image 20240108183756.png",
+    "geral/imagens/Pasted image 20240109104824.png",
+    "geral/imagens/Pasted image 20240109110407.png",
+    "geral/imagens/Pasted image 20240109110306.png",
+    "geral/imagens/Pasted image 20240109110048.png",
+    "geral/imagens/Pasted image 20240109105952.png",
+    "geral/imagens/Pasted image 20240109105747.png",
+    "geral/imagens/Pasted image 20240109105345.png",
+    "geral/imagens/Pasted image 20240109104856.png",
+    "geral/imagens/Pasted image 20240109111111.png"
+  ]
+}

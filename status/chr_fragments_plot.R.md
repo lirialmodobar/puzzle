@@ -1,0 +1,5 @@
+-  Teste incluido no script farei mais quando tiver todos os dados. Nao foi testada essa parte do script ainda em termos de codigo, foi puramente abstracao, seria legal ver se funciona, inventar um conjunto de dados quaisquer pra ver como executa e se comporta como esperado. 
+- Tambem pode ser necessario reavaliar a execucao desse teste, pois tem bastante trabalho manual envolvido de ver os graficos e determinar, e tbm pode exigir muito poder computacional a toa/para pouco ganho. Nao acho que va rodar no cerebro.
+- Posso testar e gerar para o cromossomo 1. No entanto, ai so terei o numero otimo de fragmentos dele, enquanto a ideia geral era ver o numero otimo para todos os cromossomos de cada ancestralidade, entao no futuro o grafico pode mudar ligeiramente, e terei tido o trabalho do teste 2x, e tambem existe a questao de se gero esse grafico separado por PA e SP, ou PAxSPxgeral ou so geral. 
+ -  Collapse esta rodando cromossomo por cromossomo, sera que ainda vale manter a estrutura de loops de cromossomos considerando isso?
+ - Nome: Mudar para frags ao inves de fragments.
