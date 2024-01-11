@@ -1,10 +1,24 @@
 #!/bin/bash
 
 # Set the working directory
-WD=/home/yuri/liri/puzzle/old_data/teste
+WD=/home/yuri/liri/puzzle
 
 # Define the input files directory
-INPUT_FILES=/home/yuri/liri/puzzle/old_data/output_collapse
+INPUT_FILES=/home/yuri/liri/puzzle/output_collapse
+
+# Function to process states and ancestries
+process_states_ancs() {
+	local state=$1
+	local label_lower=$2
+
+	if [ "$state" = "rs_sp" ]; then
+		grep -w "$label" "$INFOS/all_anc_all_chr.txt" | grep -v -E "C20361_A|C20361_B|C20776_A|C20776_B" | awk '{print $0 ($1 ~ /^C1/ ? "\trs" : "\tsp")}' > "$ANC_DIR/${label_lower}_${state}_all.txt"
+	elif [ "$state" = "rs" ]; then
+		awk '{if ($6 == "rs") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_all.txt > $ANC_DIR/"$label_lower"_"$state"_all.txt
+	else
+		awk '{if ($6 == "sp") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_all.txt > $ANC_DIR/"$label_lower"_"$state"_all.txt
+	fi
+}
 
 # Function to process a specific chromosome
 process_chromosome() {
@@ -15,28 +29,12 @@ process_chromosome() {
     awk -v chr="$chr" -v OFS="\t" '{ if ($2 == chr) {print}}' "${ANC_DIR}/${label}_${state}_all.txt" | sort -k3,3nb -k4,4nbr > "$WD/$chr_${label}_temp.txt"
 
     if [ -s "$WD/$chr_${label}_temp.txt" ]; then
-        awk '!seen[$3]++' "$WD/$chr_${label}_temp.txt" | awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%.2f\tNA\t%s\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, $5, $6; next} {printf "%s\t%d\t%d\t%d\t%.2f\t%d\t%s\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, ($3 <= a) ? 0 : 1, $5, $6; a=$4}' > "$ANC_DIR/chr_info_filt/chr_${chr}_${label}_${state}_filt.txt"
+        awk '!seen[$3]++' "$WD/$chr_${label}_temp.txt" | awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%d\tNA\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), $5, $6; next} {printf "%s\t%d\t%d\t%d\t%d\t%d\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), ($3 <= a) ? 0 : 1, $5, $6; a=$4}' > "$ANC_DIR/chr_info_filt/chr_${chr}_${label}_${state}_filt.txt"
 
-        awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%.2f\tNA\t%s\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, $5, $6; next} {printf "%s\t%d\t%d\t%d\t%.2f\t%d\t%s\t%s\n", $1, $2, $3, $4, ($4-$3)/1000, ($3 <= a) ? 0 : 1, $5, $6; a=$4}' "$WD/$chr_${label}_temp.txt" > "$ANC_DIR/chr_info_unfilt/chr_${chr}_${label}_${state}_unfilt.txt"
+        awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%d\tNA\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), $5, $6; next} {printf "%s\t%d\t%d\t%d\t%d\t%d\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), ($3 <= a) ? 0 : 1, $5, $6; a=$4}' "$WD/$chr_${label}_temp.txt" > "$ANC_DIR/chr_info_unfilt/chr_${chr}_${label}_${state}_unfilt.txt"
     fi
     rm "$WD/$chr_${label}_temp.txt"
 }
-
-# Function to process states and ancestries
-
-process_states_ancs() {
-	local state=$1
-	local label_lower=$2
-
-	if [ "$state" = "rs_sp" ]; then
-		grep -w "$label" "$INFOS/all_anc_all_chr.txt" | awk '{if ($1 ~ /^C1*/) print $0 "\trs"; else print $0 "\tsp"}' > "$ANC_DIR/${label_lower}_${state}_all.txt"
-	elif [ "$state" = "rs" ]; then
-		awk '{if ($6 == "rs") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_all.txt > $ANC_DIR/"$label_lower"_"$state"_all.txt
-	else
-		awk '{if ($6 == "sp") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_all.txt > $ANC_DIR/"$label_lower"_"$state"_all.txt
-	fi
-}
-
 
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
