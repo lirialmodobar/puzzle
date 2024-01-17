@@ -1,0 +1,1 @@
+- Sed pode ser utilizado com # e ai nao precisa escapar a / quando to tentando substituir algo que tem /
