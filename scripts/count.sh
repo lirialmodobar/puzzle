@@ -22,6 +22,44 @@ find_vars_within_pos_range() {
     done < "$pos_file"
 }
 
+join_rec() {
+    f1=$1
+    f2=$2
+    shift 2
+    if [ $# -gt 0 ]; then
+        join -a 1 -a 2 -e 0 "$f1" "$f2" | join_rec /dev/stdin "$@"
+    else
+        join -a 1 -a 2 -e 0 "$f1" "$f2"
+    fi
+}
+
+sum_scores() {
+    awk '
+        {
+            variant = $1;
+            chromosome = $2;
+            position = $3;
+
+            # Extract scores from columns following the first 3
+            num_scores = int((NF-3) / 3);  # Calculate the number of scores
+
+            # Iterate through scores
+            for (i = 0; i <= num_scores; i++) {
+                score_field = i * 3 + 4;  # Starting position for scores
+                score = $(score_field);  # Assuming the score is spaced every 4 fields
+                sum[variant] += score;
+                positions[variant] = position;
+            }
+        }
+        END {
+            for (variant in sum) {
+                print variant, chromosome, positions[variant], sum[variant];
+            }
+        }
+    '
+}
+
+
 #Define an array of states
 states=("rs_sp" "rs" "sp")
 
@@ -79,21 +117,12 @@ for state in "${states[@]}"; do
 done
 
 #Total occurences per chr across all labels
-#echo "calculating total occurences" >> $INFOS/log_count.txt
-#join_and_sum_pairwise() {
- #   join -a 1 -a 2 -e 0 -o 1.1 1.2 1.3 2.1 2.2 2.3 1.4 2.4 "$1" "$2" > merge_temp
-  #  sed -i 's/0 0 0 //1' merge_temp
-   # awk 'NF == 8 { print $4, $5, $6, ($7+$8) } NF == 5 { print $1, $2, $3, ($4+$5) }' merge_temp > "$3"
-    #rm merge_temp
-#}
-
+echo "calculating total occurences" >> $INFOS/log_count.txt
 
 #for chr in {1..22}; do
- #       join_and_sum_pairwise "$WD/eur/$CHRS_UNFILT/count_info/sort_pos_count_chr_1_eur.txt" "$WD/nat/$CHRS_UNFILT/count_info/sort_pos_count_chr_1_nat.txt"  "$INFOS/sort_pos_count_chr_1_eur_nat.txt"
-  #      join_and_sum_pairwise "$WD/afr/$CHRS_UNFILT/count_info/sort_pos_count_chr_1_afr.txt" "$WD/unk/$CHRS_UNFILT/count_info/sort_pos_count_chr_1_unk.txt"  "$INFOS/count_info/sort_pos_count_chr_1_afr_unk.txt"
-   #     join_and_sum_pairwise "$INFOS/sort_pos_count_chr_1_eur_nat.txt" "$INFOS/sort_pos_count_chr_1_afr_unk.txt" "$INFOS/sort_pos_count_chr_1_all.txt"
-    #    sort -k 3,3nb -o "$INFOS/sort_pos_count_chr_1_all.txt" "$INFOS/sort_pos_count_chr_1_all.txt"
-     #   rm "$INFOS/sort_pos_count_chr_1_eur_nat.txt"
-      #  rm "$INFOS/sort_pos_count_chr_1_afr_unk.txt"
+	chr=1
+        join_rec $WD/rs_sp/nat/chr_info_unfilt/count_info/count_chr_"$chr"_nat_rs_sp.txt $WD/rs_sp/eur/chr_info_unfilt/count_info/count_chr_"$chr"_eur_rs_sp.txt $WD/rs_sp/afr/chr_info_unfilt/count_info/count_chr_"$chr"_afr_rs_sp.txt $WD/rs_sp/unk/chr_info_unfilt/count_info/count_chr_"$chr"_unk_rs_sp.txt > $WD/infos/count_chr_"$chr"_rs_sp.txt
+	join_rec $WD/rs/nat/chr_info_unfilt/count_info/count_chr_"$chr"_nat_rs.txt $WD/rs/eur/chr_info_unfilt/count_info/count_chr_"$chr"_eur_rs.txt $WD/rs/afr/chr_info_unfilt/count_info/count_chr_"$chr"_afr_rs.txt $WD/rs/unk/chr_info_unfilt/count_info/count_chr_"$chr"_unk_rs.txt > $WD/infos/count_chr_"$chr"_rs.txt
+	join_rec $WD/sp/nat/chr_info_unfilt/count_info/count_chr_"$chr"_nat_sp.txt $WD/sp/eur/chr_info_unfilt/count_info/count_chr_"$chr"_eur_sp.txt $WD/sp/afr/chr_info_unfilt/count_info/count_chr_"$chr"_afr_sp.txt $WD/sp/unk/chr_info_unfilt/count_info/count_chr_"$chr"_unk_sp.txt > $WD/infos/count_chr_"$chr"_sp.txt
 #done
-#echo "done" >> $INFOS/log_count.txt
+echo "done" >> $INFOS/log_count.txt
