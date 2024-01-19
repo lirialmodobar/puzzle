@@ -34,7 +34,7 @@ join_rec() {
 }
 
 sum_scores() {
-    awk '
+    awk -v OFS='\t' '
         {
             variant = $1;
             chromosome = $2;
