@@ -4,7 +4,6 @@ new title: occur_plot
 author: "Jessica Honorato Mauer"
 date: "3/12/2022 - 4/10/2022"
 adapted by: "Liriel Almodobar"
-date:
 output: html_document
 ---
 
@@ -14,7 +13,7 @@ output: html_document
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install(version = "3.17")
+BiocManager::install
 
 #Transcriptome ranges for the known gene track of Homo sapiens, e.g., introns, exons, UTR regions. usar o do seu genoma de ref!!
 BiocManager::install("TxDb.Hsapiens.UCSC.hg38.knownGene")
@@ -53,81 +52,62 @@ i = 1
 # State and ancestry specific occurence counts
 ## All ancestries
 read.table("/home/yuri/liri/puzzle/109_preliminar_oct23/infos_txt/sort_pos_count_chr_1_all.txt", h=F) -> rs_count
-
+rs_count <- rs_count[order(rs_count[,3]),]
 rs_count <- rs_count[,c(2,3,4)]
 colnames(rs_count) <- c("chrom","bp", "score")
 paste("chr",rs_count$chrom,sep='') -> rs_count$chrom
 
-#scale(rs_count$score) -> rs_count$wc_scaled
-#as.numeric(rs_count$wc_scaled) -> rs_count$wc_scaled
-
 rs_count$end <- c(rs_count$bp[2:length(rs_count$bp)] - 1, rs_count$bp[length(rs_count$bp)] + 1)
 
-rs_count <- rs_count[,c(1,2,5,3)]
+rs_count <- rs_count[,c(1,2,4,3)]
 colnames(rs_count) <- c("chrom", "start", "end", "score")
+rs_count <- rs_count[order(rs_count$start),]
 
 ```
 
 ```{r}
 
 ## EUR
-read.table("/home/yuri/liri/puzzle/109_preliminar_oct23/sort_pos_count_chr_1_eur.txt", h=F) -> count_eur_rs
-
+read.table("/home/yuri/liri/puzzle/109_preliminar_oct23/eur/chr_info_unfilt/count_info/sort_pos_count_chr_1_eur.txt", h=F) -> count_eur_rs
+count_eur_rs <- count_eur_rs[order(count_eur_rs[,3]),]
 count_eur_rs <- count_eur_rs[,c(2,3,4)]
 colnames(count_eur_rs) <- c("chrom","bp", "score")
 paste("chr",count_eur_rs$chrom,sep='') -> count_eur_rs$chrom
-
-#scale(count_eur_rs$score) -> count_eur_rs$wc_scaled
-#as.numeric(count_eur_rs$wc_scaled) -> count_eur_rs$wc_scaled
-
 count_eur_rs$end <- c(count_eur_rs$bp[2:length(count_eur_rs$bp)] - 1, count_eur_rs$bp[length(count_eur_rs$bp)] + 1)
 
-count_eur_rs <- count_eur_rs[,c(1,2,5,3)]
+count_eur_rs <- count_eur_rs[,c(1,2,4,3)]
 colnames(count_eur_rs) <- c("chrom", "start", "end", "score")
 
 ## AFR
-read.table("/home/yuri/liri/puzzle/109_preliminar_oct23/sort_pos_count_chr_1_afr.txt", h=F) -> count_afr_rs
-
+read.table("/home/yuri/liri/puzzle/109_preliminar_oct23/afr/chr_info_unfilt/count_info/sort_pos_count_chr_1_afr.txt", h=F) -> count_afr_rs
+count_afr_rs <- count_afr_rs[order(count_afr_rs[,3]),]
 count_afr_rs <- count_afr_rs[,c(2,3,4)]
 colnames(count_afr_rs) <- c("chrom","bp", "score")
 paste("chr",count_afr_rs$chrom,sep='') -> count_afr_rs$chrom
-
-#scale(count_afr_rs$score) -> count_afr_rs$wc_scaled
-#as.numeric(count_afr_rs$wc_scaled) -> count_afr_rs$wc_scaled
-
 count_afr_rs$end <- c(count_afr_rs$bp[2:length(count_afr_rs$bp)] - 1, count_afr_rs$bp[length(count_afr_rs$bp)] + 1)
-
-count_afr_rs <- count_afr_rs[,c(1,2,5,3)]
+count_afr_rs <- count_afr_rs[,c(1,2,4,3)]
 colnames(count_afr_rs) <- c("chrom", "start", "end", "score")
 
 ## NAT
-read.table("/home/yuri/liri/puzzle/109_preliminar_oct23/sort_pos_count_chr_1_nat.txt", h=F) -> count_nat_rs
-
+read.table("/home/yuri/liri/puzzle/109_preliminar_oct23/nat/chr_info_unfilt/count_info/sort_pos_count_chr_1_nat.txt", h=F) -> count_nat_rs
+count_nat_rs <- count_nat_rs[order(count_nat_rs[,3]),]
 count_nat_rs <- count_nat_rs[,c(2,3,4)]
 colnames(count_nat_rs) <- c("chrom","bp", "score")
 paste("chr",count_nat_rs$chrom,sep='') -> count_nat_rs$chrom
-
-#scale(count_nat_rs$score) -> count_nat_rs$wc_scaled
-#as.numeric(count_nat_rs$wc_scaled) -> count_nat_rs$wc_scaled
-
 count_nat_rs$end <- c(count_nat_rs$bp[2:length(count_nat_rs$bp)] - 1, count_nat_rs$bp[length(count_nat_rs$bp)] + 1)
 
-count_nat_rs <- count_nat_rs[,c(1,2,5,3)]
+count_nat_rs <- count_nat_rs[,c(1,2,4,3)]
 colnames(count_nat_rs) <- c("chrom", "start", "end", "score")
 
 ## UNK
-read.table("/home/yuri/liri/puzzle/109_preliminar_oct23/sort_pos_count_chr_1_unk.txt", h=F) -> count_unk_rs
-
+read.table("/home/yuri/liri/puzzle/109_preliminar_oct23/unk/chr_info_unfilt/count_info/sort_pos_count_chr_1_unk.txt", h=F) -> count_unk_rs
+count_unk_rs <- count_unk_rs[order(count_unk_rs[,3]),]
 count_unk_rs <- count_unk_rs[,c(2,3,4)]
 colnames(count_unk_rs) <- c("chrom","bp", "score")
 paste("chr",count_unk_rs$chrom,sep='') -> count_unk_rs$chrom
-
-#scale(count_unk_rs$score) -> count_unk_rs$wc_scaled
-#as.numeric(count_unk_rs$wc_scaled) -> count_unk_rs$wc_scaled
-
 count_unk_rs$end <- c(count_unk_rs$bp[2:length(count_unk_rs$bp)] - 1, count_unk_rs$bp[length(count_unk_rs$bp)] + 1)
 
-count_unk_rs <- count_unk_rs[,c(1,2,5,3)]
+count_unk_rs <- count_unk_rs[,c(1,2,4,3)]
 colnames(count_unk_rs) <- c("chrom", "start", "end", "score")
 
 ```
@@ -157,13 +137,13 @@ pageCreate(
     width = 5, height = 2, default.units = "inches", xgrid = 0, ygrid = 0
 )
 
-ideogramPlot <- plotIdeogram(params= params,  
+ideogramPlot <- plotIdeogram(params=params,  
     y = 0.5,height = 0.2,
 )
 
 signalplot <- plotSignal(
     data = rs_count,
-    linecolor = "darkgray",
+    linecolor = "black",
     params = params,
     y = "0.4b", height = 0.5,
 )
@@ -177,7 +157,7 @@ plotGenomeLabel(
 ## Annotate y-axis
 annoYaxis(
     plot = signalplot, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
-    axisLine = TRUE, fontsize = 9
+    axisLine = FALSE, fontsize = 9
 )
 
 ## Plot y-axis label
@@ -203,7 +183,7 @@ ideogramPlot <- plotIdeogram(params= params,
 
 signalplot <- plotSignal(
     data = rs_count,
-    linecolor = "darkgray",
+    linecolor = "black",
     params = params,
     y = "0.4b", height = 0.5,
 )
@@ -211,12 +191,12 @@ signalplot <- plotSignal(
 ## Annotate y-axis
 annoYaxis(
     plot = signalplot, at = seq(0, max_score+50, by = 50),label=as.character(seq(0, max_score+50, by = 50)),#acho que aqui ficava so at ou label, e tem que rever esse max_score+50
-    axisLine = TRUE, fontsize = 9 #n lembro se mudava fonte, mas acho que sim
+    axisLine = FALSE, fontsize = 9 #n lembro se mudava fonte, mas acho que sim
 )
 
 ## Plot y-axis label
 plotText(
-    label = "variants occurrences", x = 0.10, y = 1.37, rot = 90, #adjust x, y and fontsize
+    label = "variants occurrences", x = 0.005, y = 2.5, rot = 90, #adjust x, y and fontsize
     fontsize = 9, fontface = "plain", just = "center",
     default.units = "inches"
 )
@@ -224,55 +204,55 @@ plotText(
 ## Plot and place signal plots
 
 signalplotEUR <- plotSignal(
-    data = eur_rs_count,
-    linecolor = "#7297b4",
+    data = count_eur_rs,
+    linecolor = "darkblue",
     params = params,
-    y = "0.03b", height = 0.5,
+    y = "0.2b", height = 0.5,
 )
 
 ## Annotate y-axis
 annoYaxis(
-    plot = signalplot, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
-    axisLine = TRUE, fontsize = 9
+    plot = signalplotEUR, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
+    axisLine = FALSE, fontsize = 9
 )
 
 signalplotAFR <- plotSignal(
     data = count_afr_rs,
-    linecolor = "#c05040",
+    linecolor = "red",
     params = params,
-    y = "0.03b", height = 0.5,
+    y = "0.2b", height = 0.5,
 )
 
 ## Annotate y-axis
 annoYaxis(
-    plot = signalplot, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
-    axisLine = TRUE, fontsize = 9
+    plot = signalplotAFR, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
+    axisLine = FALSE, fontsize = 9
 )
 
 signalplotNAT <- plotSignal(
-    data = nat_rs_count,
-    linecolor = "#6caf5e",
+    data = count_nat_rs,
+    linecolor = "darkgreen",
     params = params,
-    y = "0.03b", height = 0.5,
+    y = "0.2b", height = 0.5,
 )
 
 ## Annotate y-axis
 annoYaxis(
-    plot = signalplot, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
-    axisLine = TRUE, fontsize = 9
+    plot = signalplotNAT, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
+    axisLine = FALSE, fontsize = 9
 )
 
 signalplotUNK <- plotSignal(
-    data = unk_rs_count,
-    linecolor = "#919191",
+    data = count_unk_rs,
+    linecolor = "darkgrey",
     params = params,
-    y = "0.03b", height = 0.5,
+    y = "0.2b", height = 0.5,
 )
 
 ## Annotate y-axis
 annoYaxis(
-    plot = signalplot, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
-    axisLine = TRUE, fontsize = 9
+    plot = signalplotUNK, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
+    axisLine = FALSE, fontsize = 9
 )
 
 plotGenomeLabel(
@@ -283,7 +263,7 @@ plotGenomeLabel(
 #ALL NAT EUR AFR UNK
 legendPlot <- plotLegend(
     legend = c("ALL","EUR","AFR","NAT","UNK"),
-    fill = c("black","#7297b4","#c05040", "#919191"), #when in rstudio, replace by the colors and change in chr_frags
+    fill = c("black","darkblue","red","darkgreen", "darkgrey"),
     border = FALSE,
     x = 5, y = 2.5, width = 1.5, height = 2,
     just = c("left", "top"),
