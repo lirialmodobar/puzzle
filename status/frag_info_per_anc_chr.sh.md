@@ -27,3 +27,4 @@ Collapse esta rodando cromossomo por cromossomo, sera que ainda vale manter a es
 - %%
 	- OBS: Entendido superficialmente.Tem estudo no gpt, posso aprofundar quando der, mas acho que entendi bem. Titulo do chat no gpt: Shell script argument handling.
 	%%
+-  Ver se os move move do output collapse nao fizeram nada ficar fora do lugar.

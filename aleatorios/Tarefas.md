@@ -3,7 +3,7 @@
 - Ver do cep do meu projeto (Cassia mandou detalhes)
 	- https://cep.unifesp.br/submissao-de-projetos/passo-a-passo#fase-2-submissao-do-projeto-na-plataforma-brasil
 - Poster pra x-meeting e pro ESHG ate dia 20, e pro sbg ate dia 2/02
-- mandar certificados para o enio
+- ~~mandar certificados para o enio
 -  ~~renovar bilhete unico~~ 
 
 ## Quando der tempo ou problema
@@ -18,7 +18,7 @@ Ordem aleatoria
 - obsidian garantir que nao perderei dados e como compartilhar.
 - mudar ordem dos arquivos no obsidian
 - sanduiche???
-- pegar cracha
+- pegar cracha (esta com a lilian da genetica)
 - ver como deixar o bloco de codigo decente no obsidian
 - lembrar qual treco do less deixa ver bonitinho
 - investigar cut --complement (usar o script diff pra testar)
