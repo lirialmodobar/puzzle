@@ -1,5 +1,6 @@
 ---
-title: "plotgardener"
+original title: "plotgardener"
+new title: occur_plot
 author: "Jessica Honorato Mauer"
 date: "3/12/2022 - 4/10/2022"
 adapted by: "Liriel Almodobar"
