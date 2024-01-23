@@ -14,5 +14,6 @@ Cássia Maués:  Eu acho que sei.  Tem dois indivíduos, no meu dado, que tavam 
 
 #### Planejamento
 
-- C20361, C20776 (lai, mas nao fam), C21218 (fam, mas nao lai). Vou remover os dois primeiros no inicio do script [[frag_info_per_anc_chr.sh]], e o aqui com o keep vai manter so quem se sobrepoe, entao o terceiro ja ta ok. Futuramente, vou entender esse porque. 
+- ~~C20361, C20776 (lai, mas nao fam), C21218 (fam, mas nao lai). Vou remover os dois primeiros no inicio do script [[frag_info_per_anc_chr.sh]], e o aqui com o keep vai manter so quem se sobrepoe, entao o terceiro ja ta ok. Futuramente, vou entender esse porque. 
+- Checar e entender melhor o bim e como ele informa a questao da genotipagem e se algo que mude nesse entendimento muda a lógica aplicada no script até agora. Entendi/lembrei que o bim nao altera com o keep, so o fam (checar). 
 

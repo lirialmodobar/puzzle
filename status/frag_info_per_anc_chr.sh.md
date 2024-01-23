@@ -4,8 +4,8 @@
 %%
 Collapse esta rodando cromossomo por cromossomo, sera que ainda vale manter a estrutura de loops de cromossomos considerando isso? Impactaria os outros scripts (count, futuros planos do plotgardener, pos_frags_vs_hg38, chr_fragments_plot.R).
 %%
-- Como collapse esta rodando cromossomo por cromossomo, coloquei o loop opcional com uma flag. Isso impacta nos scripts [[pos_frags_vs_hg38.sh]], [[chr_fragments_plot.R]],[[count.sh]] e [[plotgardener.Rmd]] e gera uma nova versao do script, que esta no github e localmente e foi testada.
-- Dividi SP e PA, script ja no github e testado, com ressalva de que nao teve como testar o dado separado pra sp ja que o meu dataset so tinha rs por enquanto. O modo que foi feita essa divisao pode impactar [[pos_frags_vs_hg38.sh]], [[chr_fragments_plot.R]], [[count.sh]] e [[plotgardener.Rmd]] em quando for fazer essa divisao neles.
+- Como collapse esta rodando cromossomo por cromossomo, coloquei o loop opcional com uma flag. Isso impacta nos scripts [[pos_frags_vs_hg38.sh]], [[chr_frag_plot.R]],[[count.sh]] e [[occur_plot.Rmd]] e gera uma nova versao do script, que esta no github e localmente e foi testada.
+- Dividi SP e PA, script ja no github e testado, com ressalva de que nao teve como testar o dado separado pra sp ja que o meu dataset so tinha rs por enquanto. O modo que foi feita essa divisao pode impactar [[pos_frags_vs_hg38.sh]], [[chr_frag_plot.R]], [[count.sh]] e [[occur_plot.Rmd]] em quando for fazer essa divisao neles.
 - IDs que nao serao utilizados foram removidos
 - Nova versao sem os ids rodada separado para SP e PA com leves alteracoes e com todos os individuos, cromossomo 1. Testado e no github versao estavel. 
 	- Obs para o futuro: Enquanto tiver so dado do chr 1, se for rodar sem a flag sp vai continuar bonitinho so com chr1, porque com certeza pra sp eu gerei so o cromossomo 1 mesmo, ja q os ids vem por ultimo e nesses lotes eu ja tava gerando separado, ja rs e rs_sp terao mistura.
@@ -28,3 +28,4 @@ Collapse esta rodando cromossomo por cromossomo, sera que ainda vale manter a es
 	- OBS: Entendido superficialmente.Tem estudo no gpt, posso aprofundar quando der, mas acho que entendi bem. Titulo do chat no gpt: Shell script argument handling.
 	%%
 -  Ver se os move move do output collapse nao fizeram nada ficar fora do lugar.
+- Ver se [[count.sh]] e a decisao de remover rs_sp tem alguma aplicaçao aqui.

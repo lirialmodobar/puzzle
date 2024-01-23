@@ -44,7 +44,7 @@ Sao gerados dois outputs, um filtrado e outro nao, por isso, dentro do dir de ca
 
 Para ambas tabelas: Coluna 1 = id, coluna 2 = chr, coluna 3 = pos inicial, coluna 4 = pos final, coluna 5 = tamanho do fragmento, coluna 6 = verificar gap, coluna 7 = ancestralidade.
 
-## [[chr_fragments_plot.R]]
+## [[chr_frag_plot.R]]
 
 ### Objetivo
 
@@ -118,7 +118,7 @@ Pego do legado, com 109 pessoas, por isso nao aparece na estrutura de diretorios
 ![[Pasted image 20240109110407.png]]
 Coluna 1 = id da variante, coluna 2 = chr, coluna 3 = pos (unica, porque a variante e de troca de uma unica base), coluna 4 = contagem de ocorrencias.
 
-## [[plotgardener.Rmd]]
+## [[occur_plot.Rmd]]
 
 ### Objetivo
 
