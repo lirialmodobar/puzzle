@@ -1,0 +1,153 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+## Installing packages and databases
+
+```{r, eval=FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install
+
+#Transcriptome ranges for the known gene track of Homo sapiens, e.g., introns, exons, UTR regions. usar o do seu genoma de ref!!
+BiocManager::install("TxDb.Hsapiens.UCSC.hg38.knownGene")
+
+#Gene-based information for Homo sapiens; useful for mapping between gene IDs, Names, Symbols, GO and KEGG identifiers, etc.
+
+BiocManager::install("org.Hs.eg.db")
+
+#Provides a convenient interface to annotations from many different sources; objects are returned as fully parsed Bioconductor data objects or as the name of a file on disk.
+
+BiocManager::install("AnnotationHub")
+
+#plotgardener package
+
+BiocManager::install("plotgardener")
+
+```
+
+```{r, echo=FALSE}
+## Load libraries and datasets
+library("plotgardener")
+library("org.Hs.eg.db")
+library("TxDb.Hsapiens.UCSC.hg38.knownGene")
+library("AnnotationHub")
+```
+
+### Formatting miscall tables
+
+Alterar o valor do cromossomo e rodar os demais comandos dessa seção
+```{r}
+i = 1
+```
+
+```{r}
+
+## NAT RS
+read.table("/home/santoro/liri/count_chr_1_nat_rs.txt", h=F) -> count_nat_rs
+count_nat_rs <- count_nat_rs[order(count_nat_rs[,3]),]
+count_nat_rs <- count_nat_rs[,c(2,3,4)]
+colnames(count_nat_rs) <- c("chrom","bp", "score")
+paste("chr",count_nat_rs$chrom,sep='') -> count_nat_rs$chrom
+count_nat_rs$end <- c(count_nat_rs$bp[2:length(count_nat_rs$bp)] - 1, count_nat_rs$bp[length(count_nat_rs$bp)] + 1)
+
+count_nat_rs <- count_nat_rs[,c(1,2,4,3)]
+colnames(count_nat_rs) <- c("chrom", "start", "end", "score")
+
+##NAT SP
+
+read.table("/home/santoro/liri/count_chr_1_nat_sp.txt", h=F) -> count_nat_sp
+count_nat_sp <- count_nat_sp[order(count_nat_sp[,3]),]
+count_nat_sp <- count_nat_sp[,c(2,3,4)]
+colnames(count_nat_sp) <- c("chrom","bp", "score")
+paste("chr",count_nat_sp$chrom,sep='') -> count_nat_sp$chrom
+count_nat_sp$end <- c(count_nat_sp$bp[2:length(count_nat_sp$bp)] - 1, count_nat_sp$bp[length(count_nat_sp$bp)] + 1)
+
+count_nat_sp <- count_nat_sp[,c(1,2,4,3)]
+colnames(count_nat_sp) <- c("chrom", "start", "end", "score")
+
+```
+
+
+### plotting parameters
+
+```{r}
+max_score <- max(count_nat_rs$score, count_nat_sp$score)
+
+print(max_score)
+
+params <- pgParams(
+    chrom = "chr1", chromstart = 1, chromend = 248956422,
+    assembly = "hg38",
+    x = 0.5, just = c("left", "top"),
+    width = 4, length = 4, default.units = "inches",
+    range = c(0, max_score)
+)
+
+```
+## direcao do erro v2
+```{r}
+pageCreate(
+    width = 5, height = 4, default.units = "inches", xgrid = 0, ygrid = 0
+)
+
+ideogramPlot <- plotIdeogram(params= params,
+    y = 0.5, height = 0.2,
+)
+
+signalplot <- plotSignal(
+    data = count_nat_rs,
+    linecolor = "darkgreen",
+    params = params,
+    y = "0.2b", height = 1.0,
+)
+
+## Annotate y-axis
+annoYaxis(
+    plot = signalplot, at = seq(0, max_score+50, by = 50),label=as.character(seq(0, max_score+50, by = 50)),#acho que aqui ficava so at ou label, e tem que rever esse max_score+50
+    axisLine = FALSE, fontsize = 9
+)
+
+## Plot y-axis label
+plotText(
+    label = "variants occurrences", x = 0.005, y = 1.90, rot = 90,
+    fontsize = 9, fontface = "plain", just = "center",
+    default.units = "inches"
+)
+
+## Plot and place signal plots
+
+signalplotNATSP <- plotSignal(
+    data = count_nat_sp,
+    linecolor = "green",
+    params = params,
+    y = "0.2b", height = 1.0,
+)
+
+## Annotate y-axis
+annoYaxis(
+    plot = signalplotNATSP, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
+    axisLine = FALSE, fontsize = 9
+)
+
+plotGenomeLabel(
+    params = params,
+    y = "0.01b", height = 0.2, scale = "Mb",
+)
+
+# NATRS NATSP
+legendPlot <- plotLegend(
+    legend = c("NAT_RS","NAT_SP"),
+    fill = c("darkgreen", "green"),
+    border = FALSE,
+    x = 4.5, y = 2.40, width = 1.5, height = 1.0,
+    just = c("left", "top"),
+    default.units = "inches"
+)
+
+
+pageGuideHide()
+
+```
