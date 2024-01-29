@@ -10,7 +10,7 @@
 
 Ordem aleatoria
 
-- por um feito no filter_bim
+- ~~por um feito no filter_bim~~
 - checar permissoes dw service
 - remover master git ou tirar do principal e colocar legado
 	- master nao esta mais como default, mas nao consegui colocar como legado e tem uma bagunca do obsidian pra arrumar.
@@ -22,5 +22,5 @@ Ordem aleatoria
 - ver como deixar o bloco de codigo decente no obsidian
 - lembrar qual treco do less deixa ver bonitinho
 - investigar cut --complement (usar o script diff pra testar)
-- atualizar lattes
+- ~~atualizar lattes~~
 - criar conteudo para estudar (ter fone talvez) para quando eu tiver mt cansada pra ficar so em script.

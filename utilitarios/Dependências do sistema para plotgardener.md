@@ -1,4 +1,4 @@
-- libcurl4-openssl-dev
+-  libcurl4-openssl-dev
 - libxml2-dev
 - libbz2-dev
 - liblzma-dev

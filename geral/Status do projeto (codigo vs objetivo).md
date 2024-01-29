@@ -1,7 +1,7 @@
 
 Obs: Em todos os casos, ta indo cromossomo por cromossomo, entao por agora so tem os dados do cromossomo 1 de base para tudo isso e o teste para gerar todos esses dados e cumprir os objetivos sera o cromossomo 1(logico que ja com a generalizacao para os outros poderem ter a mesma aplicacao).
 
-## Objetivo geral​
+## Objetivo geral​ (papel)
 
 ### Reconstruir haplótipos nativo americanos 
 
@@ -19,9 +19,13 @@ De forma geral, para obter a sequencia, penso em usar os dados combinados de ind
 
 #### Status
 
-1. A contagem de ocorrencias por alguma logica matematica deve virar uma frequencia alelica, a gente precisaria dessa tabela separada por SP e PA, e ai ter a contagem de ocorrencias dividida pelo n (de fragmentos?). Precisa checar essa logica, mas a derivacao disso deve estar facil. 
-2. Precisa ver se calcula entre todas as ancestralidades, por ancestralidade ou ambos. Precisa ver tambem como faz essa distincao, que teste estatistico fazer.
+1. A contagem de ocorrencias por alguma logica matematica deve virar uma frequencia alelica.
+	1. Existe um arquivo em que dá pra pegar a informação do alelo, a qual precisamos para fazer a frequência. Precisa obter essa info por indivíduo e por variante para podermos fazer essa conta. Precisa ver como fazer esse merge e como isso pode se relacionar com arquivos intermediários rodados em [[count.sh]].
+2. Precisa ver como faz essa distincao, que teste estatistico fazer.
+## Objetivo geral (reunião com Marquinhos 24/01/24)
 
+- Objetivo final do projeto: Montar genomas com crianças do INPD e ver se com esses genomas como referência conseguimos distinguir o que é NAT do RS e o que é NAT de SP ao aplicar LAI com eles. 
+	- Teste primeiro, para ver se é possível o LAI diferenciar coisas tão próximas: Rodar um LAI com ref do HGDP, dividir em norte e sul da américa (atentar para o n não ficar bizarramente pequeno de um lado, 30 de cada lado idealmente pelo menos), alvo do lai colombianos do 1000 genomes e os mexicanos. Ver se os colombianos são mais identificados como sul e mexicanos como norte.
 ## Objetivos específicos​
 
 ### Aplicar LAI para obter os fragmentos de cada ancestralidade 
