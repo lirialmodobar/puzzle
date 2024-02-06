@@ -34,6 +34,7 @@ library("plotgardener")
 library("org.Hs.eg.db")
 library("TxDb.Hsapiens.UCSC.hg38.knownGene")
 library("AnnotationHub")
+
 ```
 
 ### Formatting miscall tables
@@ -55,8 +56,6 @@ count_nat_rs$end <- c(count_nat_rs$bp[2:length(count_nat_rs$bp)] - 1, count_nat_
 
 count_nat_rs <- count_nat_rs[,c(1,2,4,3)]
 colnames(count_nat_rs) <- c("chrom", "start", "end", "score")
-count_nat_rs$score <- count_nat_rs$score-339
-
 
 ##NAT SP
 
@@ -69,8 +68,7 @@ count_nat_sp$end <- c(count_nat_sp$bp[2:length(count_nat_sp$bp)] - 1, count_nat_
 
 count_nat_sp <- count_nat_sp[,c(1,2,4,3)]
 colnames(count_nat_sp) <- c("chrom", "start", "end", "score")
-#count_nat_sp$score <- count_nat_sp$score+104
-count_nat_sp$score <- count_nat_sp$score-339
+count_nat_sp$score <- count_nat_sp$score + 104
 
 ```
 
@@ -79,23 +77,22 @@ count_nat_sp$score <- count_nat_sp$score-339
 
 ```{r}
 max_score <- max(count_nat_rs$score, count_nat_sp$score)
-min_score <- min(count_nat_rs$score, count_nat_sp$score)
 
 print(max_score)
-print (min_score)
+
 params <- pgParams(
     chrom = "chr1", chromstart = 1, chromend = 248956422,
     assembly = "hg38",
     x = 0.5, just = c("left", "top"),
     width = 4, length = 4, default.units = "inches",
-    range = c(min_score, max_score)
+    range = c(0, max_score)
 )
 
 ```
 ## direcao do erro v2
 ```{r}
 pageCreate(
-    width = 5, height = 6, default.units = "inches", xgrid = 0, ygrid = 0
+    width = 5, height = 4, default.units = "inches", xgrid = 0, ygrid = 0
 )
 
 ideogramPlot <- plotIdeogram(params= params,
@@ -106,13 +103,13 @@ signalplot <- plotSignal(
     data = count_nat_rs,
     linecolor = "darkgreen",
     params = params,
-    y = "0.1b", height = 1.5,
+    y = "0.2b", height = 1.0,
 )
 
 ## Annotate y-axis
 annoYaxis(
-    plot = signalplot, at = seq(min_score, max_score, by = 10),label=as.character(seq(min_score, max_score, by = 10)),#acho que aqui ficava so at ou label, e tem que rever esse max_score+50
-    axisLine = FALSE, fontsize = 7
+    plot = signalplot, at = seq(0, max_score+50, by = 50),label=as.character(seq(0, max_score+50, by = 50)),#acho que aqui ficava so at ou label, e tem que rever esse max_score+50
+    axisLine = FALSE, fontsize = 9
 )
 
 ## Plot y-axis label
@@ -128,20 +125,30 @@ signalplotNATSP <- plotSignal(
     data = count_nat_sp,
     linecolor = "green",
     params = params,
-    y = "0.1b", height = 1.5,
+    y = "0.2b", height = 1.0,
 )
 
 ## Annotate y-axis
 annoYaxis(
-    plot = signalplotNATSP, at = as.character(seq(min_score, max_score, by = 10)),label=as.character(seq(min_score, max_score, by = 10)),
-    axisLine = FALSE, fontsize = 7
+    plot = signalplotNATSP, at = as.character(seq(0, max_score+50, by = 50)),label=as.character(seq(0, max_score+50, by = 50)),
+    axisLine = FALSE, fontsize = 9
 )
 
-plotGenomeLabel(
-    params = params, at = c(seq(1,240, by = 10)), label = c(seq(1,240,by=10)),
-    y = "0.01b", height = 0.2, scale = "Mb",
+annoXaxis(
+    plot = signalplotNATSP, at = seq(0, 240000000, by = 10000000),label=as.character(seq(0, 240000000, by = 10000000)),#acho que aqui ficava so at ou label, e tem que rever esse max_score+50
+    axisLine = TRUE, fontsize = 9, 
 )
 
+#plotGenomeLabel(
+ #   params = params,
+  #  y = "0.4b", height = 0.2, scale = "Mb",
+#)
+plotText(
+  label = "chr1",
+  x = 2.5,
+  y = "0.43b",
+  fontsize = 9
+)
 # NATRS NATSP
 legendPlot <- plotLegend(
     legend = c("NAT_RS","NAT_SP"),
@@ -155,17 +162,13 @@ legendPlot <- plotLegend(
 # We can then use annoHighlight() to highlight our genomic region of interest with a box of our desired height:
 # 21: 13,187,535-13,337,741
 # 20: 58,415-112,164
-region <- pgParams(chrom = "chr1", chromstart = 1, chromend = 350000000)
+region <- pgParams(chrom = "chr1", chromstart = 20000000, chromend = 40000000)
 annoHighlight(
     plot = ideogramPlot, params = region,
     fill = "red",
-    y = 0.25, height = 0.5, just = c("left", "top"), default.units = "inches"
+    y = 0.25, height = 0.5, just = c("left", "top"), default.units = "inches", alpha = 0.4
 )
 
-#annoXaxis(
- #   plot = signalplotNATSP, at = seq(1, 250000000, by = 10000000),label=as.character(seq(1, 250000000, by = 10000000)),#acho que aqui ficava so at ou label, e tem que rever esse max_score+50
-  #  axisLine = TRUE, fontsize = 9, 
-#)
 pageGuideHide()
 
 ```
