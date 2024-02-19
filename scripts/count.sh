@@ -59,9 +59,17 @@ sum_scores() {
     '
 }
 
+# Parse command line arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --chr) chr_flag="$2"; shift ;;
+        *) echo "Unknown parameter: $1"; exit 1 ;;
+    esac
+    shift
+done
 
 #Define an array of states
-states=("rs_sp" "rs" "sp")
+states=("rs" "sp")
 
 # Define an array of labels
 labels=("EUR" "NAT" "AFR" "UNK")
@@ -121,8 +129,29 @@ echo "calculating total occurences" >> $INFOS/log_count.txt
 
 #for chr in {1..22}; do
 	chr=1
-        join_rec $WD/rs_sp/nat/chr_info_unfilt/count_info/count_chr_"$chr"_nat_rs_sp.txt $WD/rs_sp/eur/chr_info_unfilt/count_info/count_chr_"$chr"_eur_rs_sp.txt $WD/rs_sp/afr/chr_info_unfilt/count_info/count_chr_"$chr"_afr_rs_sp.txt $WD/rs_sp/unk/chr_info_unfilt/count_info/count_chr_"$chr"_unk_rs_sp.txt > $WD/infos/count_chr_"$chr"_rs_sp.txt
-	join_rec $WD/rs/nat/chr_info_unfilt/count_info/count_chr_"$chr"_nat_rs.txt $WD/rs/eur/chr_info_unfilt/count_info/count_chr_"$chr"_eur_rs.txt $WD/rs/afr/chr_info_unfilt/count_info/count_chr_"$chr"_afr_rs.txt $WD/rs/unk/chr_info_unfilt/count_info/count_chr_"$chr"_unk_rs.txt > $WD/infos/count_chr_"$chr"_rs.txt
-	join_rec $WD/sp/nat/chr_info_unfilt/count_info/count_chr_"$chr"_nat_sp.txt $WD/sp/eur/chr_info_unfilt/count_info/count_chr_"$chr"_eur_sp.txt $WD/sp/afr/chr_info_unfilt/count_info/count_chr_"$chr"_afr_sp.txt $WD/sp/unk/chr_info_unfilt/count_info/count_chr_"$chr"_unk_sp.txt > $WD/infos/count_chr_"$chr"_sp.txt
+	# Arrays for rs_sp, rs, and sp arguments
+	rs_sp_args=()
+	rs_args=()
+	sp_args=()
+
+	for region in nat eur afr unk; do
+    		# Construct arguments for rs_sp
+    		rs_sp_args+=("$WD/rs_sp/$region/chr_info_unfilt/count_info/count_chr_${chr}_${region}_rs_sp.txt")
+
+    		# Construct arguments for rs
+    		rs_args+=("$WD/rs/$region/chr_info_unfilt/count_info/count_chr_${chr}_${region}_rs.txt")
+
+    		# Construct arguments for sp
+    	sp_args+=("$WD/sp/$region/chr_info_unfilt/count_info/count_chr_${chr}_${region}_sp.txt")
+	done
+
+	# Call join_rec with all arguments
+	join_rec "${rs_sp_args[@]}" > "$WD/infos/count_chr_${chr}_rs_sp.txt"
+	join_rec "${rs_args[@]}" > "$WD/infos/count_chr_${chr}_rs.txt"
+	join_rec "${sp_args[@]}" > "$WD/infos/count_chr_${chr}_sp.txt"
+
+        #join_rec $WD/rs_sp/nat/chr_info_unfilt/count_info/count_chr_"$chr"_nat_rs_sp.txt $WD/rs_sp/eur/chr_info_unfilt/count_info/count_chr_"$chr"_eur_rs_sp.txt $WD/rs_sp/afr/chr_info_unfilt/count_info/count_chr_"$chr"_afr_rs_sp.txt $WD/rs_sp/unk/chr_info_unfilt/count_info/count_chr_"$chr"_unk_rs_sp.txt > $WD/infos/count_chr_"$chr"_rs_sp.txt
+	#join_rec $WD/rs/nat/chr_info_unfilt/count_info/count_chr_"$chr"_nat_rs.txt $WD/rs/eur/chr_info_unfilt/count_info/count_chr_"$chr"_eur_rs.txt $WD/rs/afr/chr_info_unfilt/count_info/count_chr_"$chr"_afr_rs.txt $WD/rs/unk/chr_info_unfilt/count_info/count_chr_"$chr"_unk_rs.txt > $WD/infos/count_chr_"$chr"_rs.txt
+	#join_rec $WD/sp/nat/chr_info_unfilt/count_info/count_chr_"$chr"_nat_sp.txt $WD/sp/eur/chr_info_unfilt/count_info/count_chr_"$chr"_eur_sp.txt $WD/sp/afr/chr_info_unfilt/count_info/count_chr_"$chr"_afr_sp.txt $WD/sp/unk/chr_info_unfilt/count_info/count_chr_"$chr"_unk_sp.txt > $WD/infos/count_chr_"$chr"_sp.txt
 #done
 echo "done" >> $INFOS/log_count.txt
