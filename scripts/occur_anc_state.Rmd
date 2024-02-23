@@ -189,18 +189,21 @@ annoHighlight(
     y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
 )
 
+
 region <- pgParams(chrom = "chr1", chromstart = 166000000, chromend = 176000000)
 annoHighlight(
     plot = ideogramPlot, params = region,
     fill = "salmon",
     y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
 )
+
 region <- pgParams(chrom = "chr1", chromstart = 220000000, chromend = 250000000)
 annoHighlight(
     plot = ideogramPlot, params = region,
     fill = "salmon",
     y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
 )
+
 
 pageGuideHide()
 
@@ -274,7 +277,10 @@ legendPlot <- plotLegend(
 
 # We can then use annoHighlight() to highlight our genomic region of interest with a box of our desired height:
 
-region <- pgParams(chrom = "chr1", chromstart = 13000000, chromend = 24000000)
+
+#region <- pgParams(chrom = "chr1", chromstart = 13000000, chromend = 24000000)
+region <- pgParams (chrom = "chr1", chromstart = 2000000, chromend = 16000000)
+
 annoHighlight(
     plot = ideogramPlot, params = region,
     fill = "salmon",
