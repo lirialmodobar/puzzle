@@ -58,7 +58,7 @@ count_nat_rs$end <- c(count_nat_rs$bp[2:length(count_nat_rs$bp)] - 1, count_nat_
 
 count_nat_rs <- count_nat_rs[,c(1,2,4,3)]
 colnames(count_nat_rs) <- c("chrom", "start", "end", "score")
-#count_nat_rs$score <- count_nat_rs$score - 339 ## version with negative values
+count_nat_rs$score <- count_nat_rs$score - 339 ## version with negative values
 
 ##NAT SP
 
@@ -72,7 +72,7 @@ count_nat_sp$end <- c(count_nat_sp$bp[2:length(count_nat_sp$bp)] - 1, count_nat_
 count_nat_sp <- count_nat_sp[,c(1,2,4,3)]
 colnames(count_nat_sp) <- c("chrom", "start", "end", "score")
 count_nat_sp$score <- count_nat_sp$score + 104 
-#count_nat_sp$score <- count_nat_sp$score - 339 ##version with negative values
+count_nat_sp$score <- count_nat_sp$score - 339 ##version with negative values
 
 ```
 
@@ -81,9 +81,9 @@ count_nat_sp$score <- count_nat_sp$score + 104
 
 ```{r}
 max_score <- max(count_nat_rs$score, count_nat_sp$score)
-#min_score <- min(count_nat_rs$score, count_nat_sp$score) ## version with negative values
+min_score <- min(count_nat_rs$score, count_nat_sp$score) ## version with negative values
 print(max_score)
-#print(min_score) ## version with negative values
+print(min_score) ## version with negative values
 
 params <- pgParams(
     chrom = "chr1", 
@@ -91,8 +91,8 @@ params <- pgParams(
     assembly = "hg38",
     x = 0.5, just = c("left", "top"),
     width = 4, length = 4, default.units = "inches",
-    range = c(0, max_score)
-    #range = c(min_score, max_score) ## version with negative values
+    #range = c(0, max_score)
+    range = c(min_score, max_score) ## version with negative values
 )
 
 ```
@@ -117,13 +117,13 @@ signalplot <- plotSignal(
     linecolor = "darkgreen",
     params = params,
     y = "0.2b", height = 1.0,
-    #negData = TRUE ##version with negative values
+    negData = TRUE ##version with negative values
 )
 
 ### Annotate y-axis
 annoYaxis(
-    plot = signalplot, at = seq(0, max_score+50, by = 50),
-    #plot = signalplot, at = seq(min_score, max_score+10, by = 10) ##version with negative values
+    #plot = signalplot, at = seq(0, max_score+50, by = 50),
+    plot = signalplot, at = seq(min_score, max_score+10, by = 10), ##version with negative values
     axisLine = FALSE, fontsize = 9
 )
 
@@ -134,13 +134,13 @@ signalplotNATSP <- plotSignal(
     linecolor = "green",
     params = params,
     y = "0.2b", height = 1.0,
-    #negData = TRUE ##version with negative values
+    negData = TRUE ##version with negative values
 )
 
 ### Annotate y-axis
 annoYaxis(
-    plot = signalplotNATSP, at = seq(0, max_score+50, by = 50),
-    #plot = signalplot, at = seq(min_score, max_score+10, by = 10) ##version with negative values
+    #plot = signalplotNATSP, at = seq(0, max_score+50, by = 50),
+    plot = signalplot, at = seq(min_score, max_score+10, by = 10), ##version with negative values
     axisLine = FALSE, fontsize = 9
 )
 
@@ -176,31 +176,35 @@ legendPlot <- plotLegend(
 )
 
 # We can then use annoHighlight() to highlight our genomic region of interest with a box of our desired height:
-region <- pgParams(chrom = "chr1", chromstart = 13000000, chromend = 24000000)
+#region <- pgParams(chrom = "chr1", chromstart = 13000000, chromend = 24000000) ## sp+104
+region <- pgParams(chrom = "chr1", chromstart = 18000000, chromend = 30000000) ## pode ser a mesma, na vdd e a mesma expandida
 annoHighlight(
     plot = ideogramPlot, params = region,
     fill = "salmon",
     y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
 )
-region <- pgParams(chrom = "chr1", chromstart = 60000000, chromend = 76000000)
+region <- pgParams(chrom = "chr1", chromstart = 60000000, chromend = 76000000) ##sp+104 e sp + 104 - 339
 annoHighlight(
     plot = signalplotNATSP, params = region,
     fill = "salmon",
     y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
 )
 
-region <- pgParams(chrom = "chr1", chromstart = 166000000, chromend = 176000000)
+#region <- pgParams(chrom = "chr1", chromstart = 166000000, chromend = 176000000) ##sp+104
+region <- pgParams(chrom = "chr1", chromstart = 16300000, chromend = 190000000) ## pode ser a mesma, na vdd acho que e a mesma expandida
 annoHighlight(
     plot = ideogramPlot, params = region,
     fill = "salmon",
     y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
 )
-region <- pgParams(chrom = "chr1", chromstart = 220000000, chromend = 250000000)
+
+region <- pgParams(chrom = "chr1", chromstart = 220000000, chromend = 250000000) ##sp+104 and sp + 104 - 339
 annoHighlight(
     plot = ideogramPlot, params = region,
     fill = "salmon",
     y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
 )
+
 
 pageGuideHide()
 
@@ -274,7 +278,8 @@ legendPlot <- plotLegend(
 
 # We can then use annoHighlight() to highlight our genomic region of interest with a box of our desired height:
 
-region <- pgParams(chrom = "chr1", chromstart = 13000000, chromend = 24000000)
+#region <- pgParams(chrom = "chr1", chromstart = 13000000, chromend = 24000000)
+region <- pgParams (chrom = "chr1", chromstart = 2000000, chromend = 16000000)
 annoHighlight(
     plot = ideogramPlot, params = region,
     fill = "salmon",
