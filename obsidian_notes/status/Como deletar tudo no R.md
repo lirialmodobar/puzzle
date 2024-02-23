@@ -1,0 +1,1 @@
+https://webhostinggeeks.com/howto/how-to-uninstall-r-and-rstudio-on-ubuntu/
