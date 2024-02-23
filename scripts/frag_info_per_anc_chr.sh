@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Set the working directory
-WD=/home/yuri/liri/puzzle
+WD=/home/yuri/liri/puzzle/109_preliminar_oct23/109_17jan24
 
 # Define the input files directory
-INPUT_FILES=/home/yuri/liri/puzzle/output_collapse
+INPUT_FILES=/home/yuri/liri/puzzle/109_preliminar_oct23/output_collapse
 
 # Function to process states and ancestries
 process_states_ancs() {
@@ -98,7 +98,7 @@ for state in "${states[@]}"; do
     		# Process states and ancs
 		process_states_ancs "$state" "$label_lower"
 
-    		# Process chromosomes based on the --chr flag
+    		# Process states, ancs and chromosomes based on the --chr flag
     		if [ -n "$chr_flag" ]; then
         		process_chromosome "$chr_flag" "$label_lower" "$ANC_DIR"
     		else
