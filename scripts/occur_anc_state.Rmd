@@ -60,6 +60,7 @@ count_nat_rs <- count_nat_rs[,c(1,2,4,3)]
 colnames(count_nat_rs) <- c("chrom", "start", "end", "score")
 #count_nat_rs$score <- count_nat_rs$score - 339 ## version with negative values
 
+
 ##NAT SP
 
 read.table("/home/yuri/liri/puzzle/sp/nat/chr_info_unfilt/count_info/count_chr_1_nat_sp.txt", h=F) -> count_nat_sp
@@ -74,6 +75,7 @@ colnames(count_nat_sp) <- c("chrom", "start", "end", "score")
 count_nat_sp$score <- count_nat_sp$score + 104 
 #count_nat_sp$score <- count_nat_sp$score - 339 ##version with negative values
 
+
 ```
 
 
@@ -84,6 +86,7 @@ max_score <- max(count_nat_rs$score, count_nat_sp$score)
 #min_score <- min(count_nat_rs$score, count_nat_sp$score) ## version with negative values
 print(max_score)
 #print(min_score) ## version with negative values
+
 
 params <- pgParams(
     chrom = "chr1", 
@@ -259,6 +262,7 @@ annoXaxis(
 )
 
 
+
 plotText(
   label = "chr1",
   x = 2.5,
@@ -276,7 +280,6 @@ legendPlot <- plotLegend(
 )
 
 # We can then use annoHighlight() to highlight our genomic region of interest with a box of our desired height:
-
 
 #region <- pgParams(chrom = "chr1", chromstart = 13000000, chromend = 24000000)
 region <- pgParams (chrom = "chr1", chromstart = 2000000, chromend = 16000000)
