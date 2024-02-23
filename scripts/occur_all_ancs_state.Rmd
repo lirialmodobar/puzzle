@@ -1,6 +1,6 @@
 ---
 original title: "plotgardener"
-new title: occur_plot
+new title: occur_all_ancs_state.Rmd
 author: "Jessica Honorato Mauer"
 date: "3/12/2022 - 4/10/2022"
 adapted by: "Liriel Almodobar"
