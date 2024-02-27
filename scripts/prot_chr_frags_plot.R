@@ -201,6 +201,7 @@ test_n_frags <- c(ref_n_frags - 3*sd_ref_n_frags, ref_n_frags, ref_n_frags + 3*s
 #Plotting
 
 chromosome <- paste0("chr",chr)
+colors <- c("darkblue", "red", "darkgreen", "darkgrey")
 
 for (i in 1:length(states)) {
     state <- states[i]
