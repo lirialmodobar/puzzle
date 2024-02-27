@@ -118,7 +118,7 @@ Pego do legado, com 109 pessoas, por isso nao aparece na estrutura de diretorios
 ![[Pasted image 20240109110407.png]]
 Coluna 1 = id da variante, coluna 2 = chr, coluna 3 = pos (unica, porque a variante e de troca de uma unica base), coluna 4 = contagem de ocorrencias.
 
-## [[occur_plot.Rmd]]
+## [[occur_plot.Rmd - atualizar]]
 
 ### Objetivo
 
