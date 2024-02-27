@@ -7,9 +7,11 @@
 - Codei a parte para ter PAXSPXGeral, ta no git, falta testar.
  - Mudei o jeito de fazer o teste, calculando um número referência baseado numa média inicialmente de n frags de cada ancestralidade ponderados pelo quanto esse n contribui pro total de frags, saindo então um número médio de quantos fragmentos tenho por estado considerando que cada ancestralidade contribui diferentemente pra esse número. A média entre os estados é feita somando esses 2 números ponderados pela porcentagem que cada estado contribui para o número total de fragmentos. Essa média então se torna uma referência, e baseado no desvio padrão dos 4 elementos usados para calcular ela (média de cada estado e % de contribuição de cada estado), saio com 3 números pra teste: ref - 3sd, ref, ref + 3sd. Existe o rascunho, prot_chr_frag_plot.R, mas o código ainda não foi testado ou subido para o git, por agora o rascunho foca no cálculo, e precisa ainda da parte que gera o gráfico e da parte que le as tabelas e deixa elas no formato para o cálculo e para o gráfico.
  - Rascunho finalizado, falta subir no git e testar.
+ - Não subi no git (besta!) e perdi o script, refiz ele com alguns ajustes que notei serem necessários, mas preciso ainda checar se nada foi perdido da lógica anterior por esquecimento/besteira. Isso está no git (a gente aprende kkkkkk), falta checar e testar.
 ## Tarefas
 
- - Nome: Mudar para frags ao inves de fragments.
+ - ~~Nome: Mudar para frags ao inves de fragments.~~
+	 - ~~Alterado no prototipo~~
  - ~~Ver como o que mudou em [[frag_info_per_anc_chr.sh]] pode ser traduzido aqui de modo a tambem existir opcao com e sem loop~~
 	- ~~O dado vai acabar sendo gerado cromossomo por cromossomo por causa do jeito que to rodando o collapse, entao nao adianta esperar ter todos eles para entao fazer o teste. Isso pode ficar como uma versao para quem for gerar todos de uma vez, a ultima versao de 2023 (porque nela o loop era obrigatorio pro fim de ver o numero otimo para todos os cromossomos de cada anc), mas com a divisao de estados implementada na primeira versao de 2024.~~
 	- Como desenhar o teste cromossomo por cromossomo sem ser uma quantidade absurda de dado? 
