@@ -13,8 +13,9 @@ get_file_path <- function(positions_dir, chr){
 
 process_frags_file <- function(positions_file_path, chr){
     data <- read.table(positions_file_path, header = FALSE, sep = "\t")
-    positions <- dados[2:4]
+    positions <- dados[1:4]
     positions[, 1] <- paste0("chr", positions[, 1])
+    colnames(positions) <- c("sample_id", "chr", "first_bp", "last_bp")
     return(positions)
 }    
                                  
@@ -42,8 +43,8 @@ process_state_data <- function(eur_state, nat_state, afr_state, unk_state) {
 ## Function to count n of fragments per state for given ancestries
  
 count_anc_frags <- function(df_state, anc) {
-    cols <- grep(paste0("^fragments_", anc), names(df), value = TRUE)
-    frags_anc_state <- rowSums(df[cols] != 0)
+    col <- paste0("first_bp_", anc)
+    frags_anc_state <- rowSums(df_state[col] != 0)
     return(frags_anc_state)
 }
   
@@ -75,6 +76,14 @@ get_df_anc_state <- function(anc, state){
 	return(df_anc_state)
 }
 
+process_df_anc_state <- function(anc, state){
+	df_anc_state <- get_df_anc_state(anc, state)
+	df_anc_state <- df_anc_state[2:4]
+	colnames(df_anc_state) <- NULL
+	return(df_anc_state)
+}
+
+
 select_random_frags <- function(df_anc_state, n_frags){
     set.seed(123)
     random_indices <- sample(1:n_frags, n_frags)
@@ -83,7 +92,7 @@ select_random_frags <- function(df_anc_state, n_frags){
 }    #apply to each df_anc_state and each n_frags, generating df_anc_state_n_random
 
 get_df_anc_state_random <- function(anc, state, n_frags){
-	df_anc_state <- get_df_anc_state(anc, state)
+	df_anc_state <- process_df_anc_state(anc, state)
 	df_anc_state_random <- select_random_frags(df_anc_state, n_frags)
 	return(df_anc_state_random) 
 }
@@ -98,7 +107,7 @@ create_plot_dir <- function(positions_dir){
 }                                 
                                  
 create_pdf_path <- function(plot_dir){
-    pdf_path <- file.path(plot_dir, paste0("teste",n_frags, "_frags_plot"))
+    pdf_path <- file.path(plot_dir, paste0("teste_",n_frags, "_frags_plot"))
     return(pdf_path)
 } 
                 
@@ -118,7 +127,7 @@ create_fragments_plot <- function(anc, state, n_frags, color) {
     kp <- plotKaryotype(genome = "hg38", chromosomes = chromosome)
     kpAddLabels(kp, labels = paste("frag", anc, state))
     # Add fragments to the plot
-    kpPlotRegions(kp, data = df_anc_state_n_random, col=color, border=darker(color), avoid.overlapping=TRUE)
+    kpPlotRegions(kp, data = df_anc_state_random, col=color, border=darker(color), avoid.overlapping=TRUE)
     # End PDF device
     dev.off()
 }
@@ -192,6 +201,7 @@ test_n_frags <- c(ref_n_frags - 3*sd_ref_n_frags, ref_n_frags, ref_n_frags + 3*s
 #Plotting
 
 chromosome <- paste0("chr",chr)
+colors <- c("darkblue", "red", "darkgreen", "darkgrey")
 
 for (i in 1:length(states)) {
     state <- states[i]
