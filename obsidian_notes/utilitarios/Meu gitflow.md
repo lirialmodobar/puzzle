@@ -25,7 +25,7 @@
 
 Bonitinho: Fetch --> pull (assim que abrir o pc ou apos um ciclo desses ja feito)---> alteracoes que quiser ---> status ---> push origin HEAD ----> github merge ---> fetch ----> pull
 Se esqueceu o fetch e pull antes de comecar e tem certeza que ja ta em dia: mesmo fluxo do primeira vez alterando algo. 
-
+Completar com o que acabo fazendo na pratica (apos alterações, acho que da pra mudar o primeira vez alterando algo, remover o primeiro fetch e pull, ja que acabou de clonar)
 ### Permissoes
 
 usuario: lirialmodobar
