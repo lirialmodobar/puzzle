@@ -15,17 +15,14 @@
 		git config user.name lirialmodobar
 		obs: colocar --global depois do config se for só meu, que ai já vai isso pra todos os meus repos.
 	- Em geral, a cada operação feita com um arquivo indicada pelo status e pelo meu bom-senso, fazer um commit especifico, pra ter uma descrição de cada coisa e nao um commit que abrange varias mudanças. No obsidian faço de uma vez pq sao so atualizações das anotações.
-1) Git fetch: Ve o que mudou (corrigir)
-2) Git pull (puxa o que teve de atualização na main e coloca o remoto em dia com ela)
-3) Git push origin HEAD: Sobe minhas atualizações para a branch remota que bate com a minha local, e não para a main. Gosto de dar um git push antes para ver ele me perguntando justo isso (aparentemente se fez como do 1 ao 3, ele nao da o aviso, pelo menos nao no SDumont, checar em outros)
-4) No github, a main vai aparecer dizendo que tem atualizações de outra branch e se quer fazer pull request, colocar que sim e ir seguindo instruções para o merge, resolver conflitos caso haja.
-5) Git fetch: Pegar mudanças que ocorreram na main depois desse merge
-6) Git pull: Atualizar a branch local com as mudanças da main
+2) Git push origin HEAD: Sobe minhas atualizações para a branch remota que bate com a minha local, e não para a main. Gosto de dar um git push antes para ver ele me perguntando justo isso (aparentemente se fez como do 1 ao 3, ele nao da o aviso, pelo menos nao no SDumont, checar em outros)
+3) No github, a main vai aparecer dizendo que tem atualizações de outra branch e se quer fazer pull request, colocar que sim e ir seguindo instruções para o merge, resolver conflitos caso haja.
+4) Git fetch: Pegar mudanças que ocorreram na main depois desse merge
+5) Git pull: Atualizar a branch local com as mudanças da main
 ### Proximas vezes
 
-Bonitinho: Fetch --> pull (assim que abrir o pc ou apos um ciclo desses ja feito)---> alteracoes que quiser ---> status ---> push origin HEAD ----> github merge ---> fetch ----> pull
-Se esqueceu o fetch e pull antes de comecar e tem certeza que ja ta em dia: mesmo fluxo do primeira vez alterando algo. 
-
+Bonitinho: Fetch --> pull --->  status ---> push origin HEAD ----> github merge ---> fetch ----> pull
+Checar: se o fetch e  pull apos ter feito alterações nao sobrepoe o status, mas acho que nao
 ### Permissoes
 
 usuario: lirialmodobar
