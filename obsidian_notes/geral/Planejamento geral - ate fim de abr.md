@@ -1,0 +1,6 @@
+- Rodar afr, eur e unk para o cromossomo 1, gerar os gráficos, analisar os resultados (congressos)
+- Terminar de submeter a etica (max meio de mar)
+- Rodar scripts para o cromossomo 22, gerar os gráficos, analisar os resultados (congressos)
+- Rodar o teste do LAI citado pelo Marquinhos em [[Status do projeto (codigo vs objetivo)]]
+- Rascunhar montagem
+	- Isso começa por bolar aquele script de frequencia alelica, o que pode ja gerar resultados acerca das frequencias alelicas.
