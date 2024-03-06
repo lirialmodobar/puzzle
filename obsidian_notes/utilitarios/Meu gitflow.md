@@ -22,7 +22,7 @@
 ### Proximas vezes
 
 Bonitinho: Fetch --> pull --->  status ---> push origin HEAD ----> github merge ---> fetch ----> pull
-Checar: se o fetch e  pull apos ter feito alterações nao sobrepoe o status, mas acho que nao
+Checar: se o fetch e  pull apos ter feito alterações nao sobrepoe o status, mas acho que nao. Conisiderar se não seria melhor fetch ---> status ---> pull (relacionado com o checar).
 ### Permissoes
 
 usuario: lirialmodobar
