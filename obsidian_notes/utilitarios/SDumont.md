@@ -14,6 +14,10 @@ sudo vpnc /etc/vpnc/sdumont.conf --enable-weak-encryption
 
 ssh liriel.almodobar@login.sdumont.lncc.br (por algum motivo copiar e colar aqui nao da, tem que digitar mesmo --- ver se mudando pra linha de codigo corrige isso)
 
+### minha home
+
+/prj/unifesp/pgt/liriel.almodobar
+
 ### desconectar da vpn (testar)
 
 sudo vpnc-disconnect
