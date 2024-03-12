@@ -1,3 +1,7 @@
+
+## caso nao tenha vpnc
+
+sudo apt-get install vpnc
 ##  criar arquivo
 
 sudo nano /etc/vpnc/sdumont.conf
