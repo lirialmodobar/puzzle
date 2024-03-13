@@ -1,6 +1,6 @@
 ### Status
 
-- Parte do processar haps feita no sem_nome.sh, so precisa ver como colocar os A e B e fazer o sort de posicao, e ta sem nomes ou dirs bonitinhos (5_columns por ex tem que ir em infos, é que nao tem o infos nesse pc)
+- Parte do processar haps feita no sem_nome.sh, so precisa ver como colocar os A e B e fazer o sort de posicao, e ta sem nomes ou dirs bonitinhos (5_columns por ex tem que ir em infos, é que nao tem o infos nesse pc). Script chama sem_nome.sh e ja ta no github por garantia.
 - Folha fisica na bolsa do lab com o desenho de onde tirei a ideia do rascunho, pode ser consultada pra caso eu tenha pulado algo.
 ### Tarefas
 
