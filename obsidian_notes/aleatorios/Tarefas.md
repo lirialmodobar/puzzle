@@ -30,3 +30,7 @@ Ordem aleatoria
 - ~~atualizar lattes~~
 - criar conteudo para estudar (ter fone talvez) para quando eu tiver mt cansada pra ficar so em script.
 	- estudar duckdb
+
+### Possiveis artigos science day
+
+https://academic.oup.com/mbe/article/38/9/3497/6299394?login=true
