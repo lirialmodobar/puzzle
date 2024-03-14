@@ -2,6 +2,7 @@
 
 - Parte do processar haps feita no sem_nome.sh, so precisa ver como colocar os A e B e fazer o sort de posicao, e ta sem nomes ou dirs bonitinhos (5_columns por ex tem que ir em infos, é que nao tem o infos nesse pc). Script chama sem_nome.sh e ja ta no github por garantia.
 - Folha fisica na bolsa do lab com o desenho de onde tirei a ideia do rascunho, pode ser consultada pra caso eu tenha pulado algo.
+- O arquivo ja sai no sort certinho, sl pq. 
 ### Tarefas
 
 - Objetivo aqui: obter a freq alelica para cada anc da variante tal, e ter base para fazer a montagem. 
@@ -13,7 +14,7 @@
 		- .haps vai ter os haplotipos, com 2 colunas por individuo, precisa ver se os individuos do .sample as linhas correspondem à ordem das colunas, e tbm quem seria _A e _B
 		- identificar as colunas do .haps: cut na coluna do sample, sed /n por /t pra ficar horizontal, adicionar headers iniciais, dar um cat. Resolver: precisa que seja _A e _B.
 		- deixar o 1 já como o alelo que é, e o 0 já como o alelo que é
-		- transpor para que no fim tenha: ind, chr, pos, var, alelo, certificar que esta organizado por posicao da menor para a maior. esse arquivo provavelmente será mantido, para ser nosso arquivo de info de sequencia (talvez na hora a gente remova só o individuo)
+		- transpor para que no fim tenha: ind, chr, pos, var, alelo, certificar que esta organizado por posicao da menor para a maior. esse arquivo provavelmente será mantido, para ser nosso arquivo de info de sequencia (talvez na hora a gente remova só o individuo). 
 A partir daqui talvez divida em outro script ou encaixe em [[count.sh]]
 	- Juntar haps com aquele output que vem por chr e anc (collapse_haps_extra_info)
 		- Vai precisar juntar as infos por intervalos, aquela mesma busca de intervalos do [[count.sh]], tem um rascunho no gpt e no kaggle da primeira func que faz isso

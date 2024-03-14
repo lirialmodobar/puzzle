@@ -12,7 +12,7 @@ Ordem aleatoria
 
 - ~~por um feito no filter_bim~~
 - Organizar [[Objetivos do projeto]] adicionando o objetivo geral de [[[Status do projeto (codigo vs objetivo)]]]
-- Colocar o gitflow meu um dia.
+-~~Colocar o gitflow meu um dia.~~
 - Refazer anotacoes da reuniao com o projeto xingu e datas de submissao
 - Rmd e vscode pode ser interessante para o Santos Dumont
 - checar permissoes dw service
