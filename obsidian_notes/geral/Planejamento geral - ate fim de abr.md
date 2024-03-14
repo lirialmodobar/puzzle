@@ -1,5 +1,5 @@
 - Rodar afr, eur e unk para o cromossomo 1, gerar os gráficos, analisar os resultados (congressos)
-	- Rodando eur, rs, chr 1, no sdumont, job 10961943, ver se tem como alocar mais nós da proxima, porque to achando que ta demorando.
+	- Rodando eur, rs, chr 1, no sdumont, job 10968466, ver se tem como alocar mais nós da proxima, porque to achando que ta demorando.
 - Terminar de submeter a etica (max meio de mar)
 - Rodar scripts para o cromossomo 22, gerar os gráficos, analisar os resultados (congressos)
 	- Rodando collapse cromossomo 22 no Sdumont, job 10963774, mesma coisa de alocar mais nós. 
