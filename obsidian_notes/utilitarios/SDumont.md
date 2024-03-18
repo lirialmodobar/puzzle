@@ -29,6 +29,9 @@ sudo vpnc-disconnect
 ### duvidas? deu problema?
 
 email favoritado helpdesk lncc
+#### manual 
+
+[https://sdumont.lncc.br/support_manual.php?pg=support](https://sdumont.lncc.br/support_manual.php?pg=support "https://sdumont.lncc.br/support_manual.php?pg=support")
 
 ### senhas
 
