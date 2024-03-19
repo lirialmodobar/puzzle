@@ -1,4 +1,3 @@
-
 ## caso nao tenha vpnc
 
 sudo apt-get install vpnc
