@@ -2,6 +2,8 @@
 
 - Ver do cep do meu projeto (Cassia mandou detalhes)
 	- https://cep.unifesp.br/submissao-de-projetos/passo-a-passo#fase-2-submissao-do-projeto-na-plataforma-brasil
+- PAD:
+	https://www.unifesp.br/reitoria/prograd/programas-institucionais/pad
 - Poster pra x-meeting e pro ~~ESHG ate dia 20~~ sbg ate dia 2/02
 - ~~mandar certificados para o enio
 -  ~~renovar bilhete unico~~ 
@@ -16,8 +18,8 @@ Ordem aleatoria
 - Refazer anotacoes da reuniao com o projeto xingu e datas de submissao
 - Rmd e vscode pode ser interessante para o Santos Dumont
 - checar permissoes dw service
-- remover master git ou tirar do principal e colocar legado
-	- master nao esta mais como default, mas nao consegui colocar como legado e tem uma bagunca do obsidian pra arrumar.
+- ~~remover master git ou tirar do principal e colocar legado~~
+	- ~~master nao esta mais como default, mas nao consegui colocar como legado e tem uma bagunca do obsidian pra arrumar.~~
 - achar e ler artigo da rafa que tentei ler ano passado que tem a ver com minha pesquisa, rafa disse que lembrava de ter algo a ver com linguagem.
 - ~~obsidian garantir que nao perderei dados e como compartilhar.~~
 	- feito usando git de uma forma mais besta, quem sabe um dia o obsidiansync
@@ -30,6 +32,7 @@ Ordem aleatoria
 - ~~atualizar lattes~~
 - criar conteudo para estudar (ter fone talvez) para quando eu tiver mt cansada pra ficar so em script.
 	- estudar duckdb
+	- estudar nextflow
 
 ### Possiveis artigos science day
 
