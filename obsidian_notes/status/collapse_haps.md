@@ -3,8 +3,12 @@
 - Parte do processar haps feita no sem_nome.sh, so precisa ver como colocar os A e B e fazer o sort de posicao, e ta sem nomes ou dirs bonitinhos (5_columns por ex tem que ir em infos, é que nao tem o infos nesse pc). Script chama sem_nome.sh e ja ta no github por garantia.
 - Folha fisica na bolsa do lab com o desenho de onde tirei a ideia do rascunho, pode ser consultada pra caso eu tenha pulado algo.
 - O arquivo ja sai no sort certinho, sl pq, e ja ta com os A e B.
-- Fiz por intervalo e gerei o output desejado, mas agora precisa ver se tudo realmente bate, em resumo, falta testar toda essa parte.
-- Cheguei até frequencias alélicas, falta testar toda essa parte e por os loops e dirs.
+- Processar haps testado
+	- A troca de 1 e 0 pelos alelos bate, faltando apenas checar se eu acertei quem era pra ser 0 e quem era pra ser 1 (posso ter invertido e acho que inverti, porque o alelo raro tá aparecendo demais)
+	- Transposição tbm bate (embora eu n tenha testado tão bem, acho que testei o suficiente)
+- Cheguei até frequencias alélicas (github: allele_freq.sh -- alterar o nome aqui), falta testar toda essa parte e por os loops e dirs. O teste dessa parte, bem como dos intervalos, deve provavelmente ser o de comparar com o output do count, porque se a contagem bater, da pra considerar que o resto ta certo.
+	- Teste feito e bem-sucedido!
+	- Problema: quase não tem equivalência de variantes no .haps e no bim (as que tem estão em vars_comuns.txt no diretório puzzle do dell marquinhos).
 ### Tarefas
 
 - Objetivo aqui: obter a freq alelica para cada anc da variante tal, e ter base para fazer a montagem. 
