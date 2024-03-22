@@ -17,9 +17,13 @@ sudo vpnc /etc/vpnc/sdumont.conf --enable-weak-encryption
 
 ssh liriel.almodobar@login.sdumont.lncc.br (por algum motivo copiar e colar aqui nao da, tem que digitar mesmo --- ver se mudando pra linha de codigo corrige isso)
 
-### minha home
+### minha home e scratch (submeter jobs)
 
 /prj/unifesp/pgt/liriel.almodobar
+### comandos
+
+sbatch - submete job
+sacct - se o job nao está no squeue, da pra checar aqui o status 
 
 ### desconectar da vpn (testar)
 
