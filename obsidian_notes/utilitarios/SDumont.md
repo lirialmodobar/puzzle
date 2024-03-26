@@ -25,6 +25,11 @@ ssh liriel.almodobar@login.sdumont.lncc.br (por algum motivo copiar e colar aqu
 sbatch - submete job
 sacct - se o job nao está no squeue, da pra checar aqui o status 
 
+### jobs em progresso
+
+10989012 - frag_info chr 22 
+10988961 - collapse chr 21
+
 ### desconectar da vpn (testar)
 
 sudo vpnc-disconnect

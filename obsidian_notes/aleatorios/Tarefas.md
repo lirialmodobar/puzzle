@@ -2,6 +2,28 @@
 
 - Ver do cep do meu projeto (Cassia mandou detalhes)
 	- https://cep.unifesp.br/submissao-de-projetos/passo-a-passo#fase-2-submissao-do-projeto-na-plataforma-brasil
+	- Documentos
+		- Declaração de concordância = 5_cartas_de_concordância (pendente assinaturas euripedes, salum e bressan,  Marquinhos vai providenciar)
+		- Folha de rosto = 0_folha_de_rosto (Marquinhos - imprimir)
+		- Declaração de Manuseio Material Biológico / Biorepositório / Biobanco = 3_declaracao_de_sigilo (Marquinhos - imprimir)
+		- Declaração dos pesquisadores = 15_TCUD_unifesp_CM (Marquinhos - coletar assinaturas e posteriormente imprimir, acho)
+		- outros:  
+			- ~~4_arquivovcf_legendado~~
+				- Precisa ver se realmente vou usar ele
+			- ~~7_PARECER_CEP_UNIFESP_Aprovado_04_07_2018~~
+				- por que ta o titulo de outro projeto?
+			- ~~6_PARECER_CEP_CAPPesq_APROVADO_11_03_2010 ~~ 
+			- ~~8_PARECER_CONEP_Projeto_Conexao_0_e_3_anos~~  
+				- por que ta o titulo de outro projeto?
+			- ~~1_ProjetoConexao_6_e_9_anos~~  
+				- por que ta o titulo de outro projeto? e as outras idades?
+			- ~~2_Projeto_Conexao_0_e_3_anos~~
+				-  por que ta o titulo de outro projeto? e as outras idades?
+		- projeto detalhad/ brochura investigador = 14_CEP_CM_projeto_v2_24mar23 (está escrito e com refs, passei pro Camo formatar)
+		- Solicitação registrada pelo CEP = 16_Cadastro_CEP_UNIFESP_CM (Marquinhos - imprimir)
+		-  ~~TCLE / Termos de Assentimento / Justificativa de Ausência = documentos com TCLE e TA no nome~~
+			- por que só essas idades?
+		- ~~PB informações básicas E6 - do lucas, ve se adiciona e em que categoria ~~
 - PAD:
 	https://www.unifesp.br/reitoria/prograd/programas-institucionais/pad
 - Poster pra x-meeting e pro ~~ESHG ate dia 20~~ sbg ate dia 2/02

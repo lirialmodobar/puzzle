@@ -10,7 +10,7 @@ Collapse esta rodando cromossomo por cromossomo, sera que ainda vale manter a es
 - Nova versao sem os ids rodada separado para SP e PA com leves alteracoes e com todos os individuos, cromossomo 1. Testado e no github versao estavel. 
 	- Obs para o futuro: Enquanto tiver so dado do chr 1, se for rodar sem a flag sp vai continuar bonitinho so com chr1, porque com certeza pra sp eu gerei so o cromossomo 1 mesmo, ja q os ids vem por ultimo e nesses lotes eu ja tava gerando separado, ja rs e rs_sp terao mistura.
 - No diretorio local /home/yuri/liri/puzzle/comp tem-se registros de dados de comparacoes feitas entre versoes dos scripts, compostas por um conjunto diretorio (versao anterior) e subdiretorio (versao que esta sendo comparada), existindo dois conjuntos: 109_preliminar_oct23 e 109_sp_oct23.
-
+- Chr 22: muita gente diferente ou haplotipo diferente começando e terminando no mesmo trecho, quase nenhum gap (achei estranho, vou rodar com o outro script tbm, o um antes, pra ver se da o msm)
 ## Tarefas
 
 - ~~Testar se o output realmente esta se comportando como devia apos alteracao no codigo com a flag~~
@@ -29,3 +29,4 @@ Collapse esta rodando cromossomo por cromossomo, sera que ainda vale manter a es
 	%%
 -  Ver se os move move do output collapse nao fizeram nada ficar fora do lugar.
 - Ver se [[count.sh]] e a decisao de remover rs_sp tem alguma aplicaçao aqui.
+- Reconsiderar a flag, talvez? Já estamos fazendo chr por chr msm...
