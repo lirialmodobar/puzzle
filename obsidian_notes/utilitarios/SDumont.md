@@ -20,16 +20,18 @@ ssh liriel.almodobar@login.sdumont.lncc.br (por algum motivo copiar e colar aqu
 ### minha home e scratch (submeter jobs)
 
 /prj/unifesp/pgt/liriel.almodobar
+/scratch/unifesp/pgt/liriel.almodobar
 ### comandos
 
 sbatch - submete job
 sacct - se o job nao está no squeue, da pra checar aqui o status 
+scancel - cancela o job
 
 ### jobs em progresso
 
-10989012 - frag_info chr 22 
+ 10989390- frag_info chr 22 
 10988961 - collapse chr 21
-
+ - teste do frag info antigo pra ver se o output realmente ta normal
 ### desconectar da vpn (testar)
 
 sudo vpnc-disconnect
