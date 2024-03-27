@@ -29,9 +29,8 @@ scancel - cancela o job
 
 ### jobs em progresso
 
- 10989390- frag_info chr 22 
 10988961 - collapse chr 21
- - teste do frag info antigo pra ver se o output realmente ta normal
+10990173 - frag info 22
 ### desconectar da vpn (testar)
 
 sudo vpnc-disconnect
