@@ -1,6 +1,9 @@
 - Rodar afr, eur e unk para o cromossomo 1, gerar os gráficos, analisar os resultados (congressos)
+	- Rodando eur, afr, chr 1, no sdumont, job 10982541, ver se tem como melhorar performance, porque to achando que ta demorando.
+		- Não acho que tenha mais validade, porque pos do collapse tão em hg38 e o bim que eu usei foi hg19, não acho que eu vá incluir esse resultado, vou rodar de novo. 
 - Terminar de submeter a etica (max meio de mar)
 - Rodar scripts para o cromossomo 22, gerar os gráficos, analisar os resultados (congressos)
+	- Rodando frag_info_per_anc cromossomo 22 no Sdumont, job 10982546. 
 - Rodar o teste do LAI citado pelo Marquinhos em [[Status do projeto (codigo vs objetivo)]]
 - Rascunhar montagem
 	- Isso começa por bolar aquele script de frequencia alelica, o que pode ja gerar resultados acerca das frequencias alelicas.
