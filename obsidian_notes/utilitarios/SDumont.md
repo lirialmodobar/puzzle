@@ -31,6 +31,7 @@ scancel - cancela o job
 
 10993111 - collapse chr 21
 10990173 - frag info 22 (checar se ta ok os arquivos - dirs ja checados)
+10993162 - unzip haps
 ### desconectar da vpn (testar)
 
 sudo vpnc-disconnect
