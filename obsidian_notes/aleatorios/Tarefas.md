@@ -59,3 +59,12 @@ Ordem aleatoria
 ### Possiveis artigos science day
 
 https://academic.oup.com/mbe/article/38/9/3497/6299394?login=true
+
+### Artigos para entender mais dessa área
+
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7993749/ (métodos)
+https://www.sciencedirect.com/science/article/pii/S0960982223002671?via%3Dihub (contexto)
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9014191/ (contexto)
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7951803/ (métodos/contexto)
+https://core.ac.uk/reader/111075591?utm_source=linkout (contexto)
+https://onlinelibrary.wiley.com/doi/10.1002/ajmg.c.31853 (talvez)

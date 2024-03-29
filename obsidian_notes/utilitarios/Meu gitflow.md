@@ -23,6 +23,10 @@
 
 Bonitinho: Fetch --> pull --->  status ---> push origin HEAD ----> github merge ---> fetch ----> pull
 Checar: se o fetch e  pull apos ter feito alterações nao sobrepoe o status, mas acho que nao. Conisiderar se não seria melhor fetch ---> status ---> pull (relacionado com o checar).
+
+### Obs
+
+Sdumont pede pra justificar o pull, aí abre o vim, pra sair do vim depois digita :exit!
 ### Permissoes
 
 usuario: lirialmodobar
