@@ -1,5 +1,5 @@
-WD=/home/santoro/liri/puzzle
-HAPS_SAMPLE_DIR=$WD/bhrc_haps_sample
+WD=/scratch/unifesp/pgt/liriel.almodobar/puzzle
+HAPS_SAMPLE_DIR=$WD/bhrc_haps_hg38
 
 # Check if all three arguments are provided
 if [ $# -ne 3 ]; then
@@ -15,23 +15,6 @@ chr=$3
 #Functions
 
 ##Process .haps file
-
-### Subset haps for my sample
-
-tail +3 INPD_hg38_1.sample | grep -n C | sed s#:0##g | sed 's#_[^ ]*##g' | awk '{ print $1, $2}' | sed "p" |awk 'NR%2{suffix="_A"} !(NR%2){suffix="_B"} {print $0 suffix}' | awk '{if (NR % 2 == 0) $1 = ($1 * 2) + 5 ; else $1 = ($1 * 2) - 1 + 5} 1' > $WD/haps_cols.txt
-awk '{print $1}' $WD/haps_cols.txt > $WD/haps_indexes
-
-#### Declare an empty array
-indexes=()
-
-# Read the file line by line and populate the array
-while IFS= read -r line; do
-    indexes+=("$line")
-done < $WD/haps_indexes
-
-awk -v OFS="\t"  -v indexes="${indexes[*]}" '{split(indexes, arr, " "); for (i in arr) printf "%s ", $arr[i]; print ""}' $haps_file > "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps" 
-
-rm $WD/haps_indexes
 
 ### Generate .haps with header
 
@@ -68,9 +51,8 @@ join_header_allele(){
 }
 
 get_header_allele(){
-	local sample_file=$1
-	local subset_haps_file=$2
-	local header_allele_file=$3
+	local subset_haps_file=$1
+	local header_allele_file=$2
 	haps_header
 	get_allele
 	join_header_allele
@@ -120,7 +102,14 @@ id_as_row(){
 
 # Subset haps for my sample
 
-tail +3 INPD_hg38_1.sample | grep -n C | sed s#:0##g | sed 's#_[^ ]*##g' | awk '{ print $1, $2}' | sed "p" |awk 'NR%2{suffix="_A"} !(NR%2){suffix="_B"} {print $0 suffix}' | awk '{if (NR % 2 == 0) $1 = ($1 * 2) + 5 ; else $1 = ($1 * 2) - 1 + 5} 1' > $WD/haps_cols.txt
+##Create necessary dirs for future steps
+
+if [ ! -d "$WD/haps_bhrc_children" ]; then
+        mkdir "$INPUT_DIR/haps_bhrc_children"
+fi
+
+
+tail +3 "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.sample" | grep -n C | sed s#:0##g | sed 's#_[^ ]*##g' | awk '{ print $1, $2}' | sed "p" |awk 'NR%2{suffix="_A"} !(NR%2){suffix="_B"} {print $0 suffix}' | awk '{if (NR % 2 == 0) $1 = ($1 * 2) + 5 ; else $1 = ($1 * 2) - 1 + 5} 1' > $WD/haps_cols.txt
 awk '{print $1}' $WD/haps_cols.txt > $WD/haps_indexes
 
 ## Declare an empty array
@@ -132,11 +121,15 @@ while IFS= read -r line; do
     indexes+=("$line")
 done < $WD/haps_indexes
 
-awk -v OFS="\t"  -v indexes="${indexes[*]}" '{split(indexes, arr, " "); for (i in arr) printf "%s ", $arr[i]; print ""}' "$WD/bhrc_haps_sample/127_BHRC_altura_chr${chr}.haps > "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps"
+awk -v OFS="\t"  -v indexes="${indexes[*]}" '{split(indexes, arr, " "); for (i in arr) printf "%s ", $arr[i]; print ""}' "$WD/bhrc_haps_sample/127_BHRC_altura_chr${chr}.haps > $WD/ind_cols_haps
+awk '{print $1,$2,$3,$4,$5}' "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.haps" > $WD/first_haps
+paste $WD/first_haps $WD/ind_cols_haps > "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps"
 
 rm $WD/haps_indexes
+rm $WD/first_haps
+rm $WD/ind_cols_haps
 
-get_header_allele "$HAPS_SAMPLE_DIR/127_BHRC_altura_chr${chr}.sample" "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps" $WD/haps_geno_header.txt
+get_header_allele "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps" $WD/haps_geno_header.txt
 
 tail +2 $WD/haps_geno_header.txt > $WD/geno_headless.txt
 
@@ -144,7 +137,7 @@ while read -r row; do
 	id_as_row $WD/haps_geno_header.txt
 done < $WD/geno_headless.txt
 
-#rm $WD/haps_geno_header.txt
+rm $WD/haps_geno_header.txt
 rm $WD/geno_headless.txt
 
 # ----------------------------------------------------------------------------------
