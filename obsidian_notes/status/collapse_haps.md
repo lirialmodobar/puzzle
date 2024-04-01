@@ -8,7 +8,8 @@
 	- Transposição tbm bate (embora eu n tenha testado tão bem, acho que testei o suficiente)
 - Cheguei até frequencias alélicas (github: allele_freq.sh -- alterar o nome aqui), falta testar toda essa parte e por os loops e dirs. O teste dessa parte, bem como dos intervalos, deve provavelmente ser o de comparar com o output do count, porque se a contagem bater, da pra considerar que o resto ta certo.
 	- Teste feito e bem-sucedido!
-	- Problema: quase não tem equivalência de variantes no .haps e no bim (as que tem estão em vars_comuns.txt no diretório puzzle do dell marquinhos).
+	- Problema: quase não tem equivalência de variantes no .haps e no bim (as que tem estão em vars_comuns.txt no diretório puzzle do dell marquinhos). Resposta: diferentes versões do genoma, bim errado, to checando se o bim é certo agora
+- O haps é separado por espaço, precisa ver se isso n tá influenciando em nada no meu script.
 ### Tarefas
 
 - Objetivo aqui: obter a freq alelica para cada anc da variante tal, e ter base para fazer a montagem. 
