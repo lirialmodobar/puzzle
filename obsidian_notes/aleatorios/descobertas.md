@@ -1,1 +1,2 @@
 - Sed pode ser utilizado com # e ai nao precisa escapar a / quando to tentando substituir algo que tem /
+- head -1 bhrc_haps_hg38/INPD_hg38_1.haps | tr ' separador_aqui' '\n' | wc -l ---> da pra saber o numero de colunas de um arquivo.
