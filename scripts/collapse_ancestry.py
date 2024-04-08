@@ -18,6 +18,7 @@ def parse_args():
   parser.add_argument('--ind_info', help='Individual IDs listed in the order they appear in RFMix Viterbi output', required=True)
   parser.add_argument('--pop_labels', default='AFR,EUR,NAT',
                     help='comma-separated list of population labels in the order of rfmix populations (1 first, 2 second, and so on). Used in bed files and karyogram labels')
+  parser.add_argument('--chr', help='chromosome number', type=int, required=True)
   parser.add_argument('--chrX', help='include chrX?', default=False, action="store_true")
   parser.add_argument('--out', help='prefix to bed file, _A.bed and _B.bed will be appended', required=True)
   
@@ -133,7 +134,7 @@ if __name__ == '__main__':
     raise Exception('Individual is not in the list provided')
   
   #set up chromosome variables
-  chrs = range(1,2)
+  chrs = range(args.chr,args.chr + 1)
   if args.chrX:
     chrs.append('X')
   
