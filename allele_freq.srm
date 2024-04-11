@@ -1,0 +1,13 @@
+#!/bin/bash
+#SBATCH --nodes=1          # Número de nós
+#SBATCH --ntasks=1         # Número total de tarefas
+#SBATCH -p cpu_long            # Fila (partition) a ser utilizada
+#SBATCH -J allele_freq_1             # Nome do job
+
+# Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+# Executa seu script bash
+/bin/bash /scratch/unifesp/pgt/liriel.almodobar/puzzle/scripts/allele_freq.sh sp nat 1
