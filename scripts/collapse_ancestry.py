@@ -133,7 +133,7 @@ if __name__ == '__main__':
     raise Exception('Individual is not in the list provided')
   
   #set up chromosome variables
-  chrs = range(1,2)
+  chrs = range(2,3)
   if args.chrX:
     chrs.append('X')
   

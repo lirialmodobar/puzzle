@@ -19,7 +19,7 @@ chr=$3
 ### Generate .haps with header
 
 haps_header() {
-	awk '{print $2}' $WD/haps_cols.txt | tr '\n' '\t' > $WD/geno_columns.txt
+	awk '{print $2}' $WD/haps_cols.txt | tr '\n' ' ' > $WD/geno_columns.txt
 	paste $WD/infos/5_columns.txt $WD/geno_columns.txt > $WD/header.txt  #5_columns should go to info
 	rm $WD/geno_columns.txt
 	rm $WD/haps_cols.txt
@@ -45,7 +45,7 @@ get_allele() {
 }
 
 join_header_allele(){
-	cat $WD/header.txt $WD/alleles.txt | head -n 10  > $header_allele_file # n 10 just for testing
+	cat $WD/header.txt $WD/alleles.txt  > $header_allele_file # n 10 just for testing
 	rm $WD/alleles.txt
 	rm $WD/header.txt
 }
@@ -64,16 +64,19 @@ get_header_allele(){
 get_ids_cols_indexes(){
         ### Split the header to get column indexes for IDs
         header=$(head -n 1 $header_allele_file)
-        IFS=$'\t' read -r -a ids <<< "$header"
+        read -r -a ids <<< "$header"
 }
 
 get_relevant_fields(){
         #### Split the line
-                IFS=$'\t' read -r -a fields <<< "$row"
+                read -r -a fields <<< "$row"
         #### Extract common fields
                 chr="${fields[0]}"
+		echo "$chr"
                 snp_id="${fields[1]}"
+		echo "$snp_id"
                 pos="${fields[2]}"
+		echo "$pos"
 }
 
 
@@ -93,6 +96,7 @@ id_as_row(){
         #### Iterate over IDs
         for ((i = 5; i < ${#fields[@]}; i++)); do
                 id="${ids[$i]}"
+		echo "$id"
                 get_allele_for_id $i
 		join_infos
         done
@@ -105,40 +109,45 @@ id_as_row(){
 ##Create necessary dirs for future steps
 
 if [ ! -d "$WD/haps_bhrc_children" ]; then
-        mkdir "$INPUT_DIR/haps_bhrc_children"
+        mkdir "$WD/haps_bhrc_children"
 fi
 
 
-tail +3 "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.sample" | grep -n C | sed s#:0##g | sed 's#_[^ ]*##g' | awk '{ print $1, $2}' | sed "p" |awk 'NR%2{suffix="_A"} !(NR%2){suffix="_B"} {print $0 suffix}' | awk '{if (NR % 2 == 0) $1 = ($1 * 2) + 5 ; else $1 = ($1 * 2) - 1 + 5} 1' > $WD/haps_cols.txt
-awk '{print $1}' $WD/haps_cols.txt > $WD/haps_indexes
+tail -n +3 "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.sample" | grep -n C | sed s#:0##g | sed 's#_[^ ]*##g' | awk '{ print $1, $2}' | sed "p" |awk 'NR%2{suffix="_A"} !(NR%2){suffix="_B"} {print $0 suffix}' | awk '{if (NR % 2 == 0) $1 = ($1 * 2) + 5 ; else $1 = ($1 * 2) - 1 + 5} 1' > $WD/haps_cols.txt
+#awk '{print $1}' $WD/haps_cols.txt > $WD/haps_indexes
 
 ## Declare an empty array
-indexes=()
+#indexes=()
 
 ### Read the file line by line and populate the array
 
-while IFS= read -r line; do
-    indexes+=("$line")
-done < $WD/haps_indexes
+#while IFS= read -r line; do
+ #   indexes+=("$line")
+#done < $WD/haps_indexes
 
-awk -v OFS="\t"  -v indexes="${indexes[*]}" '{split(indexes, arr, " "); for (i in arr) printf "%s ", $arr[i]; print ""}' "$WD/bhrc_haps_sample/127_BHRC_altura_chr${chr}.haps > $WD/ind_cols_haps
-awk '{print $1,$2,$3,$4,$5}' "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.haps" > $WD/first_haps
-paste $WD/first_haps $WD/ind_cols_haps > "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps"
+#echo "subsetting haps" >> $WD/infos/log_haps.txt
 
-rm $WD/haps_indexes
-rm $WD/first_haps
-rm $WD/ind_cols_haps
+#awk -v OFS="\t"  -v indexes="${indexes[*]}" '{split(indexes, arr, " "); for (i in arr) printf "%s ", $arr[i]; print ""}' "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.haps" > $WD/ind_cols_haps
+#awk '{print $1,$2,$3,$4,$5}' "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.haps" > $WD/first_haps
+#paste $WD/first_haps $WD/ind_cols_haps > "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps"
+
+#echo "finished subsetting haps" >> $WD/infos/log_haps.txt
+
+#rm $WD/haps_indexes
+#rm $WD/first_haps
+#rm $WD/ind_cols_haps
 
 get_header_allele "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps" $WD/haps_geno_header.txt
 
-tail +2 $WD/haps_geno_header.txt > $WD/geno_headless.txt
+tail -n +2 $WD/haps_geno_header.txt > $WD/geno_headless.txt
 
 while read -r row; do
+	echo $row
 	id_as_row $WD/haps_geno_header.txt
 done < $WD/geno_headless.txt
 
-rm $WD/haps_geno_header.txt
-rm $WD/geno_headless.txt
+#rm $WD/haps_geno_header.txt
+#rm $WD/geno_headless.txt
 
 # ----------------------------------------------------------------------------------
 
