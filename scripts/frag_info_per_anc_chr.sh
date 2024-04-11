@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Set the working directory
-WD=/home/yuri/liri/puzzle/109_preliminar_oct23/109_17jan24
+WD=/scratch/unifesp/pgt/liriel.almodobar/puzzle
 
 # Define the input files directory
-INPUT_FILES=/home/yuri/liri/puzzle/109_preliminar_oct23/output_collapse
+INPUT_FILES=/scratch/unifesp/pgt/liriel.almodobar/puzzle/output_collapse/chr_22
 
 # Function to process states and ancestries
 process_states_ancs() {
@@ -59,7 +59,7 @@ ls "$INPUT_FILES" > "$WD/collapse_results.txt"
 # Process each file listed in 'collapse_results.txt'
 while read collapse; do
     FILE_NAME=$(echo "$collapse" | head -n 1 | sed "s/.bed//g")
-    cut -f1-4 "$INPUT_FILES/$collapse" | sed "s/^/$FILE_NAME\t/" >> "$INFOS/all_anc_all_chr.txt"
+    cut -f1-4 "$INPUT_FILES/$collapse" | sed "s/^/$FILE_NAME\t/" >> "$INFOS/all_anc.txt"
 done < "$WD/collapse_results.txt"
 
 # Remove the temporary file 'collapse_results.txt'
@@ -109,3 +109,4 @@ for state in "${states[@]}"; do
 		fi
 	done
 done
+rm $INFOS/all_anc.txt
