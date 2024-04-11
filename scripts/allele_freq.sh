@@ -58,46 +58,6 @@ get_header_allele(){
 	join_header_allele
 }
 
-
-### Format output relative to each individual
-
-get_ids_cols_indexes(){
-        ### Split the header to get column indexes for IDs
-        header=$(head -n 1 $header_allele_file)
-        IFS=$'\t' read -r -a ids <<< "$header"
-}
-
-get_relevant_fields(){
-        #### Split the line
-                IFS=$'\t' read -r -a fields <<< "$row"
-        #### Extract common fields
-                chr="${fields[0]}"
-                snp_id="${fields[1]}"
-                pos="${fields[2]}"
-}
-
-
-get_allele_for_id() {
-        local index_id=$1
-        allele=$(echo "$row" | awk -v index_id=$index_id '{print $index_id}')
-}
-
-join_infos(){
-       echo "$id    $chr    $snp_id    $pos    $allele" >> $WD/infos/geno_info_chr_${chr}.txt
-}
-
-id_as_row(){
-	local header_allele_file=$1
-	get_ids_cols_indexes
-	get_relevant_fields
-        #### Iterate over IDs
-        for ((i = 5; i < ${#fields[@]}; i++)); do
-                id="${ids[$i]}"
-                get_allele_for_id $i
-		join_infos
-        done
-}
-
 #Main script
 
 # Subset haps for my sample
@@ -129,52 +89,46 @@ rm $WD/haps_indexes
 rm $WD/first_haps
 rm $WD/ind_cols_haps
 
-get_header_allele "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps" $WD/haps_geno_header.txt
-
-tail +2 $WD/haps_geno_header.txt > $WD/geno_headless.txt
-
-while read -r row; do
-	id_as_row $WD/haps_geno_header.txt
-done < $WD/geno_headless.txt
-
-rm $WD/haps_geno_header.txt
-rm $WD/geno_headless.txt
+get_header_allele "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps" $WD/infos/haps_geno_header.txt
 
 # ----------------------------------------------------------------------------------
 
 #Obtaining allele frequency through processed haps file
 
-#INPUT_FILE="$WD/$state/$anc/chr_info_unfilt/chr_${chr}_${anc}_${state}_unfilt.txt"
-#INPUT_DIR="$WD/$state/$anc/chr_info_unfilt"
+INPUT_FILE="$WD/$state/$anc/chr_info_unfilt/chr_${chr}_${anc}_${state}_unfilt.txt"
+INPUT_DIR="$WD/$state/$anc/chr_info_unfilt"
 
 ##Create necessary dirs for future steps
-#if [ ! -d "$INPUT_DIR/count_info" ]; then
- #       mkdir "$INPUT_DIR/count_info"
-#fi
+if [ ! -d "$INPUT_DIR/count_info" ]; then
+        mkdir "$INPUT_DIR/count_info"
+fi
 
-#if [ ! -d "$INPUT_DIR/seq_info" ]; then
- #       mkdir "$INPUT_DIR/seq_info"
-#fi
+if [ ! -d "$INPUT_DIR/seq_info" ]; then
+        mkdir "$INPUT_DIR/seq_info"
+fi
 
 
 ##Functions
 
 ###Find haps data in collapse intervals (merge collapse and haps)
 
-#find_vars_within_pos_range() {
-#	local pos_file="$1"
-#	local var_file="$2"
-#	local output_file="$3"
+find_vars_within_pos_range() {
+        local pos_file="$1"
+        local var_file="$2"
+        local output_file="$3"
+        while read -r id chrom initial_pos final_pos _ _ _ _; do
+                #### Search for matching positions in bim file
+                index_id=$(awk -v id="$id" '{ for (i=1; i<=NF; i++) if ($i == id) { print i; exit } }' "$var_file")
+                if [ -n "$index_id" ]; then
+                        vars=$(awk -v OFS="\t" -v index_id="$index_id" -v ip="$initial_pos" -v fp="$final_pos" -v id="$id" '$3 >= ip && $3 <= fp { print $2 "," $3 "
+," $index_id }' "$var_file" | tr "\n" "\t")
+                        if [ -n "$vars" ]; then #testing only
+                                echo -e "$id\t$chrom\t$initial_pos\t$final_pos\t$vars" >> "$output_file"
+                        fi
+                fi
+        done < "$pos_file"
+}
 
-	#### Process each line in pos file
-#	while read -r id chrom initial_pos final_pos _ _ _ _; do
-		#### Search for matching positions in bim file
-#		vars=$(awk -v OFS="\t" -v id="$id" -v ip="$initial_pos" -v fp="$final_pos" '$1 == id && $4 > ip && $4 < fp { vals = vals  $3 "," $4 "," $5 "\t" } END { print vals }' "$var_file")
-#		if [ -n "$vars" ]; then #testing only
-#			echo -e "$id\t$chrom\t$initial_pos\t$final_pos\t$vars" >> "$output_file"
-#		fi
-#	done < "$pos_file"
-#}
 
 ###Obtain allele frequencies
 
@@ -193,7 +147,7 @@ rm $WD/geno_headless.txt
 
 ##Main script
 
-#find_vars_within_pos_range $INPUT_FILE "$WD/infos/geno_info_chr_${chr}.txt" "$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
+#find_vars_within_pos_range $INPUT_FILE "$WD/infos/haps_geno_header.txt" "$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
 
 #cohaps="$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
 
