@@ -26,7 +26,7 @@ Checar: se o fetch e  pull apos ter feito alterações nao sobrepoe o status, ma
 
 ### Obs
 
-Sdumont pede pra justificar o pull, aí abre o vim, pra sair do vim depois digita :exit!
+Sdumont pede pra justificar o pull, aí abre o vim, pra sair do vim depois digita esc e :exit!
 ### Permissoes
 
 usuario: lirialmodobar

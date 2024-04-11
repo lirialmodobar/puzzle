@@ -26,11 +26,13 @@ ssh liriel.almodobar@login.sdumont.lncc.br (por algum motivo copiar e colar aqu
 sbatch - submete job
 sacct - se o job nao está no squeue, da pra checar aqui o status 
 scancel - cancela o job
+squeue -u liriel.almodobar - permite ver todos os jobs desse usuário
 
 ### jobs em progresso
 
-10993111 - collapse chr 21
+10997381 - collapse chr 2
 10990173 - frag info 22 (checar se ta ok os arquivos - dirs ja checados)
+10998855 - n tentativa de rodar o allele freq
 ### desconectar da vpn (testar)
 
 sudo vpnc-disconnect
