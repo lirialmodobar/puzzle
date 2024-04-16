@@ -31,9 +31,10 @@ squeue -u liriel.almodobar - permite ver todos os jobs desse usuário
 ### jobs em progresso
 
 10997381 - collapse chr 2 (checar output)
-11015460 - tentativa collapse paralelo
+11022639 - tentativa collapse paralelo
 10990173 - frag info 22 (checar se ta ok os arquivos - dirs ja checados)
-11015492 - allele freq refatorado
+11024328 - allele freq nat sp 1 refatorado, 12h37 16/04, 17h57 ja tinha acabado, n sei quando acabou (verificado por cima, verificar mais detalhadamente)
+11024825 - allele freq eur sp 1 18h27 16/04
 ### desconectar da vpn (testar)
 
 sudo vpnc-disconnect
