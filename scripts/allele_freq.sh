@@ -45,7 +45,7 @@ get_allele() {
 }
 
 join_header_allele(){
-	cat $WD/header.txt $WD/alleles.txt | head -n 10  > $header_allele_file # n 10 just for testing
+	cat $WD/header.txt $WD/alleles.txt  > $header_allele_file
 	rm $WD/alleles.txt
 	rm $WD/header.txt
 }
@@ -70,7 +70,7 @@ if [ ! -d "$WD/haps_bhrc_children" ]; then
 fi
 
 
-#tail +3 "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.sample" | grep -n C | sed s#:0##g | sed 's#_[^ ]*##g' | awk '{ print $1, $2}' | sed "p" |awk 'NR%2{suffix="_A"} !(NR%2){suffix="_B"} {print $0 suffix}' | awk '{if (NR % 2 == 0) $1 = ($1 * 2) + 5 ; else $1 = ($1 * 2) - 1 + 5} 1' > $WD/haps_cols.txt
+#tail -n +3 "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.sample" | grep -n C | sed s#:0##g | sed 's#_[^ ]*##g' | awk '{ print $1, $2}' | sed "p" |awk 'NR%2{suffix="_A"} !(NR%2){suffix="_B"} {print $0 suffix}' | awk '{if (NR % 2 == 0) $1 = ($1 * 2) + 5 ; else $1 = ($1 * 2) - 1 + 5} 1' > $WD/haps_cols.txt
 #awk '{print $1}' $WD/haps_cols.txt > $WD/haps_indexes
 
 ## Declare an empty array
@@ -90,7 +90,7 @@ fi
 #rm $WD/first_haps
 #rm $WD/ind_cols_haps
 
-get_header_allele "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps" $WD/infos/haps_geno_header.txt
+#get_header_allele "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps" $WD/infos/haps_geno_header.txt
 
 # ----------------------------------------------------------------------------------
 
@@ -121,8 +121,7 @@ find_vars_within_pos_range() {
                 #### Search for matching positions in bim file
                 index_id=$(awk -v id="$id" '{ for (i=1; i<=NF; i++) if ($i == id) { print i; exit } }' "$var_file")
                 if [ -n "$index_id" ]; then
-                        vars=$(awk -v OFS="\t" -v index_id="$index_id" -v ip="$initial_pos" -v fp="$final_pos" -v id="$id" '$3 >= ip && $3 <= fp { print $2 "," $3 "
-," $index_id }' "$var_file" | tr "\n" "\t")
+                        vars=$(awk -v OFS="\t" -v index_id="$index_id" -v ip="$initial_pos" -v fp="$final_pos" -v id="$id" '$3 >= ip && $3 <= fp { print $2 "," $3 "," $index_id }' "$var_file" | tr "\n" "\t")
                         if [ -n "$vars" ]; then #testing only
                                 echo -e "$id\t$chrom\t$initial_pos\t$final_pos\t$vars" >> "$output_file"
                         fi
@@ -166,7 +165,6 @@ while read var; do
 	allele_freq $var
 done < $WD/temp_input.txt
 
-#rm "$WD/infos/geno_info_chr_${chr}.txt"
-#rm $WD/varal_info_entrada.txt
-#rm $WD/count_var_allele.txt
-#rm $WD/temp_input
+rm $WD/varal_info_entrada.txt
+rm $WD/count_var_allele.txt
+rm $WD/temp_input
