@@ -11,6 +11,7 @@ fi
 state=$1
 anc=$2
 chr=$3
+
 #Functions
 
 ##Process .haps file
@@ -56,6 +57,7 @@ get_header_allele(){
 	get_allele
 	join_header_allele
 }
+
 
 #Main script
 
