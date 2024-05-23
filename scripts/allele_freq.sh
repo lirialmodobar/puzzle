@@ -136,13 +136,13 @@ find_vars_within_pos_range() {
 
 count_var_allele(){
 	count=$(grep -w "$var_allele" "$cohaps" | wc -l)
-	echo -e "$var_allele\t$chr\t$count\t" | sed 's#,#\t#g' | awk -v OFS="\t" '{print $1, $4, $2, $3, $5}' >> "$WD/count_var_allele.txt"
+	echo -e "$var_allele\t$chr\t$count\t" | sed 's#,#\t#g' | awk -v OFS="\t" '{print $1, $4, $2, $3, $5}' >> "$WD/count_var_allele_${state}_${anc}_${chr}.txt"
 }
 
 #### Get allele frequencies
 allele_freq(){
-	sum_var=$(grep "$var" "$WD/count_var_allele.txt" | awk '{ sum += $5 } END { print sum }')
-	awk -v OFS="\t" -v var=$var -v sum_var=$sum_var '{if ($1 == var) {print $1, $2, $3, $4, $5, sum_var, ($5/sum_var)*100}}' "$WD/count_var_allele.txt" >> "$INPUT_DIR/count_info/freqs_chr_${chr}_${anc}_${state}.txt"
+	sum_var=$(grep "$var" "$WD/count_var_allele_${state}_${anc}_${chr}.txt" | awk '{ sum += $5 } END { print sum }')
+	awk -v OFS="\t" -v var=$var -v sum_var=$sum_var '{if ($1 == var) {print $1, $2, $3, $4, $5, sum_var, ($5/sum_var)*100}}' "$WD/count_var_allele_${state}_${anc}_${chr}.txt" >> "$INPUT_DIR/count_info/freqs_chr_${chr}_${anc}_${state}.txt"
 }
 
 ##Main script
@@ -152,19 +152,19 @@ find_vars_within_pos_range $INPUT_FILE "$WD/infos/haps_geno_header.txt" "$INPUT_
 cohaps="$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
 
 ### Getting variant_alleles combinations to search
-awk '{for(i=5;i<=NF;i++) print $i}' "$cohaps"  | sort -b | uniq > "$WD/varal_info_entrada.txt"
+awk '{for(i=5;i<=NF;i++) print $i}' "$cohaps"  | sort -b | uniq > "$WD/varal_info_entrada_${state}_${anc}_${chr}.txt"
 
 while read var_allele; do
         count_var_allele "$var_allele"
-done < $WD/varal_info_entrada.txt
+done < "$WD/varal_info_entrada_${state}_${anc}_${chr}.txt"
 
 ###Getting variants to search
-cut -f 1 "$WD/count_var_allele.txt" | sort -b | uniq  > $WD/temp_input.txt
+cut -f 1 "$WD/count_var_allele_${state}_${anc}_${chr}.txt" | sort -b | uniq  > "$WD/temp_input_${state}_${anc}_${chr}.txt"
 
 while read var; do
 	allele_freq $var
-done < $WD/temp_input.txt
+done < "$WD/temp_input_${state}_${anc}_${chr}.txt"
 
-rm $WD/varal_info_entrada.txt
-rm $WD/count_var_allele.txt
-rm $WD/temp_input
+#rm "$WD/varal_info_entrada_${state}_${anc}_${chr}.txt"
+#rm "$WD/count_var_allele_${state}_${anc}_${chr}.txt"
+#rm "$WD/temp_input_${state}_${anc}_${chr}.txt"
