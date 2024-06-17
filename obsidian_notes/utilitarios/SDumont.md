@@ -25,7 +25,7 @@ ssh liriel.almodobar@login.sdumont.lncc.br (por algum motivo copiar e colar aqu
 
 sbatch - submete job
 sacct - se o job nao está no squeue, da pra checar aqui o status 
-scancel - cancela o job
+scancel  (sem flag --job)- cancela o job
 squeue -u liriel.almodobar - permite ver todos os jobs desse usuário
 
 ### jobs em progresso
@@ -35,6 +35,12 @@ squeue -u liriel.almodobar - permite ver todos os jobs desse usuário
 10990173 - frag info 22 (checar se ta ok os arquivos - dirs ja checados)
 11024328 - allele freq nat sp 1 refatorado, 12h37 16/04, 17h57 ja tinha acabado, n sei quando acabou (verificado por cima, verificar mais detalhadamente)
 11024825 - allele freq eur sp 1 18h27 16/04
+11087459 - collapse 14,16,17 - 12h40 27/05, nó tinha caido. nós cairam de novo, 14 completo.
+11096882 - collapse 16, 17- nó tinha caido, completo.
+11115515 - cópia para o collapse, deu muito erro, sumiu a pasta
+11115704 - collapse 10-19 20h54 17/06, pois eu fui besta e deletei tudo
+
+D no collapse: quando nao cobre o cromossomo inteiro, é porque as posicoes no array nao cobrem?
 ### desconectar da vpn (testar)
 
 sudo vpnc-disconnect

@@ -1,1 +1,0 @@
-Requer gfortran!

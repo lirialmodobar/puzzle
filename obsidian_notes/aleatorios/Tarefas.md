@@ -26,7 +26,7 @@
 		- ~~PB informações básicas E6 - do lucas, ve se adiciona e em que categoria ~~
 - PAD:
 	https://www.unifesp.br/reitoria/prograd/programas-institucionais/pad
-- Poster pra x-meeting e pro ~~ESHG ate dia 20~~ sbg ate dia 2/02
+- ~~Poster pra x-meeting e pro ESHG ate dia 20 sbg ate dia 2/02~~ 
 - ~~mandar certificados para o enio
 -  ~~renovar bilhete unico~~ 
 
