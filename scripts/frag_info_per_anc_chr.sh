@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # Set the working directory
-WD=/scratch/unifesp/pgt/liriel.almodobar/puzzle
+WD=/prj/unifesp/pgt/liriel.almodobar/puzzle
+
+chr=$1
 
 # Define the input files directory
-INPUT_FILES=/scratch/unifesp/pgt/liriel.almodobar/puzzle/output_collapse/chr_22
+INPUT_FILES=/prj/unifesp/pgt/liriel.almodobar/puzzle/output_collapse/chr_${chr}
 
 # Function to process states and ancestries
 process_states_ancs() {
@@ -12,11 +14,11 @@ process_states_ancs() {
 	local label_lower=$2
 
 	if [ "$state" = "rs_sp" ]; then
-		grep -w "$label" "$INFOS/all_anc_all_chr.txt" | grep -v -E "C20361_A|C20361_B|C20776_A|C20776_B" | awk '{print $0 ($1 ~ /^C1/ ? "\trs" : "\tsp")}' > "$ANC_DIR/${label_lower}_${state}_all.txt"
+		grep -w "$label" "$INFOS/all_anc_${chr}.txt" | grep -v -E "C20361_A|C20361_B|C20776_A|C20776_B" | awk '{print $0 ($1 ~ /^C1/ ? "\trs" : "\tsp")}' > "$ANC_DIR/${label_lower}_${state}_${chr}.txt"
 	elif [ "$state" = "rs" ]; then
-		awk '{if ($6 == "rs") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_all.txt > $ANC_DIR/"$label_lower"_"$state"_all.txt
+		awk '{if ($6 == "rs") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_${chr}.txt > $ANC_DIR/"$label_lower"_"$state"_${chr}.txt
 	else
-		awk '{if ($6 == "sp") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_all.txt > $ANC_DIR/"$label_lower"_"$state"_all.txt
+		awk '{if ($6 == "sp") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_${chr}.txt > $ANC_DIR/"$label_lower"_"$state"_${chr}.txt
 	fi
 }
 
@@ -36,14 +38,6 @@ process_chromosome() {
     rm "$WD/$chr_${label}_temp.txt"
 }
 
-# Parse command line arguments
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --chr) chr_flag="$2"; shift ;;
-        *) echo "Unknown parameter: $1"; exit 1 ;;
-    esac
-    shift
-done
 
 # Check if the 'infos' directory exists and create it if not
 if [ ! -d "$WD/infos" ]; then
@@ -54,16 +48,16 @@ fi
 INFOS="$WD/infos"
 
 # List files in the input directory and save the results to a file
-ls "$INPUT_FILES" > "$WD/collapse_results.txt"
+ls "$INPUT_FILES" > "$WD/collapse_results_${chr}.txt"
 
 # Process each file listed in 'collapse_results.txt'
 while read collapse; do
     FILE_NAME=$(echo "$collapse" | head -n 1 | sed "s/.bed//g")
-    cut -f1-4 "$INPUT_FILES/$collapse" | sed "s/^/$FILE_NAME\t/" >> "$INFOS/all_anc.txt"
-done < "$WD/collapse_results.txt"
+    cut -f1-4 "$INPUT_FILES/$collapse" | sed "s/^/$FILE_NAME\t/" >> "$INFOS/all_anc_${chr}.txt"
+done < "$WD/collapse_results_${chr}.txt"
 
 # Remove the temporary file 'collapse_results.txt'
-rm "$WD/collapse_results.txt"
+rm "$WD/collapse_results_{chr}.txt"
 
 #Define an array of states
 states=("rs_sp" "rs" "sp")
@@ -98,15 +92,7 @@ for state in "${states[@]}"; do
     		# Process states and ancs
 		process_states_ancs "$state" "$label_lower"
 
-    		# Process states, ancs and chromosomes based on the --chr flag
-    		if [ -n "$chr_flag" ]; then
-        		process_chromosome "$chr_flag" "$label_lower" "$ANC_DIR"
-    		else
-        	# Process each chromosome from 1 to 22
-        		for chr in {1..22}; do
-            			process_chromosome "$chr" "$label_lower" "$ANC_DIR"
-        		done
-		fi
+        	process_chromosome "$chr" "$label_lower" "$ANC_DIR"
 	done
 done
-rm $INFOS/all_anc.txt
+rm $INFOS/all_anc_${chr}.txt
