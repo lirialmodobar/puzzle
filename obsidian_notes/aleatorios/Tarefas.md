@@ -25,7 +25,7 @@
 			- por que só essas idades?
 		- ~~PB informações básicas E6 - do lucas, ve se adiciona e em que categoria ~~
 - PAD:
-	https://www.unifesp.br/reitoria/prograd/programas-institucionais/pad
+	https://www.unifesp.br/reitoria/prograd/programas-institucionais/137-pad
 - ~~Poster pra x-meeting e pro ESHG ate dia 20 sbg ate dia 2/02~~ 
 - ~~mandar certificados para o enio
 -  ~~renovar bilhete unico~~ 
@@ -62,8 +62,10 @@ https://academic.oup.com/mbe/article/38/9/3497/6299394?login=true
 
 ### Artigos para entender mais dessa área
 
+https://academic.oup.com/mbe/article/39/1/msab339/6448769?login=true (contexto)
+https://www.pnas.org/doi/full/10.1073/pnas.1909075117 (contexto)
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7993749/ (métodos)
-https://www.sciencedirect.com/science/article/pii/S0960982223002671?via%3Dihub (contexto)
+~~https://www.sciencedirect.com/science/article/pii/S0960982223002671?via%3Dihub (contexto)~~
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9014191/ (contexto)
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7951803/ (métodos/contexto)
 https://core.ac.uk/reader/111075591?utm_source=linkout (contexto)

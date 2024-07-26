@@ -11,7 +11,7 @@ Creio que seja a proxima prioridade, ja que nao tem base nenhuma ainda. Ate agor
 
 1.  entender o que fizeram no artigo anterior e traduzir pra codigo (bem do zero, nao consegui o codigo dos caras e achei bem pouco confiavel, tambem nao entendi bem como traduzir para codigo); 
 2.  usar software de alinhamento e tratar fragmentos como reads (soa legal porque alguem ja lidou com todos os problemas de como montar, mas n sei se temos em quantidade suficiente e outros problemas tecnicos, preciso estudar melhor a viabilidade) 
-3.  usar o mesmo codigo do [[count.sh]] adaptado para ao inves de ocorrencias de variantes, ter ocorrencias de cada fragmento, e ai no caso de sobreposicao, usar o que tem a maior ocorrencia (geral, sp, pa?).  Se for fazer nao so um, mas varios genomas, acho q esse seria o caso de uso, e ai ir montando os com menores ocorrencias, etc, mas ai fica muito arbitrario, tem que ver.
+3.  usar o mesmo codigo do [[count.sh (aposentado)]] adaptado para ao inves de ocorrencias de variantes, ter ocorrencias de cada fragmento, e ai no caso de sobreposicao, usar o que tem a maior ocorrencia (geral, sp, pa?).  Se for fazer nao so um, mas varios genomas, acho q esse seria o caso de uso, e ai ir montando os com menores ocorrencias, etc, mas ai fica muito arbitrario, tem que ver.
 
 De forma geral, para obter a sequencia, penso em usar os dados combinados de individuo e fragmento que temos do collapse ancestry e ai usar bim e fam para extrair quais sao as variantes que estao dentro desse fragmento. Importante: precisa ter alguma sinalizacao de gap, porque nem toda posicao individual sera continua. Precisa ver gaps dentro dos fragmentos e entre fragmentos e como lidar com isso e como isso sai representado. Para codigo, precisa ver como fazer essa busca e se algum codigo no count.sh de busca no bim pode ser adaptado, porque tem a questao do individuo per se. 
 
@@ -20,7 +20,7 @@ De forma geral, para obter a sequencia, penso em usar os dados combinados de ind
 #### Status
 
 1. A contagem de ocorrencias por alguma logica matematica deve virar uma frequencia alelica.
-	1. Existe um arquivo em que dá pra pegar a informação do alelo, a qual precisamos para fazer a frequência. Precisa obter essa info por indivíduo e por variante para podermos fazer essa conta. Precisa ver como fazer esse merge e como isso pode se relacionar com arquivos intermediários rodados em [[count.sh]].
+	1. Existe um arquivo em que dá pra pegar a informação do alelo, a qual precisamos para fazer a frequência. Precisa obter essa info por indivíduo e por variante para podermos fazer essa conta. Precisa ver como fazer esse merge e como isso pode se relacionar com arquivos intermediários rodados em [[count.sh (aposentado)]].
 2. Precisa ver como faz essa distincao, que teste estatistico fazer.
 ## Objetivo geral (reunião com Marquinhos 24/01/24)
 

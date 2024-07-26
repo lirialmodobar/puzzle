@@ -20,7 +20,7 @@ Obs: Aqui tem todos os cromossomos, so que no caso eu rodei so pro 1 o collapse,
 
 ### Objetivo
 
-Organizar os dados obtidos do collapse de todas as pessoas (ou seja, todas as tabelas, de todas as pessoas) em tabelas para cada uma das 4 ancestralidades (africano, europeu, nativo-americano e desconhecido) e cada um dos cromossomos (1 ao 22). O output e organizado em diretorios, um para cada ancestralidade, com as tabelas individuais dos cromossomos 1 ao 22 sem as colunas anteriores de pos de outro jeito (colunas 5 e 6) + info adicional contidas neles. 
+Organizar os dados obtidos do collapse de todas as pessoas (ou seja, todas as tabelas, de todas as pessoas) em tabelas para cada uma das 4 ancestralidades (africano, europeu, nativo-americano e desconhecido) e cada um dos cromossomos (1 ao 22), para cada estado (rs e sp_. O output e organizado em diretorios, um para cada estado, com um subdiretório para cada ancestralidade, contendo as tabelas individuais dos cromossomos 1 ao 22 sem as colunas anteriores de pos de outro jeito (colunas 5 e 6) + info adicional (explicado abaixo) contidas neles. 
 
 ### Info adicional
 
@@ -34,16 +34,18 @@ Sao gerados dois outputs, um filtrado e outro nao, por isso, dentro do dir de ca
 
 ![[Pasted image 20240109104543.png]]
 
-### Exemplo de tabela filtrada (atualizar)
+Tambem é gerado no diretório infos o arquivo com todas as ancestralidades juntas e não filtradas, para cada cromossomo (nao separado por estado). 
 
-![[Pasted image 20240109104824.png]]
+![[Pasted image 20240723115933.png]]
+### Exemplo de tabela filtrada 
 
-### Exemplo de tabela nao filtrada (atualizar)
+![[Pasted image 20240723115530.png]]
 
-![[Pasted image 20240109104856.png]]
+### Exemplo de tabela nao filtrada
 
-Para ambas tabelas: Coluna 1 = id, coluna 2 = chr, coluna 3 = pos inicial, coluna 4 = pos final, coluna 5 = tamanho do fragmento, coluna 6 = verificar gap, coluna 7 = ancestralidade.
+![[Pasted image 20240723115637.png]]
 
+Para ambas tabelas: Coluna 1 = id, coluna 2 = chr, coluna 3 = pos inicial, coluna 4 = pos final, coluna 5 = tamanho do fragmento, coluna 6 = verificar gap, coluna 7 = ancestralidade, coluna 8 = estado.
 ## [[chr_frag_plot.R]]
 
 ### Objetivo
@@ -57,23 +59,6 @@ Acompanha um arquivo renv.lock, pois utilizei o pacote renv para administrar dep
 ### Exemplo (com 109 pessoas e sei la quantos fragmentos)
 
 ![[Pasted image 20240109105345.png]]
-
-## [[check_largest_region.sh]]
-
-### Objetivo
-
-Verificar, na ancestralidade desconhecida, qual o maior fragmento desconhecido dentre todos os cromossomos. Gera um txt no diretorio infos, contendo as infos do fragmento.
-Obs: Usa o input filtrado, porque ele ja vem com os maiores fragmentos (ver acima).
-
-### Diretorio (ultimo arquivo)
-
-![[Pasted image 20240109105420.png]]
-
-### Output
-
-![[Pasted image 20240109105451.png]]
-
-Se houver dois ou mais fragmentos de mesmo tamanho, eles aparecerao.
 
 ## [[pos_frags_vs_hg38.sh]]
 
@@ -97,26 +82,46 @@ Eliminar repeticoes de variantes no arquivo de genotipagem da coorte, que contem
 
  Utiliza o programa plink, um programa de linha de comando para manipular dados de genotipagem.
 
-## [[count.sh]]
+## [[collapse_haps]]
 
+Substitui [[count.sh (aposentado)]]
 ### Objetivos
 
-Contar quantas variantes estao dentro de cada gap e contar as ocorrencias (numero de vezes que uma variante aparece, pois apesar de cada variante ser de uma posicao especificica, existe overlap entre os fragmentos, entao pode aparecer mais de uma vez) por ancestralidade e entre todas as ancestralidades.
+Contar as ocorrencias (numero de vezes que uma variante aparece, pois apesar de cada variante ser de uma posicao especificica, existe overlap entre os fragmentos, entao pode aparecer mais de uma vez) por ancestralidade, separado por estado. Além disso, calcular frequência alélica dessas variantes em cada estado-ancestralidade. 
 
 ### Obs
 
-O input para as ocorrencias vem do output nao filtrado, pois precisamos do dado de overlap. Tambem e utilizado o arquivo bim como input para a contagem de ocorrencias, pois pelo collapse ancestry a gente obtem apenas os fragmentos, nao as variantes que tem neles. Para a contagem de variantes em gaps, o input vem do filtrado, pois ele ja representa os reais gaps, (no nao filtrado, havera gaps entre um fragmento e outro que nao sao verdadeiros, pois existe um fragmento maior que abrange, e o filtrado ja seleciona esse gap maior) e tambem do dado de posicao em relacao ao hg38, para incluir os gaps em relacao ao genoma de referencia.
+O input para as ocorrencias vem do output nao filtrado, pois precisamos do dado de overlap. O arquivo .haps, que contem as informacoes das variantes e genotipos delas para todas as coortes é usado como input para a contagem de ocorrencias e frequência alélica, pois pelo collapse ancestry a gente obtem apenas os fragmentos, nao as variantes que tem neles ou o genótipo das mesmas.  Infos sobre o arquivo .haps podem ser encontradas em: 
 
-### Diretorio
+Para otimizacao e paralelizacao, esse script foi dividido em 2 etapas, representadas por outros 2 scripts:
 
-Pego do legado, com 109 pessoas, por isso nao aparece na estrutura de diretorios mais acima - ainda nao rodei
+### format_haps.sh
 
-![[Pasted image 20240109110306.png]]
+#### Objetivos
 
-### Output
+Filtrar o arquivo haps para apenas as criancas da bhrc, trocar as infos codificadas em 0 e 1 para letras, inserir infos de ID. Tudo isso para que seja possível obter as infos de seq e de freq alélica/contagem de ocorrências do script allele_freq.sh (para fazer o merge com o collapse processado por [[frag_info_per_anc_chr.sh]], precisa do id, pois o dado é de cada pessoa). 
 
-![[Pasted image 20240109110407.png]]
-Coluna 1 = id da variante, coluna 2 = chr, coluna 3 = pos (unica, porque a variante e de troca de uma unica base), coluna 4 = contagem de ocorrencias.
+#### Diretorio
+
+Para o haps subsetado e com ids, mas ainda não com alelos e ids (pode ser util para outra pessoa nesse formato, por isso foi criado)
+
+![[Pasted image 20240723121940.png]]
+
+Para o haps com alelos e ids, no diretorio infos, é criado o arquivo haps_geno_header de cada cromossomo. 
+
+![[Pasted image 20240723122217.png]]
+#### Output
+
+Haps subsetado (haps normal, mas so das criancas da bhrc)
+
+![[Pasted image 20240723122419.png]]
+
+Haps com info de id e alelo (parcial pq bem grande)
+
+
+### allele_freq.sh (completar)
+
+Objetivo: O descrito acima em [[collapse_haps]]. 
 
 ## [[occur_plot.Rmd - atualizar]]
 

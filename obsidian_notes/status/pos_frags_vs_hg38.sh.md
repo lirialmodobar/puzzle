@@ -11,5 +11,5 @@
 	- Sera PAxSPxgeral, pelo menos por enquanto, porque ai garante todos os casos, e realmente como entre estados muda a posicao inicial e final, tem que dividir por estado e ter o geral.
 		- Tem que ver o que altera no codigo e que complexidade adiciona.
 		- Checar se realmente precisa ter o geral e se ele não é dedutivel a partir de rs e sp, mas acho que não.
-- ~~Por nome de acordo com [[count.sh]]~~ 
+- ~~Por nome de acordo com [[count.sh (aposentado)]]~~ 
 - Checar se ta pronto pra teste, ja q fiz as subalteracoes, e ai testar.
