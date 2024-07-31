@@ -1,31 +1,70 @@
+check_overlap <- function(row_1, row_2){
+  last_bp_row_1 <- row_1["Column2"]
+  first_bp_row_2 <- row_2["Column1"]
+  if(!is.na(first_bp_row_2) && last_bp_row_1 > first_bp_row_2) {
+    overlapping_rows <- list(row_1, row_2)
+    return(overlapping_rows)
+  } else {
+    return(NULL)
+  }
+}
+
 subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   # Get the value of the second column for row A
   x <- df[row_A_index, "Column2"]
   
   # Find values from the first column greater than x
-  y_values <- df[df$Column1 > x, "Column1"]
+  y_values <- subset(df, df$Column1 > x)
   
-  # Determine the smallest value(s) of y
-  smallest_y <- min(y_values)
+  # See if there is overlaps in y values
+  if(nrow(y_values) != 0){
+    row_1 <- y_values[1,]
+    print(row_1)
+    row_2 <- y_values[2,]
+    print(row_2)
+      overlap_result <- check_overlap(row_1, row_2)
+  } else {
+      overlap_result <- NULL
+    }
+   
+ 
   
-  # Find rows with smallest value of y
-  smallest_y_rows <- which(df$Column1 == smallest_y)
+  # Determine y rows to be analysed
+    
+    
+    if(length(overlap_result) == 0 && exists("row_1")) {
+      only_y_row <- row_1
+    } else {
+      y_rows <- overlap_result  
+    }
   
   # Initialize an empty list to store subsets
   subset_list <- list()
-  if (!is.null(df2) && length(y_values) == 0) {
+
+  if (!is.null(df2) && nrow(y_values) == 0) {
     subset_list[[length(subset_list) + 1]] <- df2
   }
-  # Iterate over rows with smallest y
-  for (row_index in smallest_y_rows) {
+  # Iterate over y rows 
+  if(exists("only_y_row")){
     if(is.null(df2)){
       # Generate subset dataframe
-      subset_df <- rbind(df[row_A_index, , drop = FALSE], df[row_index, , drop = FALSE])
+      subset_df <- rbind(df[row_A_index, , drop = FALSE], only_y_row)
       subset_list[[length(subset_list) + 1]] <- subset_df
     } else {
-      subset_df <- rbind(df2, df[row_index, , drop = FALSE])
+      subset_df <- rbind(df2, only_y_row)
       subset_list[[length(subset_list) + 1]] <- subset_df  
     }
+  }  else {
+  for (y_row in y_rows) {
+    if(is.null(df2)){
+      # Generate subset dataframe
+      subset_df <- rbind(df[row_A_index, , drop = FALSE], y_row)
+      subset_list[[length(subset_list) + 1]] <- subset_df
+    } else {
+      subset_df <- rbind(df2, y_row)
+      subset_list[[length(subset_list) + 1]] <- subset_df  
+    }
+  }
   }
   # Return the list of subsets
   return(subset_list)
@@ -41,8 +80,8 @@ generate_subsets <- function(df) {
 # Example usage:
 # Create a sample dataframe (replace this with your actual dataframe)
 df <- data.frame(
-  Column1 = c(1, 2, 3, 19, 27, 35, 35, 40, 60, 90),
-  Column2 = c(10, 18, 18, 25, 30, 40, 39, 50, 90, 100) 
+  Column1 = c(1, 2, 3, 19, 20, 27, 35, 35, 40, 60, 90),
+  Column2 = c(10, 18, 18, 25, 26, 30, 40, 39, 50, 90, 100) 
 ) 
 
 # Apply the function to generate subsets
@@ -102,6 +141,4 @@ process_subsets <- function(df, all_subsets){
 }
 
 all_subsets <- process_subsets(df, all_subsets)
-
-
-
+  
