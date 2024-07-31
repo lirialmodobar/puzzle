@@ -12,88 +12,6 @@ state=$1
 anc=$2
 chr=$3
 
-#Functions
-
-##Process .haps file
-
-### Generate .haps with header
-
-haps_header() {
-	awk '{print $2}' $WD/haps_cols.txt | tr '\n' '\t' > $WD/geno_columns.txt
-	paste $WD/infos/5_columns.txt $WD/geno_columns.txt > $WD/header.txt  #5_columns should go to info
-	rm $WD/geno_columns.txt
-	rm $WD/haps_cols.txt
-}
-
-
-### Replace 1 and 0 by the actual allele
-
-get_allele() {
-	awk '{
-		fourth_col=$4
-		fifth_col=$5
-		modified_line=$1"\t"$2"\t"$3"\t"fourth_col"\t"fifth_col
-		for (i=6; i<=NF; i++) {
-			if ($i == 0) {
-				modified_line = modified_line"\t"fourth_col
-			} else if ($i == 1) {
-				modified_line = modified_line"\t"fifth_col
-			}
-		}
-		print modified_line
-	}' $subset_haps_file > $WD/alleles.txt
-}
-
-join_header_allele(){
-	cat $WD/header.txt $WD/alleles.txt  > $header_allele_file
-	rm $WD/alleles.txt
-	rm $WD/header.txt
-}
-
-get_header_allele(){
-	local subset_haps_file=$1
-	local header_allele_file=$2
-	haps_header
-	get_allele
-	join_header_allele
-}
-
-
-#Main script
-
-# Subset haps for my sample
-
-##Create necessary dirs for future steps
-
-if [ ! -d "$WD/haps_bhrc_children" ]; then
-        mkdir "$INPUT_DIR/haps_bhrc_children"
-fi
-
-
-#tail -n +3 "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.sample" | grep -n C | sed s#:0##g | sed 's#_[^ ]*##g' | awk '{ print $1, $2}' | sed "p" |awk 'NR%2{suffix="_A"} !(NR%2){suffix="_B"} {print $0 suffix}' | awk '{if (NR % 2 == 0) $1 = ($1 * 2) + 5 ; else $1 = ($1 * 2) - 1 + 5} 1' > $WD/haps_cols.txt
-#awk '{print $1}' $WD/haps_cols.txt > $WD/haps_indexes
-
-## Declare an empty array
-#indexes=()
-
-### Read the file line by line and populate the array
-
-#while IFS= read -r line; do
- #   indexes+=("$line")
-#done < $WD/haps_indexes
-
-#awk -v OFS="\t"  -v indexes="${indexes[*]}" '{split(indexes, arr, " "); for (i in arr) printf "%s ", $arr[i]; print ""}' "$WD/bhrc_haps_sample/127_BHRC_altura_chr${chr}.haps > $WD/ind_cols_haps
-#awk '{print $1,$2,$3,$4,$5}' "$WD/bhrc_haps_hg38/INPD_hg38_${chr}.haps" > $WD/first_haps
-#paste $WD/first_haps $WD/ind_cols_haps > "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps"
-
-#rm $WD/haps_indexes
-#rm $WD/first_haps
-#rm $WD/ind_cols_haps
-
-#get_header_allele "$WD/haps_bhrc_children/bhrc_hg38_children_chr_${chr}.haps" $WD/infos/haps_geno_header.txt
-
-# ----------------------------------------------------------------------------------
-
 #Obtaining allele frequency through processed haps file
 
 INPUT_FILE="$WD/$state/$anc/chr_info_unfilt/chr_${chr}_${anc}_${state}_unfilt.txt"
@@ -147,7 +65,7 @@ allele_freq(){
 
 ##Main script
 
-find_vars_within_pos_range $INPUT_FILE "$WD/infos/haps_geno_header.txt" "$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
+find_vars_within_pos_range $INPUT_FILE "$WD/infos/haps_geno_header_${chr}.txt" "$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
 
 cohaps="$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
 
