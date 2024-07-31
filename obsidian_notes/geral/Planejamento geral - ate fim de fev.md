@@ -2,7 +2,7 @@
 	-~~Importante decidir, antes de tudo, se seguira com o loop dos cromossomos, ja que o collapse provavelmente sempre sera rodado um a um.~~
 	- feito, precisa testar os scripts citados acima que precisa testar.
 - ~~Adequar os scripts de acordo com PAxSPxgeral aos que isso se aplica/faz sentido fazer~~
-	- Todos adequados, mas precisa testar [[chr_frag_plot.R]], [[check_largest_region.sh]] e [[pos_frags_vs_hg38.sh]], atualizar a doc de [[chr_frag_plot.R]] e testar nova versão de [[count.sh]], que não tem propriamente a ver com adequar pra PAxSP porque já tem.
+	- Todos adequados, mas precisa testar [[chr_frag_plot.R]], [[check_largest_region.sh (aposentado)]] e [[pos_frags_vs_hg38.sh]], atualizar a doc de [[chr_frag_plot.R]] e testar nova versão de [[count.sh (aposentado)]], que não tem propriamente a ver com adequar pra PAxSP porque já tem.
 - ~~Ir resolvendo dependencias adicionais dos scripts um por um na etapa de separar~~
 	- feito, precisa testar os scripts citados acima que precisa testar.
 - ~~Tem uns arquivos q rodou o collapse completo, ver o que fazer quanto a isso, se tem anotado em algum lugar quais foram, etc. A flag do frag tenho quase ctz que resolve isso, checar. ~~

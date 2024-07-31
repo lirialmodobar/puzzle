@@ -30,15 +30,37 @@ squeue -u liriel.almodobar - permite ver todos os jobs desse usuário
 
 ### jobs em progresso
 
-10997381 - collapse chr 2 (checar output)
-11022639 - tentativa collapse paralelo
-10990173 - frag info 22 (checar se ta ok os arquivos - dirs ja checados)
+
 11024328 - allele freq nat sp 1 refatorado, 12h37 16/04, 17h57 ja tinha acabado, n sei quando acabou (verificado por cima, verificar mais detalhadamente)
 11024825 - allele freq eur sp 1 18h27 16/04
 11087459 - collapse 14,16,17 - 12h40 27/05, nó tinha caido. nós cairam de novo, 14 completo.
 11096882 - collapse 16, 17- nó tinha caido, completo.
 11115515 - cópia para o collapse, deu muito erro, sumiu a pasta
-11115704 - collapse 10-19 20h54 17/06, pois eu fui besta e deletei tudo
+11115704 - collapse 10-19 20h54 17/06, pois eu fui besta e deletei tudo. 13h 25/06: 12 e 11 terminaram
+11118358 - collapse 4 e 5 23h02 19/06
+11118367 - collapse 6, 7 23h14 19/06
+11118368 - collapse 8,9 23h15 19/06
+
+
+11127348 - frag info 11, 12 terminou (PROXIMO VALIDO DE RODAR ALLELE FREQ)
+11157692 - frag info 4-9 terminou
+11157748 - frag info 10 terminou
+11162817 - frag info 1 - 3
+11162828 - frag info 13-22 
+
+11158609 - haps 4-9 13h22 -- 18h36 ja tinha terminado
+11159360 - haps 10 - 15 24/07 11h41 ja tinha terminaod
+11160413 - haps 16-19 11h50 24/07 23/07 13h24 ja tinha terminado
+11162512 - haps 1-3  VALIDO FAZER MSM SEM FRAG INFO
+
+11160520 - checagem collapse 4-19, terminou e ta ok
+11162523 - checagem collapse 1 ao 3 terminou e ta ok
+11160503 - checagem arquivos presentes terminou, refazer, pq rerodei varios.
+
+
+11159362 - allele freq 4 e 5 nat 18h40 23/07  24/07 11h41 ja terminado
+11162497 - allele freq nat 6-10 11h34 26/07 
+
 
 D no collapse: quando nao cobre o cromossomo inteiro, é porque as posicoes no array nao cobrem?
 ### desconectar da vpn (testar)

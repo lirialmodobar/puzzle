@@ -2,6 +2,7 @@
 
 - Ja foi rodado para o cromossomo 1 para toda a coorte, mas sem a divisao, e alem disso, vai mudar conforme novos cromossomos forem adicionados, entao nao sei se vale a pena continuar rodando alem de mais uma vez com a adaptacao para o caso SP e PA para teste.
 - Prototipo com os 3 estados, ja com o nome do arquivo, como atualização. Falta testar.
+- Testado e organizado, tudo ok.
 
 ## Tarefas
 
