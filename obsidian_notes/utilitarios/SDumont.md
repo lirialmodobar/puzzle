@@ -45,21 +45,28 @@ squeue -u liriel.almodobar - permite ver todos os jobs desse usuário
 11127348 - frag info 11, 12 terminou (PROXIMO VALIDO DE RODAR ALLELE FREQ)
 11157692 - frag info 4-9 terminou
 11157748 - frag info 10 terminou
-11162817 - frag info 1 - 3
-11162828 - frag info 13-22 
+11165135 - frag info 1-3 terminou, sem erro
+11164777 - frag info 13-22 terminou
+SEM MAIS FRAG INFO PRA FAZER, SÓ CHECAR
 
 11158609 - haps 4-9 13h22 -- 18h36 ja tinha terminado
 11159360 - haps 10 - 15 24/07 11h41 ja tinha terminaod
 11160413 - haps 16-19 11h50 24/07 23/07 13h24 ja tinha terminado
-11162512 - haps 1-3  VALIDO FAZER MSM SEM FRAG INFO
+11162512 - haps 1-3  VALIDO FAZER MSM SEM FRAG INFO terminou
+11164810 - haps 20-22 terminou
+SEM MAIS HAPS PRA FAZER, SÓ CHECAR.
+
 
 11160520 - checagem collapse 4-19, terminou e ta ok
 11162523 - checagem collapse 1 ao 3 terminou e ta ok
-11160503 - checagem arquivos presentes terminou, refazer, pq rerodei varios.
+11165148 - checagem arquivos presentes frag info
 
 
 11159362 - allele freq 4 e 5 nat 18h40 23/07  24/07 11h41 ja terminado
-11162497 - allele freq nat 6-10 11h34 26/07 
+11162497 - allele freq nat 6-10 11h34 26/07  29/07 12h23 ja tinha terminado (provavelmente bem antes, no fds)
+11164846 - allele freq nat 11-12 29/07 12h23 17h47 tinha terminado
+11165355 - allele freq nat 1-3 17h49 29/07 11h56 30/07 ja tinha terminado
+11166135 - allele freq nat 13-22 e 3 (tinha rodado 2x pra sp), 12h07 30/07
 
 
 D no collapse: quando nao cobre o cromossomo inteiro, é porque as posicoes no array nao cobrem?
