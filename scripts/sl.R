@@ -2,12 +2,15 @@ check_overlap <- function(row_1, row_2){
   last_bp_row_1 <- row_1["Column2"]
   first_bp_row_2 <- row_2["Column1"]
   if(!is.na(first_bp_row_2) && last_bp_row_1 > first_bp_row_2) {
-    overlapping_rows <- list(row_1, row_2)
-    return(overlapping_rows)
+    #overlapping_rows <- list(row_1, row_2)
+    #return(overlapping_rows)
+    return(TRUE)
   } else {
-    return(NULL)
+    #return(NULL)
+    return(FALSE)
   }
 }
+
 
 subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   # Get the value of the second column for row A
@@ -18,11 +21,31 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   
   # See if there is overlaps in y values
   if(nrow(y_values) != 0){
-    row_1 <- y_values[1,]
-    print(row_1)
-    row_2 <- y_values[2,]
-    print(row_2)
-      overlap_result <- check_overlap(row_1, row_2)
+    overlap_result <- list()
+    encountered_rows <- list()
+    previous_row <- y_values[1, ]
+    encountered_rows[[1]] <- previous_row
+    
+    for (i in 2:nrow(y_values)) {
+      current_row <- y_values[i, ]
+      
+      overlap <- check_overlap(previous_row, current_row)
+      
+      if (overlap) {
+        is_duplicate <- any(sapply(encountered_rows, function(row) all(row == current_row)))
+        
+        if (is_duplicate) {
+          overlap_result <- c(overlap_result, list(current_row))
+        } else {
+          overlap_result <- c(overlap_result, list(previous_row, current_row))
+        }
+        
+        encountered_rows <- c(encountered_rows, list(current_row))
+        previous_row <- current_row
+      } else {
+        break
+      }
+    }
   } else {
       overlap_result <- NULL
     }
@@ -32,8 +55,8 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   # Determine y rows to be analysed
     
     
-    if(length(overlap_result) == 0 && exists("row_1")) {
-      only_y_row <- row_1
+    if(length(overlap_result) == 0 && length(y_values != 0)) {
+      only_y_row <- y_values[1,]
     } else {
       y_rows <- overlap_result  
     }
@@ -80,8 +103,8 @@ generate_subsets <- function(df) {
 # Example usage:
 # Create a sample dataframe (replace this with your actual dataframe)
 df <- data.frame(
-  Column1 = c(1, 2, 3, 19, 20, 27, 35, 35, 40, 60, 90),
-  Column2 = c(10, 18, 18, 25, 26, 30, 40, 39, 50, 90, 100) 
+  Column1 = c(1, 2, 2, 3, 19, 20, 27, 35, 35, 35, 35, 40, 60, 90),
+  Column2 = c(10, 18, 18, 18, 25, 26, 30, 40, 40, 39, 39, 50, 90, 100) 
 ) 
 
 # Apply the function to generate subsets
@@ -141,3 +164,10 @@ process_subsets <- function(df, all_subsets){
 }
 
 all_subsets <- process_subsets(df, all_subsets)
+
+###n overlaps + n nao overlaps = n max
+###como calculo o n min? pq e dele q preciso... algo com se um dos grupos do overlap tem overlap com a proxima (ou as proximas?) linha possivel.. ou definir n minimo pela qtd de overlaps iniciais
+### ou last row nao inclui as ultimas linhas possiveis?? ir ao reverso?
+### tem overlap com a anterior (loop reverso)? se nao, conta como 1, talvez funcione... cai na mesma... despreza os outros sim? se depois de um certo ponto da iteracao a resposta sempre for sim, esses outros sim nao sao contados
+### n min = n overlaps? e ai n max n overlaps + n linhas sem overlap. mas so aplica n maximo se houver linhas sem overlap, e ai tem a condicional... acho que isso dá
+
