@@ -1,7 +1,9 @@
+library(rrapply)
+
 check_overlap <- function(row_1, row_2){
   last_bp_row_1 <- row_1["Column2"]
   first_bp_row_2 <- row_2["Column1"]
-  if(!is.na(first_bp_row_2) && last_bp_row_1 > first_bp_row_2) {
+  if(!is.na(first_bp_row_2) && last_bp_row_1 >= first_bp_row_2) {
     #overlapping_rows <- list(row_1, row_2)
     #return(overlapping_rows)
     return(TRUE)
@@ -11,6 +13,58 @@ check_overlap <- function(row_1, row_2){
   }
 }
 
+
+count_overlaps_and_non_overlaps <- function(df){
+  n <- nrow(df)
+  if (n == 0) return(list(overlap_blocks = 0, non_overlap_rows = 0))
+  overlap_count <- 0
+  non_overlap_count <- 0
+  i <- 1
+  
+  while (i < n) {
+    # Check for overlap
+    is_overlap <- check_overlap(df[i, ], df[i + 1, ])
+    if (is_overlap) {
+      overlap_count <- overlap_count + 1
+      print("Overlap block:")
+      # Print the first row of the overlapping block
+      print(df[i, ])
+      # Skip all consecutive overlapping rows and print them
+      while (i < n && check_overlap(df[i, ], df[i + 1, ])) {
+        i <- i + 1
+        print(df[i, ])
+      }
+    } else {
+      non_overlap_count <- non_overlap_count + 1
+      print(paste("Non-overlapping row:", paste(df[i, ], collapse = " ")))
+    }
+    i <- i + 1
+  }
+  
+  # Check the last row
+  if (i == n) {
+    if (n == 1 && !check_overlap(df[i - 1, ], df[i, ])) {
+      non_overlap_count <- non_overlap_count + 1
+      print(paste("Non-overlapping row:", paste(df[i, ], collapse = " ")))
+    } else {
+      print(df[i, ])
+    }
+  }
+  
+  return(list(overlap_blocks = overlap_count, non_overlap_rows = non_overlap_count))
+}
+
+y_0_matters <- function(df, min, max) {
+  if(min != max && min < nrow(df) && nrow(df) <= max) {
+    return(TRUE)
+  } 
+  else if (min == max && nrow(df) == min) {
+    return(TRUE)
+  }
+  else {
+    return(FALSE)
+  }
+}
 
 subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   # Get the value of the second column for row A
@@ -54,8 +108,7 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   
   # Determine y rows to be analysed
     
-    
-    if(length(overlap_result) == 0 && length(y_values != 0)) {
+   if(length(overlap_result) == 0 && nrow(y_values != 0)) {
       only_y_row <- y_values[1,]
     } else {
       y_rows <- overlap_result  
@@ -64,15 +117,19 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   # Initialize an empty list to store subsets
   subset_list <- list()
 
-  if (!is.null(df2) && nrow(y_values) == 0) {
+  if (!is.null(df2) && nrow(y_values) == 0 && y_0_matters(df2, min, max)) {
     subset_list[[length(subset_list) + 1]] <- df2
-  }
+  } 
+  
+
+  
   # Iterate over y rows 
   if(exists("only_y_row")){
     if(is.null(df2)){
       # Generate subset dataframe
       subset_df <- rbind(df[row_A_index, , drop = FALSE], only_y_row)
       subset_list[[length(subset_list) + 1]] <- subset_df
+      
     } else {
       subset_df <- rbind(df2, only_y_row)
       subset_list[[length(subset_list) + 1]] <- subset_df  
@@ -106,6 +163,11 @@ df <- data.frame(
   Column1 = c(1, 2, 2, 3, 19, 20, 27, 35, 35, 35, 35, 40, 60, 90),
   Column2 = c(10, 18, 18, 18, 25, 26, 30, 40, 40, 39, 39, 50, 90, 100) 
 ) 
+
+
+overlap_non_overlap <- count_overlaps_and_non_overlaps(df)
+min <- overlap_non_overlap[[1]]
+max <- overlap_non_overlap[[1]] + overlap_non_overlap[[2]]
 
 # Apply the function to generate subsets
 all_subsets <- generate_subsets(df)
@@ -148,9 +210,15 @@ process_subsets <- function(df, all_subsets){
       
       # Update the original all_subsets with the modified subset
       all_subsets[[i]] <- modified_subset
+    } 
+    else if (y_0_matters(subset_df, min, max)) {
+      all_subsets[[i]] <- modified_subset
+    }
+    else{
+      all_subsets[[i]] <- "not relevant"
     }
   } 
-  all_subsets <- unlist(all_subsets, recursive = FALSE)
+  all_subsets <- rrapply(all_subsets, classes = "data.frame", how = "flatten")
   new_index <- find_last_row_indices(df, all_subsets)
   print(index)
   # Check if all last row indices match last_row
