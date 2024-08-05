@@ -75,18 +75,21 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   
   # See if there is overlaps in y values
   if(nrow(y_values) != 0){
-    overlap_result <- list()
     encountered_rows <- list()
+    overlap_result <- list()
     previous_row <- y_values[1, ]
     encountered_rows[[1]] <- previous_row
+    
     
     for (i in 2:nrow(y_values)) {
       current_row <- y_values[i, ]
       
+      # Check overlap based on specific columns
       overlap <- check_overlap(previous_row, current_row)
       
       if (overlap) {
-        is_duplicate <- any(sapply(encountered_rows, function(row) all(row == current_row)))
+        # Check if the current row is a duplicate based on specific columns
+        is_duplicate <- any(sapply(encountered_rows, function(row) all(row[c("Column1", "Column2")] == current_row[c("Column1", "Column2")])))
         
         if (is_duplicate) {
           overlap_result <- c(overlap_result, list(current_row))
@@ -100,6 +103,7 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
         break
       }
     }
+    
   } else {
       overlap_result <- NULL
     }
@@ -160,9 +164,11 @@ generate_subsets <- function(df) {
 # Example usage:
 # Create a sample dataframe (replace this with your actual dataframe)
 df <- data.frame(
+  id = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
+  chr = c('A', 'A', 'A', 'A', 'B', 'B', 'B', 'C', 'C', 'C', 'C', 'D', 'E', 'F'),
   Column1 = c(1, 2, 2, 3, 19, 20, 27, 35, 35, 35, 35, 40, 60, 90),
-  Column2 = c(10, 18, 18, 18, 25, 26, 30, 40, 40, 39, 39, 50, 90, 100) 
-) 
+  Column2 = c(10, 18, 18, 18, 25, 26, 30, 40, 40, 39, 39, 50, 90, 100)
+)
 
 
 overlap_non_overlap <- count_overlaps_and_non_overlaps(df)
@@ -238,4 +244,6 @@ all_subsets <- process_subsets(df, all_subsets)
 ### ou last row nao inclui as ultimas linhas possiveis?? ir ao reverso?
 ### tem overlap com a anterior (loop reverso)? se nao, conta como 1, talvez funcione... cai na mesma... despreza os outros sim? se depois de um certo ponto da iteracao a resposta sempre for sim, esses outros sim nao sao contados
 ### n min = n overlaps? e ai n max n overlaps + n linhas sem overlap. mas so aplica n maximo se houver linhas sem overlap, e ai tem a condicional... acho que isso dá
+
+
 
