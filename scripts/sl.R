@@ -1,14 +1,11 @@
 library(rrapply)
 
 check_overlap <- function(row_1, row_2){
-  last_bp_row_1 <- row_1["Column2"]
-  first_bp_row_2 <- row_2["Column1"]
+  last_bp_row_1 <- row_1["last_bp"]
+  first_bp_row_2 <- row_2["first_bp"]
   if(!is.na(first_bp_row_2) && last_bp_row_1 >= first_bp_row_2) {
-    #overlapping_rows <- list(row_1, row_2)
-    #return(overlapping_rows)
     return(TRUE)
   } else {
-    #return(NULL)
     return(FALSE)
   }
 }
@@ -68,10 +65,10 @@ y_0_matters <- function(df, min, max) {
 
 subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   # Get the value of the second column for row A
-  x <- df[row_A_index, "Column2"]
+  x <- df[row_A_index, "last_bp"]
   
   # Find values from the first column greater than x
-  y_values <- subset(df, df$Column1 > x)
+  y_values <- subset(df, df$first_bp > x)
   
   # See if there is overlaps in y values
   if(nrow(y_values) != 0){
@@ -89,7 +86,7 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
       
       if (overlap) {
         # Check if the current row is a duplicate based on specific columns
-        is_duplicate <- any(sapply(encountered_rows, function(row) all(row[c("Column1", "Column2")] == current_row[c("Column1", "Column2")])))
+        is_duplicate <- any(sapply(encountered_rows, function(row) all(row[c("first_bp", "last_bp")] == current_row[c("first_bp", "last_bp")])))
         
         if (is_duplicate) {
           overlap_result <- c(overlap_result, list(current_row))
@@ -109,7 +106,6 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
     }
    
  
-  
   # Determine y rows to be analysed
     
    if(length(overlap_result) == 0 && nrow(y_values != 0)) {
@@ -161,23 +157,6 @@ generate_subsets <- function(df) {
   return(flattened_subsets)
 }
 
-# Example usage:
-# Create a sample dataframe (replace this with your actual dataframe)
-df <- data.frame(
-  id = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
-  chr = c('A', 'A', 'A', 'A', 'B', 'B', 'B', 'C', 'C', 'C', 'C', 'D', 'E', 'F'),
-  Column1 = c(1, 2, 2, 3, 19, 20, 27, 35, 35, 35, 35, 40, 60, 90),
-  Column2 = c(10, 18, 18, 18, 25, 26, 30, 40, 40, 39, 39, 50, 90, 100)
-)
-
-
-overlap_non_overlap <- count_overlaps_and_non_overlaps(df)
-min <- overlap_non_overlap[[1]]
-max <- overlap_non_overlap[[1]] + overlap_non_overlap[[2]]
-
-# Apply the function to generate subsets
-all_subsets <- generate_subsets(df)
-
 find_last_row_indices <- function(df1, df_list) {
   last_row_indices <- sapply(df_list, function(df) {
     last_row_df <- df[nrow(df), ]
@@ -192,12 +171,6 @@ find_last_row_indices <- function(df1, df_list) {
   return(last_row_indices)
 }
 
-
-#index <- find_last_row_indices(df, all_subsets)
-
-# Initialize a list to store the modified subsets
-#modified_subsets <- list()
-last_row <- nrow(df)
 process_subsets <- function(df, all_subsets){
   index <- find_last_row_indices(df, all_subsets)
   print(index)
@@ -212,9 +185,6 @@ process_subsets <- function(df, all_subsets){
     if (row != last_row) {
       # Apply the function with the corresponding index from find_last_row_indices
       modified_subset <- subset_dataframe(df, row, subset_df)
- #     modified_subset <- modified_subset[[1]]
-      
-      # Update the original all_subsets with the modified subset
       all_subsets[[i]] <- modified_subset
     } 
     else if (y_0_matters(subset_df, min, max)) {
@@ -237,13 +207,56 @@ process_subsets <- function(df, all_subsets){
   }
 }
 
-all_subsets <- process_subsets(df, all_subsets)
+write_dfs <- function(df, comb_number, directory) {
+  # Extracting the values from the columns to create the file name
+  chr_number <- df$chr[1]
+  state_table <- df$state[1]
+  anc_table_upper <- df$anc[1]
+  anc_table <- tolower(anc_table_upper)
+  
+  # Creating the file name
+  file_name <- paste0("chr_", chr_number, "_", anc_table, "_", state_table, "_comb_", comb_number, ".tsv")
+  
+  file_path <- file.path(directory, file_name)
+  
+  # Writing the data frame to a TSV file
+  write.table(df, file = file_path, sep = "\t", row.names = FALSE, col.names = TRUE)
+}
 
-###n overlaps + n nao overlaps = n max
-###como calculo o n min? pq e dele q preciso... algo com se um dos grupos do overlap tem overlap com a proxima (ou as proximas?) linha possivel.. ou definir n minimo pela qtd de overlaps iniciais
-### ou last row nao inclui as ultimas linhas possiveis?? ir ao reverso?
-### tem overlap com a anterior (loop reverso)? se nao, conta como 1, talvez funcione... cai na mesma... despreza os outros sim? se depois de um certo ponto da iteracao a resposta sempre for sim, esses outros sim nao sao contados
-### n min = n overlaps? e ai n max n overlaps + n linhas sem overlap. mas so aplica n maximo se houver linhas sem overlap, e ai tem a condicional... acho que isso dá
+
+#################################################################################################
+
+#Main script
+
+args <- commandArgs(trailingOnly = T)
+
+chr <- args[1]
+state <- args[2]
+anc <- args[3]
+base_dir <- "/scratch/unifesp/pgt/liriel.almodobar"
+
+
+collapse_dir <- file.path(base_dir, "puzzle", state, anc, "chr_info_unfilt")
+collapse_file <- paste0("chr_", chr, "_", anc, "_", state, "_unfilt.txt")
+collapse_info <- file.path(collapse_dir, collapse_file)
+
+collapse_info <- read.table(collapse_info, header = F, sep = "\t") [c(-5, -6)]
+colnames(collapse_info) <- c("id", "chr", "first_bp", "last_bp", "anc", "state")
+
+overlap_non_overlap <- count_overlaps_and_non_overlaps(collapse_info)
+min <- overlap_non_overlap[[1]]
+max <- overlap_non_overlap[[1]] + overlap_non_overlap[[2]]
+
+# Apply the function to generate subsets
+all_subsets <- generate_subsets(collapse_info)
+
+# Initialize a list to store the modified subsets
+last_row <- nrow(collapse_info)
+
+all_subsets <- process_subsets(collapse_info, all_subsets)
+
+seq_directory <- file.path(collapse_dir, "seq_info")  # Specify your directory here
+lapply(seq_along(all_subsets), function(i) write_dfs(all_subsets[[i]], i, seq_directory))
 
 
 
