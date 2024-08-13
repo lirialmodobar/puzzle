@@ -66,8 +66,15 @@ SEM MAIS HAPS PRA FAZER, SÓ CHECAR.
 11162497 - allele freq nat 6-10 11h34 26/07  29/07 12h23 ja tinha terminado (provavelmente bem antes, no fds)
 11164846 - allele freq nat 11-12 29/07 12h23 17h47 tinha terminado
 11165355 - allele freq nat 1-3 17h49 29/07 11h56 30/07 ja tinha terminado
-11168947 - allele freq nat 13-16 e 3 (tinha rodado 2x pra sp), 12h07 01/08
+11168947 - allele freq nat 13-16 e 3 (tinha rodado 2x pra sp), 12h07 01/08 terminou
+11173042 - allele freq nat 17-22 11h16  05/08 06/08 12h03 ja tinha terminado
+11174537 - allele freq afr 17-22 12h06 06/08 10h42 07/08 ja tinha terminado
+11175596 - allele freq afr 11-16 10h42 07/08 12h30 08/08 ja tinha terminado
+11176392  - allele freq afr 5-10 12h32 08/08 23h55 11/08 ja tinha terminado
+11180186 - allele freq afr 1-4 00h02 12/08
 
+
+11180175 - tentativa reconstruct 23h54 11/08
 
 D no collapse: quando nao cobre o cromossomo inteiro, é porque as posicoes no array nao cobrem?
 ### desconectar da vpn (testar)
