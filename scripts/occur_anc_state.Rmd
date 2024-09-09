@@ -213,9 +213,98 @@ region <- pgParams(chrom = "chr1", chromstart = 220000000, chromend = 248956422 
     y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
 )
   
-
-
 pageGuideHide()
+
+#Regions in other chrs
+
+##chr 3
+  
+#region <- pgParams(chrom = "chr3", chromstart = 11400000, chromend = 30000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+#region <- pgParams(chrom = "chr3", chromstart = 43000000, chromend = 70000000)
+#annoHighlight(
+ #   plot = signalplotNATSP, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+
+#region <- pgParams(chrom = "chr3", chromstart = 140000000, chromend = 152000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+#region <- pgParams(chrom = "chr3", chromstart = 154000000, chromend = 170000000)
+ # annoHighlight(
+  #  plot = ideogramPlot, params = region,
+   # fill = "salmon",
+    #y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+  
+#region <- pgParams(chrom = "chr3", chromstart = 177000000, chromend = 190000000)
+ # annoHighlight(
+  #  plot = ideogramPlot, params = region,
+   # fill = "salmon",
+    #y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+  
+##chr 4
+  
+#region <- pgParams(chrom = "chr4", chromstart = 66000000, chromend = 120000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+#region <- pgParams(chrom = "chr4", chromstart = 130000000, chromend = 180000000)
+#annoHighlight(
+ #   plot = signalplotNATSP, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+##chr 5
+  
+#region <- pgParams(chrom = "chr5", chromstart = 18400000, chromend = 35000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+#region <- pgParams(chrom = "chr5", chromstart = 72000000, chromend = 84500000)
+#annoHighlight(
+ #   plot = signalplotNATSP, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+
+#region <- pgParams(chrom = "chr5", chromstart = 110000000, chromend = 130000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+#region <- pgParams(chrom = "chr5", chromstart = 134800000, chromend = 142000000)
+ # annoHighlight(
+  #  plot = ideogramPlot, params = region,
+   # fill = "salmon",
+    #y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+  
+#region <- pgParams(chrom = "chr5", chromstart = 145500000, chromend = 182000000)
+ # annoHighlight(
+  #  plot = ideogramPlot, params = region,
+   # fill = "salmon",
+    #y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
 ```
 
 ## Get gene data for regions of interest
@@ -248,9 +337,6 @@ genes_region1 <- get_genes_in_region(regions$region1)
 genes_region2 <- get_genes_in_region(regions$region2)
 genes_region3 <- get_genes_in_region(regions$region3)
 genes_region4 <- get_genes_in_region(regions$region4)
-
-
-
 
 get_gene_summary <- function(entrez_id) {
     # Check if the Entrez ID is NA
