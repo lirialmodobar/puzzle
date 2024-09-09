@@ -71,10 +71,17 @@ SEM MAIS HAPS PRA FAZER, SÓ CHECAR.
 11174537 - allele freq afr 17-22 12h06 06/08 10h42 07/08 ja tinha terminado
 11175596 - allele freq afr 11-16 10h42 07/08 12h30 08/08 ja tinha terminado
 11176392  - allele freq afr 5-10 12h32 08/08 23h55 11/08 ja tinha terminado
-11180186 - allele freq afr 1-4 00h02 12/08
+11180177 - allele freq afr 1-4 00h02 12/08 13/08 17h24 tinha terminado
+11182148 - allele freq eur 1-4 pode falhar por time limit, 13/08 17h30 deu errado, apagar vestigios
+11200888 - allele freq nat 1-5, problema: n tinha grep -w
+11201890 - allele freq nat 1; problema: repeti o cohaps, tem q fazer pro 2 ao 5 tbm
+11202229 - allele freq nat 2-5 terminou
+11203009 - allele freq nat 6-11 terminou
+11207672 - allele freq nat 12-17 terminou
+11209561 - allele freq nat 18-22, falta o 10!  terminou
+11210629 - allele freq nat 10
 
-
-11180175 - tentativa reconstruct 23h54 11/08
+11180186 - tentativa reconstruct 23h54 11/08
 
 D no collapse: quando nao cobre o cromossomo inteiro, é porque as posicoes no array nao cobrem?
 ### desconectar da vpn (testar)

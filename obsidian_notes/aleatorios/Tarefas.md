@@ -46,15 +46,14 @@ Ordem aleatoria
 - ~~obsidian garantir que nao perderei dados e como compartilhar.~~
 	- feito usando git de uma forma mais besta, quem sabe um dia o obsidiansync
 - mudar ordem dos arquivos no obsidian
-- sanduiche???
 - pegar cracha (esta com a lilian da genetica)
 - ver como deixar o bloco de codigo decente no obsidian
 - lembrar qual treco do less deixa ver bonitinho
 - investigar cut --complement (usar o script diff pra testar)
 - ~~atualizar lattes~~
 - criar conteudo para estudar (ter fone talvez) para quando eu tiver mt cansada pra ficar so em script.
-	- estudar duckdb
-	- estudar nextflow
+	- estudar nextflow (https://training.nextflow.io/#applied-training)
+	- IBD e LAI e ai IBDNe
 
 ### Possiveis artigos science day
 
@@ -62,8 +61,8 @@ https://academic.oup.com/mbe/article/38/9/3497/6299394?login=true
 
 ### Artigos para entender mais dessa área
 
-https://academic.oup.com/mbe/article/39/1/msab339/6448769?login=true (contexto)
-https://www.pnas.org/doi/full/10.1073/pnas.1909075117 (contexto)
+~~https://academic.oup.com/mbe/article/39/1/msab339/6448769?login=true (contexto)~~
+~~https://www.pnas.org/doi/full/10.1073/pnas.1909075117 (contexto)~~
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7993749/ (métodos)
 ~~https://www.sciencedirect.com/science/article/pii/S0960982223002671?via%3Dihub (contexto)~~
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9014191/ (contexto)
