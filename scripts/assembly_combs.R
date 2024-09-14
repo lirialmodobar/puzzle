@@ -71,7 +71,7 @@ y_0_matters <- function(df, min_val, max_val) {
     print("y_0_matters: Condition 1 met.")
     return(TRUE)
   } 
-  else if (min_val == max_val && nrow(df) == min_val) {
+  else if ((min_val == max_val && nrow(df) == min_val) || (min_val == 1 && max_val == 1)) {
     print("y_0_matters: Condition 2 met.")
     return(TRUE)
   }
