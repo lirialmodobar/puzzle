@@ -1,0 +1,22 @@
+# Extract unique ID pairs
+unique_ids <- unique(sub("_w[12]", "", nanosight_plus_sampleinfo$id_sample))
+
+# Create a mapping of old IDs to new IDs
+set.seed(42) # For reproducibility
+new_ids <- sprintf("%05d", sample(1:99999, length(unique_ids), replace = FALSE))
+id_mapping <- setNames(new_ids, unique_ids)
+
+# Function to replace old IDs with new IDs
+replace_ids <- function(id) {
+  base_id <- sub("_w[12]", "", id)
+  new_base_id <- id_mapping[base_id]
+  sub(base_id, new_base_id, id)
+}
+
+# Apply the mapping to the dataframe
+
+nanosight_plus_sampleinfo$id_sample <- sapply(nanosight_plus_sampleinfo$id_sample, replace_ids)
+nanosight_plus_sampleinfo <- separate(nanosight_plus_sampleinfo, id_sample, into = c("subject_id", "w"), sep = "_", remove = FALSE)
+nanosight_plus_sampleinfo <- nanosight_plus_sampleinfo[-3]
+nanosight_plus_sampleinfo <- nanosight_plus_sampleinfo[-5]
+names(nanosight_plus_sampleinfo)[names(nanosight_plus_sampleinfo) == "subject_id"] <- "subjectid"
