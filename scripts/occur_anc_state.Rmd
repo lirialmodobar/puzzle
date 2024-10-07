@@ -1,0 +1,374 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+created_by: Jessica Mauer
+adapted_by: Liriel Almodobar
+---
+
+## Installing packages and databases
+
+```{r, eval=FALSE, echo = FALSE, message = FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install
+
+#Transcriptome ranges for the known gene track of Homo sapiens, e.g., introns, exons, UTR regions. usar o do seu genoma de ref!!
+BiocManager::install("TxDb.Hsapiens.UCSC.hg38.knownGene")
+
+#Gene-based information for Homo sapiens; useful for mapping between gene IDs, Names, Symbols, GO and KEGG identifiers, etc.
+
+BiocManager::install("org.Hs.eg.db")
+
+#Provides a convenient interface to annotations from many different sources; objects are returned as fully parsed Bioconductor data objects or as the name of a file on disk.
+
+BiocManager::install("AnnotationHub")
+
+#plotgardener package
+
+BiocManager::install("plotgardener")
+
+#biomart
+
+BiocManager::install("biomaRt")
+
+```
+
+```{r, echo=FALSE, message = FALSE}
+## Load libraries and datasets
+library("plotgardener")
+library("org.Hs.eg.db")
+library("TxDb.Hsapiens.UCSC.hg38.knownGene")
+library("AnnotationHub")
+library("biomaRt")
+
+```
+
+## Formatting occurrence tables
+
+```{r}
+
+## NAT RS
+read.table("/home/yuri/liri/puzzle/rs/nat/chr_info_unfilt/count_info/freqs_chr_1_nat_rs.txt", h=F) -> count_nat_rs
+count_nat_rs <- count_nat_rs[order(count_nat_rs[,3]),]
+count_nat_rs <- count_nat_rs[,c(2,3,6)]
+count_nat_rs <- count_nat_rs[!duplicated(count_nat_rs),]
+colnames(count_nat_rs) <- c("chrom","bp", "score")
+paste("chr",count_nat_rs$chrom,sep='') -> count_nat_rs$chrom
+count_nat_rs$end <- c(count_nat_rs$bp[2:length(count_nat_rs$bp)] - 1, count_nat_rs$bp[length(count_nat_rs$bp)] + 1)
+
+count_nat_rs <- count_nat_rs[,c(1,2,4,3)]
+colnames(count_nat_rs) <- c("chrom", "start", "end", "score")
+mean_rs <- mean(count_nat_rs$score)
+count_nat_rs$score <- count_nat_rs$score - mean_rs ## version with negative values
+
+
+##NAT SP
+
+read.table("/home/yuri/liri/puzzle/sp/nat/chr_info_unfilt/count_info/freqs_chr_1_nat_sp.txt", h=F) -> count_nat_sp
+count_nat_sp <- count_nat_sp[order(count_nat_sp[,3]),]
+count_nat_sp <- count_nat_sp[,c(2,3,6)]
+count_nat_sp <- count_nat_sp[!duplicated(count_nat_sp),]
+colnames(count_nat_sp) <- c("chrom","bp", "score")
+paste("chr",count_nat_sp$chrom,sep='') -> count_nat_sp$chrom
+count_nat_sp$end <- c(count_nat_sp$bp[2:length(count_nat_sp$bp)] - 1, count_nat_sp$bp[length(count_nat_sp$bp)] + 1)
+
+count_nat_sp <- count_nat_sp[,c(1,2,4,3)]
+colnames(count_nat_sp) <- c("chrom", "start", "end", "score")
+mean_sp <- mean(count_nat_sp$score)
+mean_diff <- mean_rs - mean_sp
+count_nat_sp$score <- count_nat_sp$score + mean_diff
+count_nat_sp$score <- count_nat_sp$score - mean_rs ##version with negative values
+
+
+```
+
+## Plotting parameters
+
+```{r}
+max_score <- max(count_nat_sp$score)
+min_score <- min(count_nat_rs$score, count_nat_sp$score) ## version with negative values
+print(max_score)
+print(min_score) ## version with negative values
+
+
+params <- pgParams(
+    chrom = "chr1", 
+    chromstart = 1, chromend = 249000000, 
+    assembly = "hg38",
+    x = 0.5, just = c("left", "top"),
+    width = 4, length = 4, default.units = "inches",
+    #range = c(0, max_score)
+    range = c(min_score, max_score) ## version with negative values
+)
+
+```
+
+## Obtaining signal plots
+
+```{r}
+pageCreate(
+    width = 6, height = 5, default.units = "inches", xgrid = 0, ygrid = 0
+)
+
+## Plot and place ideogram
+
+ideogramPlot <- plotIdeogram(params= params,
+    y = 0.5, height = 0.2,
+)
+
+## Plot and place signal plots
+
+## Plot
+signalplot <- plotSignal(
+    data = count_nat_rs,
+    linecolor = "darkgreen",
+    params = params,
+    y = "0.2b", height = 1.0,
+    negData = TRUE ##version with negative values
+)
+
+### Annotate y-axis
+annoYaxis(
+    #plot = signalplot, at = seq(0, max_score+50, by = 50),
+  plot = signalplot, at = round(seq(min_score, max_score+10, by = 10), digits = 0), ##version with negative values
+   axisLine = FALSE, fontsize = 9
+)
+
+### Plot
+
+signalplotNATSP <- plotSignal(
+    data = count_nat_sp,
+    linecolor = "green",
+    params = params,
+    y = "0.2b", height = 1.0,
+    negData = TRUE ##version with negative values
+)
+
+### Annotate y-axis
+annoYaxis(
+    #plot = signalplotNATSP, at = seq(0, max_score+50, by = 50),
+   plot = signalplotNATSP, at = round(seq(min_score, max_score+10, by = 10), digits = 0), ##version with negative values
+   axisLine = FALSE, fontsize = 9
+)
+
+### Plot y-axis label
+plotText(
+    label = "variants occurrences", x = 0.005, y = 1.90, rot = 90,
+    fontsize = 9, fontface = "plain", just = "center",
+    default.units = "inches"
+)
+
+### Annotate X axis
+annoXaxis(
+    plot = signalplotNATSP,
+    at = format(seq(1, 249000000, by = 20000000),scientific = TRUE),
+    axisLine = TRUE, fontsize = 9,
+)
+
+plotText(
+  label = "chr1",
+  x = 2.5,
+  y = "0.43b",
+  fontsize = 9
+)
+
+### Plot legend
+legendPlot <- plotLegend(
+    legend = c("NAT_RS","NAT_SP"),
+    fill = c("darkgreen", "green"),
+    border = FALSE,
+    x = 4.5, y = 2.40, width = 1.5, height = 1.0,
+    just = c("left", "top"),
+    default.units = "inches"
+)
+
+# We can then use annoHighlight() to highlight our genomic region of interest with a box of our desired height:
+region <- pgParams(chrom = "chr1", chromstart = 13000000, chromend = 30000000)
+annoHighlight(
+    plot = ideogramPlot, params = region,
+    fill = "salmon",
+    y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+)
+region <- pgParams(chrom = "chr1", chromstart = 60000000, chromend = 76000000)
+annoHighlight(
+    plot = signalplotNATSP, params = region,
+    fill = "salmon",
+    y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+)
+
+
+region <- pgParams(chrom = "chr1", chromstart = 166000000, chromend = 176000000)
+annoHighlight(
+    plot = ideogramPlot, params = region,
+    fill = "salmon",
+    y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+)
+
+region <- pgParams(chrom = "chr1", chromstart = 220000000, chromend = 248956422 )
+  annoHighlight(
+    plot = ideogramPlot, params = region,
+    fill = "salmon",
+    y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+)
+  
+pageGuideHide()
+
+#Regions in other chrs
+
+##chr 3
+  
+#region <- pgParams(chrom = "chr3", chromstart = 11400000, chromend = 30000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+#region <- pgParams(chrom = "chr3", chromstart = 43000000, chromend = 70000000)
+#annoHighlight(
+ #   plot = signalplotNATSP, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+
+#region <- pgParams(chrom = "chr3", chromstart = 140000000, chromend = 152000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+#region <- pgParams(chrom = "chr3", chromstart = 154000000, chromend = 170000000)
+ # annoHighlight(
+  #  plot = ideogramPlot, params = region,
+   # fill = "salmon",
+    #y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+  
+#region <- pgParams(chrom = "chr3", chromstart = 177000000, chromend = 190000000)
+ # annoHighlight(
+  #  plot = ideogramPlot, params = region,
+   # fill = "salmon",
+    #y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+  
+##chr 4
+  
+#region <- pgParams(chrom = "chr4", chromstart = 66000000, chromend = 120000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+#region <- pgParams(chrom = "chr4", chromstart = 130000000, chromend = 180000000)
+#annoHighlight(
+ #   plot = signalplotNATSP, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+##chr 5
+  
+#region <- pgParams(chrom = "chr5", chromstart = 18400000, chromend = 35000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+#region <- pgParams(chrom = "chr5", chromstart = 72000000, chromend = 84500000)
+#annoHighlight(
+ #   plot = signalplotNATSP, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+
+#region <- pgParams(chrom = "chr5", chromstart = 110000000, chromend = 130000000)
+#annoHighlight(
+ #   plot = ideogramPlot, params = region,
+  #  fill = "salmon",
+   # y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+
+#region <- pgParams(chrom = "chr5", chromstart = 134800000, chromend = 142000000)
+ # annoHighlight(
+  #  plot = ideogramPlot, params = region,
+   # fill = "salmon",
+    #y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+  
+#region <- pgParams(chrom = "chr5", chromstart = 145500000, chromend = 182000000)
+ # annoHighlight(
+  #  plot = ideogramPlot, params = region,
+   # fill = "salmon",
+    #y = 0.45, height = 0.3, just = c("left", "top"), default.units = "inches", alpha = 0.3
+#)
+```
+
+## Get gene data for regions of interest
+
+```{r}
+# Connect to Ensembl using biomaRt
+ensembl <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl")
+
+# Define regions
+regions <- list(
+    region1 = c("1", 13000000, 30000000),
+    region2 = c("1",  60000000, 76000000),
+    region3 = c("1", 166000000, 176000000),
+    region4 = c("1", 220000000, 248956422)
+)
+
+# Function to get genes in a region
+get_genes_in_region <- function(region) {
+    getBM(
+        attributes = c("ensembl_gene_id", "entrezgene_id", "external_gene_name",  "chromosome_name", "start_position", "end_position"),
+        filters = c("chromosome_name", "start", "end"),
+        values = list(region[1], region[2], region[3]),
+        mart = ensembl
+    )
+}
+
+
+# Extract genes for each region
+genes_region1 <- get_genes_in_region(regions$region1)
+genes_region2 <- get_genes_in_region(regions$region2)
+genes_region3 <- get_genes_in_region(regions$region3)
+genes_region4 <- get_genes_in_region(regions$region4)
+
+get_gene_summary <- function(entrez_id) {
+    # Check if the Entrez ID is NA
+    if (is.na(entrez_id)) {
+        return(NA)
+    }
+    
+    # Attempt to fetch the gene summary
+    summary <- tryCatch({
+        entrez_summary(db = "gene", id = entrez_id)
+    }, error = function(e) {
+        return(NULL)
+    })
+    
+    # Return the summary if available, otherwise NA
+    if (!is.null(summary) && !is.null(summary$summary)) {
+        return(summary$summary)
+    } else {
+        return(NA)
+    }
+}
+
+genes_region1$gene_summary <- sapply(genes_region1$entrezgene_id, get_gene_summary)
+genes_region2$gene_summary <- sapply(genes_region2$entrezgene_id, get_gene_summary)
+genes_region3$gene_summary <- sapply(genes_region3$entrezgene_id, get_gene_summary)
+genes_region4$gene_summary <- sapply(genes_region4$entrezgene_id, get_gene_summary)
+
+write.csv(genes_region1, "genes_1_chr1.csv", quote = FALSE, row.names = FALSE)
+write.csv(genes_region2, "genes_2_chr1.csv", quote = FALSE, row.names = FALSE)
+write.csv(genes_region3, "genes_3_chr1.csv", quote = FALSE, row.names = FALSE)
+write.csv(genes_region4, "genes_4_chr1.csv", quote = FALSE, row.names = FALSE)
+
+
+
+```
