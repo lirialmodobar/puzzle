@@ -1,10 +1,10 @@
 #!/bin/bash
-WD=/home/santoro-lab/liri/teste_dir
+WD=/mnt/genetica_1/liriel
 COLLAPSE=$WD/output_collapse
-INFOS_TXT=$WD/infos_txt
+INFOS=$WD/infos
 CHRS_UNFILT="chr_info_unfilt"
-CHRS_FILT="chr_info_filt_largest_frag"
-#Check which file should be used as reference for start and end bp for gaps (filt or unfilt). Hypothesis is the filt since it gets the largest frags.
+CHRS_FILT="chr_info_filt"
+#Check which file should be used as reference for start and end bp for gaps (filt or unfilt)
 process_chr_file() {
     local label_lower="$1"
     local dir="$2"
@@ -26,11 +26,11 @@ for label in "${labels[@]}"; do
     label_lower="${label,,}"
 
     ### Process both "filt" and "unfilt" files for each chromosome
-    for chr in {1..22}; do
+    for chr in {1..2}; do
         process_chr_file "$label_lower" "$CHRS_FILT" "$chr" "filt"
         process_chr_file "$label_lower" "$CHRS_UNFILT" "$chr" "unfilt"
     done
 
-##Compare the gap files to check if the extra ones that unfilt has are in fact covered by the filt
+##Compare the gap files
 diff $WD/$label_lower/$CHRS_FILT/gap_filt_frags_"$label_lower".txt $WD/$label_lower/$CHRS_UNFILT/gap_unfilt_frags_"$label_lower".txt > $WD/$label_lower/diff_gap_filt_unfilt_"$label_lower".txt
 done
