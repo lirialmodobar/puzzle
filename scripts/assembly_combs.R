@@ -55,7 +55,7 @@ y_0_matters <- function(df, min, max) {
   if(min != max && min < nrow(df) && nrow(df) <= max) {
     return(TRUE)
   } 
-  else if (min == max && nrow(df) == min) {
+  else if ((min == max && nrow(df) == min) || (min == 1 && max == 1))  {
     return(TRUE)
   }
   else {
@@ -116,10 +116,15 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   
   # Initialize an empty list to store subsets
   subset_list <- list()
-
-  if (!is.null(df2) && nrow(y_values) == 0 && y_0_matters(df2, min, max)) {
+  condition_1 <- !is.null(df2) && nrow(y_values) == 0 && y_0_matters(df2, min, max)
+  condition_2 <- is.null(df2) && nrow(y_values) == 0 && y_0_matters(df, min, max)
+  if ( condition_1) {
     subset_list[[length(subset_list) + 1]] <- df2
-  } 
+  } else if (condition_2){
+    for (i in 1:nrow(df)) {
+      subset_list[[length(subset_list) + 1]] <- df[i, ]
+    }
+  }
   
 
   
@@ -152,9 +157,14 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
 
 # Apply the function to all rows of the dataframe
 generate_subsets <- function(df) {
-  subsets <- lapply(1:(nrow(df)-1), function(i) subset_dataframe(df, i))
-  flattened_subsets <- unlist(subsets, recursive = FALSE)
-  return(flattened_subsets)
+  if(max == min && max != 1 || max != min){
+    subsets <- lapply(1:(nrow(df)-1), function(i) subset_dataframe(df, i))
+    flattened_subsets <- unlist(subsets, recursive = FALSE)
+    return(flattened_subsets)
+  } else {
+    subsets <- subset_dataframe(df, 1)
+    return(subsets)
+  }
 }
 
 find_last_row_indices <- function(df1, df_list) {
@@ -207,7 +217,7 @@ process_subsets <- function(df, all_subsets){
   }
 }
 
-write_dfs <- function(df, comb_number, directory) {
+write_dfs <- function(df, subset, comb_number, directory) {
   # Extracting the values from the columns to create the file name
   chr_number <- df$chr[1]
   state_table <- df$state[1]
@@ -220,7 +230,7 @@ write_dfs <- function(df, comb_number, directory) {
   file_path <- file.path(directory, file_name)
   
   # Writing the data frame to a TSV file
-  write.table(df, file = file_path, sep = "\t", row.names = FALSE, col.names = TRUE)
+  write.table(subset, file = file_path, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
 
 
@@ -233,15 +243,18 @@ args <- commandArgs(trailingOnly = T)
 chr <- args[1]
 state <- args[2]
 anc <- args[3]
-base_dir <- "/scratch/unifesp/pgt/liriel.almodobar"
+base_dir <- "/home/yuri/liri"
 
 
-collapse_dir <- file.path(base_dir, "puzzle", state, anc, "chr_info_unfilt")
+
+collapse_dir <- file.path(base_dir, "puzzle_sdumont", state, anc, "chr_info_unfilt")
 collapse_file <- paste0("chr_", chr, "_", anc, "_", state, "_unfilt.txt")
 collapse_info <- file.path(collapse_dir, collapse_file)
 
 collapse_info <- read.table(collapse_info, header = F, sep = "\t") [c(-5, -6)]
 colnames(collapse_info) <- c("id", "chr", "first_bp", "last_bp", "anc", "state")
+collapse_info <- collapse_info[order(collapse_info[,3], collapse_info[,4]),]
+
 
 overlap_non_overlap <- count_overlaps_and_non_overlaps(collapse_info)
 min <- overlap_non_overlap[[1]]
@@ -256,7 +269,8 @@ last_row <- nrow(collapse_info)
 all_subsets <- process_subsets(collapse_info, all_subsets)
 
 seq_directory <- file.path(collapse_dir, "seq_info")  # Specify your directory here
-lapply(seq_along(all_subsets), function(i) write_dfs(all_subsets[[i]], i, seq_directory))
+lapply(seq_along(all_subsets), function(i) write_dfs(collapse_info, all_subsets[[i]], i, seq_directory))
 
-
-
+##TO: repetiu 9 e 10 e 2 e 3, perdeu as linhas individuais dos q n eram combs... se 1 linha for parte de um overlap block, salvar cada parte do bloco a que ela pertence separadamente
+#ou corrigir tipo 1,5 ou 6, nada no meio
+# se tem como grudar mais de 1 e nao gruda, nao quero
