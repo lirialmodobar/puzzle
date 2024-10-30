@@ -81,7 +81,9 @@ SEM MAIS HAPS PRA FAZER, SÓ CHECAR.
 11209561 - allele freq nat 18-22, falta o 10!  terminou
 11210629 - allele freq nat 10
 
-11180186 - tentativa reconstruct 23h54 11/08
+11180186 - tentativa reconstruct 23h54 11/08 TINHA ACABADO, ACABOU ANTES DO 30/08!!! nao escreveu nada, ue....
+
+11224130 - reconstruct teste
 
 D no collapse: quando nao cobre o cromossomo inteiro, é porque as posicoes no array nao cobrem?
 ### desconectar da vpn (testar)

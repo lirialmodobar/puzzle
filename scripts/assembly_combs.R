@@ -71,6 +71,7 @@ y_0_matters <- function(df, min_val, max_val) {
     print("y_0_matters: Condition 1 met.")
     return(TRUE)
   } 
+
   else if ((min_val == max_val && nrow(df) == min_val) || (min_val == 1 && max_val == 1)) {
     print("y_0_matters: Condition 2 met.")
     return(TRUE)
@@ -148,11 +149,16 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   
   # Initialize an empty list to store subsets
   subset_list <- list()
-  
-  if (!is.null(df2) && nrow(y_values) == 0 && y_0_matters(df2, min_val, max_val)) {
-    print("Adding df2 to subset_list based on y_0_matters condition.")
+ condition_1 <- !is.null(df2) && nrow(y_values) == 0 && y_0_matters(df2, min, max)
+  condition_2 <- is.null(df2) && nrow(y_values) == 0 && y_0_matters(df, min, max)
+  if ( condition_1) {
     subset_list[[length(subset_list) + 1]] <- df2
-  } 
+  } else if (condition_2){
+    for (i in 1:nrow(df)) {
+      subset_list[[length(subset_list) + 1]] <- df[i, ]
+    }
+  }
+  }
   
   # Iterate over y rows 
   if(exists("only_y_row")){
@@ -192,14 +198,14 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
 
 # Function to generate subsets for all rows
 generate_subsets <- function(df) {
-  print("Generating subsets for all rows.")
-  subsets <- lapply(1:(nrow(df)-1), function(i) {
-    print(paste("Generating subset for row", i))
-    subset_dataframe(df, i)
-  })
-  flattened_subsets <- unlist(subsets, recursive = FALSE)
-  print(paste("Total subsets generated:", length(flattened_subsets)))
-  return(flattened_subsets)
+  if(max_val == min_val && max_val != 1 || max_val != min_val){
+    subsets <- lapply(1:(nrow(df)-1), function(i) subset_dataframe(df, i))
+    flattened_subsets <- unlist(subsets, recursive = FALSE)
+    return(flattened_subsets)
+  } else {
+    subsets <- subset_dataframe(df, 1)
+    return(subsets)
+  }
 }
 
 # Function to find last row indices
@@ -273,8 +279,9 @@ process_subsets <- function(df, all_subsets){
   }
 }
 
-# Function to write dataframes to TSV files
-write_dfs <- function(df, comb_number, directory) {
+
+write_dfs <- function(df, subset, comb_number, directory) {
+
   print(paste("Writing dataframe", comb_number, "to directory:", directory))
   
   # Ensure the directory exists
@@ -297,12 +304,7 @@ write_dfs <- function(df, comb_number, directory) {
   print(paste("Full file path:", file_path))
   
   # Writing the data frame to a TSV file
-  tryCatch({
-    write.table(df, file = file_path, sep = "\t", row.names = FALSE, col.names = TRUE)
-    print(paste("Successfully wrote to", file_path))
-  }, error = function(e){
-    print(paste("Error writing to", file_path, ":", e$message))
-  })
+  write.table(subset, file = file_path, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
 
 #################################################################################################
@@ -323,12 +325,13 @@ if(length(args) < 3){
 chr <- args[1]
 state <- args[2]
 anc <- args[3]
-base_dir <- "/scratch/unifesp/pgt/liriel.almodobar"
+base_dir <- "/home/yuri/liri"
+
 
 print(paste("Parameters - chr:", chr, ", state:", state, ", anc:", anc))
 print(paste("Base directory:", base_dir))
 
-collapse_dir <- file.path(base_dir, "puzzle", state, anc, "chr_info_unfilt")
+collapse_dir <- file.path(base_dir, "puzzle_sdumont", state, anc, "chr_info_unfilt")
 collapse_file <- paste0("chr_", chr, "_", anc, "_", state, "_unfilt.txt")
 collapse_info_path <- file.path(collapse_dir, collapse_file)
 
@@ -342,8 +345,7 @@ if(!file.exists(collapse_info_path)){
 # Read the collapse info
 collapse_info <- read.table(collapse_info_path, header = FALSE, sep = "\t")[c(-5, -6)]
 colnames(collapse_info) <- c("id", "chr", "first_bp", "last_bp", "anc", "state")
-print("Collapse info dataframe loaded:")
-print(head(collapse_info))
+collapse_info <- collapse_info[order(collapse_info[,3], collapse_info[,4]),]
 
 # Count overlaps and non-overlaps
 overlap_non_overlap <- count_overlaps_and_non_overlaps(collapse_info)
@@ -367,22 +369,9 @@ all_subsets <- process_subsets(collapse_info, all_subsets)
 
 # Define the directory to write the sequences
 seq_directory <- file.path(collapse_dir, "seq_info")  # Specify your directory here
-print(paste("Sequence directory set to:", seq_directory))
-
-# Write all subsets to files
-print("Starting to write all subsets to files.")
-lapply(seq_along(all_subsets), function(i) {
-  subset <- all_subsets[[i]]
-  
-  if (is.data.frame(subset)) {
-    print(paste("Writing subset", i))
-    write_dfs(subset, i, seq_directory)
-  } else {
-    print(paste("Subset", i, "is not a dataframe. Skipping write. Content:", subset))
-  }
-})
-
-print("Script completed.")
+lapply(seq_along(all_subsets), function(i) write_dfs(collapse_info, all_subsets[[i]], i, seq_directory))
 
 
-
+##TO: repetiu 9 e 10 e 2 e 3, perdeu as linhas individuais dos q n eram combs... se 1 linha for parte de um overlap block, salvar cada parte do bloco a que ela pertence separadamente
+#ou corrigir tipo 1,5 ou 6, nada no meio
+# se tem como grudar mais de 1 e nao gruda, nao quero
