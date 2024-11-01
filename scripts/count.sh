@@ -1,10 +1,10 @@
 #!/bin/bash
+
 WD=/home/yuri/liri/puzzle/109_preliminar_oct23/109_17jan24
 COLLAPSE=/home/yuri/puzzle/109_preliminar_oct23/output_collapse
 INFOS=$WD/infos
 CHRS_UNFILT="chr_info_unfilt"
 CHRS_FILT="chr_info_filt"
-
 
 find_vars_within_pos_range() {
     local pos_file="$1"
