@@ -323,12 +323,12 @@ if(length(args) < 3){
 chr <- args[1]
 state <- args[2]
 anc <- args[3]
-base_dir <- "/scratch/unifesp/pgt/liriel.almodobar"
+base_dir <- "/mnt/genetica_1/liriel"
 
 print(paste("Parameters - chr:", chr, ", state:", state, ", anc:", anc))
 print(paste("Base directory:", base_dir))
 
-collapse_dir <- file.path(base_dir, "puzzle", state, anc, "chr_info_unfilt")
+collapse_dir <- file.path(base_dir, state, anc, "chr_info_unfilt")
 collapse_file <- paste0("chr_", chr, "_", anc, "_", state, "_unfilt.txt")
 collapse_info_path <- file.path(collapse_dir, collapse_file)
 
