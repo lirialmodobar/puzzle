@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Set the working directory
 WD=/prj/unifesp/pgt/liriel.almodobar/puzzle
 
 chr=$1
