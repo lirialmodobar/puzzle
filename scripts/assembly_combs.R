@@ -158,7 +158,7 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
       subset_list[[length(subset_list) + 1]] <- df[i, ]
     }
   }
-  }
+  
   
   # Iterate over y rows 
   if(exists("only_y_row")){
