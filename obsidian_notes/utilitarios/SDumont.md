@@ -83,7 +83,7 @@ SEM MAIS HAPS PRA FAZER, SÓ CHECAR.
 
 11180186 - tentativa reconstruct 23h54 11/08 TINHA ACABADO, ACABOU ANTES DO 30/08!!! nao escreveu nada, ue....
 
-11224130 - reconstruct teste
+11236397 - reconstruct teste 28/11 12h
 
 D no collapse: quando nao cobre o cromossomo inteiro, é porque as posicoes no array nao cobrem?
 ### desconectar da vpn (testar)
