@@ -1,14 +1,8 @@
-# Load project environment
-if (!requireNamespace("renv", quietly = TRUE)) {
-	# Install renv and its dependencies
-	install.packages("renv", dependencies = TRUE)
-}
-library(renv)
-renv::restore()
-
 # Load the required packages
 library(karyoploteR)
-library(optparse)
+library(RColorBrewer)
+# Get command line arguments
+args <- commandArgs(trailingOnly = TRUE)
 
 # Set the working directory
 wd <- "/home/yuri/liri/puzzle"  
@@ -55,30 +49,6 @@ option_list <- list(
 	make_option(c("--chrom"), type = "logical", default = NULL,
 	      help = "Specify the chromosome to use. If not specified, all chromosomes will be used.")
 )
-
-# Parse command-line arguments
-opt_parser <- OptionParser(usage = "Usage: Rscript script.R [options]", option_list = option_list)
-opt <- parse_args(opt_parser)
-
-if (opt$run_as_test) {
-	# Check that --rows_per_anc is not provided when --run_as_test is enabled
-	if (!is.null(opt$rows_per_anc)) {
-		cat("Error: The --run_as_test flag should not be used with the --rows_per_anc option.\n")
-		quit(status = 1)
-	}
-} else {
-	# Check that --rows_per_anc is provided when not running as a test
-	if (is.null(opt$rows_per_anc) || !file.exists(opt$rows_per_anc)) {
-		cat("Error: Please provide a valid --rows_per_anc file.\n")
-		quit(status = 1)
-	}
-	# Read the provided file and validate its format
-	rows_data <- read.table(opt$rows_per_anc, header = FALSE, sep = "\t")
-		if (ncol(rows_data) != 2 || any(is.na(rows_data$V1)) || any(is.na(rows_data$V2) || any(duplicated(rows_data$V2))) {
-			cat("Error: The input file must contain two tab-delimited columns with no header (n_rows and label), and labels should not be repeated.\n")
-			quit(status = 1)
-		}
-}
 
 # Loop through the labels and chromosomes
 for (i in 1:length(states)) {
