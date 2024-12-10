@@ -1,5 +1,5 @@
-WD=/scratch/unifesp/pgt/liriel.almodobar/puzzle
-HAPS_SAMPLE_DIR=$WD/bhrc_haps_hg38
+WD=/mnt/genetica_1/liriel
+#HAPS_SAMPLE_DIR=$WD/bhrc_haps_hg38
 
 # Check if all three arguments are provided
 if [ $# -ne 3 ]; then
@@ -65,7 +65,7 @@ allele_freq(){
 
 ##Main script
 
-find_vars_within_pos_range $INPUT_FILE "$WD/infos/haps_geno_header_${chr}.txt" "$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
+#find_vars_within_pos_range $INPUT_FILE "$WD/infos/haps_geno_header_${chr}.txt" "$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
 
 cohaps="$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
 
