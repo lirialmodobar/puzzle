@@ -6,8 +6,8 @@ library(tidyr)
 ##Data import
 rs_dir <- "/home/yuri/liri/puzzle/rs/nat/chr_info_unfilt/count_info"
 sp_dir <- "/home/yuri/liri/puzzle/sp/nat/chr_info_unfilt/count_info"
-rs_file <- file.path(rs_dir, "freqs_chr_1_nat_rs.txt")
-sp_file <- file.path(sp_dir, "freqs_chr_1_nat_sp.txt")
+rs_file <- file.path(rs_dir, "freqs_chr_5_nat_rs.txt")
+sp_file <- file.path(sp_dir, "freqs_chr_5_nat_sp.txt")
 rs <- read.table(rs_file, sep = "\t")
 colnames(rs) <- c("SNP", "CHR", "BP", "allele", "count_rs", "total_rs", "freq_rs") #not sure if i need that
 sp <- read.table(sp_file, sep = "\t")
