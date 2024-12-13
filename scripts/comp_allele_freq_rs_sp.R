@@ -12,6 +12,7 @@ rs <- read.table(rs_file, sep = "\t")
 colnames(rs) <- c("SNP", "CHR", "BP", "allele", "count_rs", "total_rs", "freq_rs") #not sure if i need that
 sp <- read.table(sp_file, sep = "\t")
 
+
 ##Data exploration
 rsvars <- rs[, c(1,4,7)]
 spvars <- sp[, c(1,4,7)]
@@ -72,3 +73,17 @@ vep <- vep %>%
  arrange(CHR, BP)
 
 write.table(vep, "vep_5.tsv", row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "\t")
+
+##All chromosomes vep input
+
+vep_1 <- read.table("/home/yuri/liri/puzzle/vep_input/vep.tsv")
+vep_2 <- read.table("/home/yuri/liri/puzzle/vep_input/vep_2.tsv")
+vep_3 <- read.table("/home/yuri/liri/puzzle/vep_input/vep_3.tsv")
+vep_4 <- read.table("/home/yuri/liri/puzzle/vep_input/vep_4.tsv")
+vep_5 <- read.table("/home/yuri/liri/puzzle/vep_input/vep_5.tsv")
+
+vep_1_5 <- rbind(vep_1, vep_2, vep_3, vep_4, vep_5)
+
+vep_1_5 <- vep_1_5[order(vep_1_5$V1, vep_1_5$V2), ]
+
+write.table(vep_1_5, "vep_1_5.tsv", row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "\t")
