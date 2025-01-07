@@ -61,8 +61,14 @@ organize_enrichment_results <- function(enrichResult)  {
   }
 }
 
+#Initializing df to save data from all chrs
+diff_rs_gt_sp_all <- data.frame(chr = integer(), pos = integer())
+diff_sp_gt_rs_all <- data.frame(chr = integer(), pos = integer())
+similar_pos_all <-  data.frame(chr = integer(), pos = integer())
+diff_pos_all <- data.frame(chr = integer(), pos = integer())
+
 # Define the loop over chromosomes
-for (chr in 1:2) {
+for (chr in 1:22) {
   #Data processing
   ## NAT RS
   freqs_rs <- paste0("/home/yuri/liri/puzzle_sdumont/rs/nat/chr_info_unfilt/count_info/freqs_chr_", chr, "_nat_rs.txt") 
@@ -74,6 +80,7 @@ for (chr in 1:2) {
   count_nat_rs$chrom <- paste("chr", count_nat_rs$chrom, sep='')
   count_nat_rs$end <- c(count_nat_rs$bp[2:length(count_nat_rs$bp)] - 1, count_nat_rs$bp[length(count_nat_rs$bp)] + 1)
   count_nat_rs <- count_nat_rs[,c(1,2,4,3)]
+  count_nat_rs$score <- count_nat_rs$score*0.116
   colnames(count_nat_rs) <- c("chrom", "start", "end", "score")
   
   ## NAT SP
@@ -86,6 +93,7 @@ for (chr in 1:2) {
   count_nat_sp$chrom <- paste("chr", count_nat_sp$chrom, sep='')
   count_nat_sp$end <- c(count_nat_sp$bp[2:length(count_nat_sp$bp)] - 1, count_nat_sp$bp[length(count_nat_sp$bp)] + 1)
   count_nat_sp <- count_nat_sp[,c(1,2,4,3)]
+  count_nat_sp$score <- count_nat_sp$score*0.156
   colnames(count_nat_sp) <- c("chrom", "start", "end", "score")
   
   ## Check position indexing
@@ -129,12 +137,12 @@ for (chr in 1:2) {
   }
   
   
-  ### Normalizing occurrences to the range [0, 1] to ensures comparability despite differences in raw  magnitudes.
-  occur_rs <- (count_nat_rs$score - min(count_nat_rs$score)) / max(count_nat_rs$score - min(count_nat_rs$score))
-  occur_sp <- (count_nat_sp$score - min(count_nat_sp$score)) / max(count_nat_sp$score - min(count_nat_sp$score))
-  
+  occur_rs <- (count_nat_rs$score)
+  occur_sp <- (count_nat_sp$score)
+
   ### Differences between states 
   diff <- occur_rs - occur_sp
+  
   
   # Detect crossings and differences
   nwin <- round(sqrt(length(occur_rs)))
@@ -145,39 +153,95 @@ for (chr in 1:2) {
   diff_sd <- sd(diff)
   different <- abs(diff - diff_mean) > 2 * diff_sd
   different <- as.numeric(different)
+  diff_sp_gt_rs <- which(diff < 0 & different == 1)
+  diff_rs_gt_sp <- which(diff > 0 & different == 1)
   
   # Plot crossings and differences
   saving_dir <- "/home/yuri/liri/puzzle/"
   png(paste0(saving_dir, "chr_", chr, "_rs_sp", ".png"), width = 2400, height = 1800, res = 300)
-  plot(pos_mb, occur_rs, type = 'l', col = 'blue', ylim = c(-0.1, 1.4),
-       ylab = "Occurrences", xlab = paste("chr ", chr, " (Mb)"), bty = "n", xaxt = "n")
+  
+  # First, draw the black and green lines (so they appear behind)
+  plot(pos_mb, different * scaling_factor, type = 'l', col = 'darkgray',
+       ylab = "Occurrences", xlab = paste("chr ", chr, " (Mb)"), bty = "n", xaxt = "n", ylim = c(0, max(occur_rs, occur_sp) + 5))
+  lines(pos_mb, similar * scaling_factor, col = "green")
+  
+  # Then, draw the blue and red lines
+  lines(pos_mb, occur_rs, col = 'blue')
   lines(pos_mb, occur_sp, col = 'red')
-  lines(pos_mb, different, col = 'black')
-  lines(pos_mb, similar, col = "green")
-  legend(x = "top", legend = c("RS", "SP", "Similar", "Different"), fill = c("blue", "red", "green", "black"), ncol = 4, bty = "n")
+  
+  # Add legend and axis as usual
+  legend(x = "top", legend = c("RS", "SP", "Similar", "Different"), fill = c("blue", "red", "green", "darkgray"), ncol = 4, bty = "n")
   x_values <- c(1, seq(20, max(pos_mb) + 20, by = 20))
   x_labels <- x_values
   axis(1, at = x_values, labels = x_labels)
+  
   dev.off()
   
   # Save similar and different positions
-  similar_pos <-pos[as.logical(similar)]
-  similar_pos_df <- as.data.frame(similar_pos)
-  write.csv(similar_pos_df, paste0("similar_positions_", chr, ".csv"), row.names = FALSE, quote = FALSE)
+  diff_pos_sp_gt_rs <- pos[diff_sp_gt_rs]
+  diff_pos_rs_gt_sp <- pos[diff_rs_gt_sp]
   diff_pos <- pos[as.logical(different)]
-  diff_pos_df <- as.data.frame(diff_pos)
-  write.csv(diff_pos_df, paste0("different_positions_", chr, ".csv"), row.names = FALSE, quote = FALSE)
-  comparisions <- c("similar", "different")
+  similar_pos <-pos[as.logical(similar)]
+  print(similar_pos)
+  # Combine all different positions into a data frame with the current chromosome
+  # Only create the data frame if diff_pos_sp_gt_rs has entries
+  if(length(diff_pos_sp_gt_rs) > 0) {
+    chr_sp_gt_rs_pos <- data.frame(
+      chr = chr,
+      position = diff_pos_sp_gt_rs
+    )
+    diff_sp_gt_rs_all <- rbind(diff_sp_gt_rs_all, chr_sp_gt_rs_pos)
+  }
+  
+  # Only create the data frame if diff_pos_rs_gt_sp has entries
+  if(length(diff_pos_rs_gt_sp) > 0) {
+    chr_rs_gt_sp_pos <- data.frame(
+      chr = chr,
+      position = diff_pos_rs_gt_sp
+    )
+    diff_rs_gt_sp_all <- rbind(diff_rs_gt_sp_all, chr_rs_gt_sp_pos)
+  }
+  
+  # Only create the data frame if diff_pos has entries
+  if(length(diff_pos) > 0) {
+    chr_diff_pos <- data.frame(
+      chr = chr,
+      position = diff_pos
+    )
+    diff_pos_all <- rbind(diff_pos_all, chr_diff_pos)
+  }
+  
+  # Only create the data frame if similar_pos has entries
+  if(length(similar_pos) > 0) {
+    chr_similar_pos <- data.frame(
+      chr = chr,
+      position = similar_pos
+    )
+    similar_pos_all <- rbind(similar_pos_all, chr_similar_pos)
+  }
+  
+  
+  # Append to the cumulative data frame
+  diff_rs_gt_sp_all <- rbind(diff_rs_gt_sp_all, chr_rs_gt_sp_pos)
+  diff_sp_gt_rs_all <- rbind(diff_sp_gt_rs_all, chr_sp_gt_rs_pos)
+  diff_pos_all <- rbind(diff_pos_all, chr_diff_pos)
+  similar_pos_all <- rbind(similar_pos_all, chr_similar_pos)
+}  
+
+write.csv(diff_pos_all, "different_positions_all.csv", row.names = FALSE, quote = FALSE)
+write.csv(diff_rs_gt_sp_all, "diff_rs_gt_sp_all_pos.csv", row.names = FALSE, quote = FALSE)
+write.csv(diff_sp_gt_rs_all, "diff_sp_gt_rs_all_pos.csv", row.names = FALSE, quote = FALSE)
+write.csv(similar_pos_all,"similar_pos_all .csv", row.names = FALSE, quote = FALSE)
+
   
   #Enrichment analysis for similar and different positions
   ## Retrieve gene information (chromosome, start, end positions, gene names)
-  
-  ensembl = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+  comparisions <- c("similar positions", "different positions", "different positions (rs > sp)", "different positions (sp > rs)")
+
+  #ensembl = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
   
   gene_gr <- getBM(
     attributes = c("ensembl_gene_id", "external_gene_name", "chromosome_name", "start_position", "end_position"),
-    filters = "chromosome_name",
-    values = chr,
     mart = ensembl
   )
   
@@ -190,25 +254,40 @@ for (chr in 1:2) {
   )
   if (!is.null(similar_pos) && !(is.null(diff_pos)) && length(diff_pos) != 0 && length(similar_pos) != 0) {
   for (comp in comparisions) {
-    if(comp == "similar") {
+    if(comp == "similar positions") {
     ## Create GenomicRanges object for the SNVs
     snv_gr <- GRanges(
-      seqnames = chr,  # Single chromosome (e.g., "1")
+      seqnames = similar_pos_all$chr, 
       ranges = IRanges(
-        start = similar_pos,  # SNV positions
-        end = similar_pos  # Same position for the end
+        start = similar_pos_all$pos,  # SNV positions
+        end = similar_pos_all$pos  # Same position for the end
       )
     )
-    } else {
+    } else if (comp == "different positions") {
       snv_gr <- GRanges(
-        seqnames = chr,  # Single chromosome (e.g., "1")
+        seqnames = diff_pos_all$chr,  # Single chromosome (e.g., "1")
         ranges = IRanges(
-          start = diff_pos,  # SNV positions
-          end = diff_pos  # Same position for the end
+          start = diff_pos_all$pos,  # SNV positions
+          end = diff_pos_all$pos  # Same position for the end
         )
       ) 
+    } else if (comp == "different positions (rs > sp)") {
+      snv_gr <- GRanges(
+        seqnames = diff_rs_gt_sp_all$chr,  # Single chromosome (e.g., "1")
+        ranges = IRanges(
+          start = diff_rs_gt_sp_all$pos ,  # SNV positions
+          end = diff_rs_gt_sp_all$pos # Same position for the end
+        )
+      ) 
+    } else if (comp == "different positions (sp > rs)") {
+      snv_gr <- GRanges(
+        seqnames = diff_sp_gt_rs_all$chr,  # Single chromosome (e.g., "1")
+        ranges = IRanges(
+          start = diff_sp_gt_rs_all$pos,  # SNV positions
+          end = diff_sp_gt_rs_all$pos  # Same position for the end
+        )
+      )
     }
-    
     
     ## Find Genes Overlapping SNVs
     overlap_genes <- findOverlaps(snv_gr, gene_gr)
@@ -245,12 +324,13 @@ for (chr in 1:2) {
     
     go_results_df <- organize_enrichment_results(go_results)
     print(head(go_results_df))
-    go_results_file <- paste0("go_results_", chr, "_", comp)
+    
+    go_results_file <- paste0("go_results_", comp)
     if(!is.null(go_results_df)) {
       write.csv(go_results_df, paste0(go_results_file, ".csv"), quote = FALSE, row.names = FALSE)
     
     ##Visualize the enrichment results
-    title_go <- paste0("Top enriched GO terms for ", comp, " regions in chr ", chr)
+    title_go <- paste0("Top enriched GO terms for ", comp)
     ### Bar plot for GO enrichment results
     png(paste0(saving_dir, "barplot_", go_results_file, ".png"), width = 1920, height = 1080, res = 150)
     print(barplot(go_results, showCategory = 10, title = title_go))  # Top 20 enriched GO terms
@@ -261,7 +341,7 @@ for (chr in 1:2) {
     print(dotplot(go_results, showCategory = 10, title = title_go))
     dev.off()
     } else {
-      print(paste0("No significant results for comp ", comp, " and chr ", chr))
+      print(paste0("No significant results for comp ", comp))
     }
     
     ### Perform KEGG pathway enrichment analysis
@@ -273,12 +353,12 @@ for (chr in 1:2) {
     )
     
     kegg_results_df <- organize_enrichment_results(kegg_results)
-    kegg_results_file <- paste0("kegg_results_", chr, "_", comp)
+    kegg_results_file <- paste0("kegg_results_", comp)
     if(!is.null(kegg_results_df)) {
       write.csv(kegg_results_df, paste0(kegg_results_file, ".csv"), quote = FALSE, row.names = FALSE)
     ##Visualize the enrichment results
     
-    title_kegg <- paste0("Enriched KEGG pathways for ", comp, " regions in chr ", chr)
+    title_kegg <- paste0("Enriched KEGG pathways for ", comp)
     
     
     ### Bar plot for KEGG pathway enrichment results
@@ -290,18 +370,18 @@ for (chr in 1:2) {
     print(dotplot(kegg_results, showCategory = 10, title = title_kegg))
     dev.off()
     } else {
-      print(paste0("No significant results for comp ", comp, " and chr ", chr))
+      print(paste0("No significant results for comp ", comp))
     }
     }
     else {
-      print(paste0("No entrez ids for chr ", chr, " comp ", comp))
+      print(paste0("No entrez ids for comp ", comp))
     } 
     } else {
-      print(paste0("No overlapping genes for chr ", chr, " comp ", comp))
+      print(paste0("No overlapping genes for comp ", comp))
     } 
   }
   } 
-} 
+
 
 #Extra
 
