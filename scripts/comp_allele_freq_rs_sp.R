@@ -2,6 +2,13 @@ library(dplyr)
 library(rtracklayer)
 library(fuzzyjoin)
 library(tidyr)
+library(biomaRt)
+library(GenomicRanges)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(enrichplot)
+library(KEGGREST)
+library(AnnotationDbi)
 
 organize_enrichment_results <- function(enrichResult)  {
   #Filters for significant results adjusted by multiple comparisions
@@ -111,7 +118,7 @@ for (chr in 1:22) {
   # Append to combined VEP data frame
   vep_combined <- bind_rows(vep_combined, vep_chr)
 }
-
+  vep_combined <- vep_combined[,c(2,3,4,6,5)]
 # Write combined data frames to files
 write.csv(diff_vars_combined, "diff_vars_combined.csv", row.names = FALSE, quote = FALSE)
 write.csv(rsvars_only_combined, "rsvars_only_combined.csv", row.names = FALSE, quote = FALSE)
