@@ -19,6 +19,8 @@ library(clusterProfiler)
 library(org.Hs.eg.db)
 library(enrichplot)
 library(KEGGREST)
+library(AnnotationDbi)
+
 
 detect_ZeroCrossing <- function(signal, movwin_length, z){
 # detect_ZeroCrossing detecta os pontos de um sinal onde houve cruzamento por 
@@ -230,7 +232,7 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
   ## Retrieve gene information (chromosome, start, end positions, gene names)
   comparisions <- c("similar positions", "different positions", "different positions (rs > sp)", "different positions (sp > rs)")
 
-  ensembl = useMart("ensembl", dataset = "hsapiens_gene_ensembl", host = "https://useast.ensembl.org")
+  ensembl = useMart("ensembl", dataset = "hsapiens_gene_ensembl", host = "https://asia.ensembl.org")
   
   gene_gr <- getBM(
     attributes = c("ensembl_gene_id", "external_gene_name", "chromosome_name", "start_position", "end_position"),
@@ -299,7 +301,7 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
     
     ## Convert to ENTREZ ids (necessary for KEGG enrichment)
     
-    entrez_mapping <- select(org.Hs.eg.db, keys = overlap_gene_data$ensembl_id, columns = c("ENSEMBL", "ENTREZID"), keytype = "ENSEMBL")
+    entrez_mapping <- AnnotationDbi::select(org.Hs.eg.db, keys = overlap_gene_data$ensembl_id, columns = c("ENSEMBL", "ENTREZID"), keytype = "ENSEMBL")
     entrez_ids <- unique(entrez_mapping$ENTREZID)
     
     ##Perform Pathway Enrichment Analysis (GO/KEGG)
@@ -330,7 +332,7 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
     print(dotplot(go_results, showCategory = 10, title = title_go))
     dev.off()
     } else {
-      print(paste0("No significant results for comp ", comp))
+      print(paste0("GO: No significant results for comp ", comp))
     }
     
     ### Perform KEGG pathway enrichment analysis
