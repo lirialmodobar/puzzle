@@ -158,8 +158,8 @@ for (chr in 1:22) {
   
   # Plot crossings and differences
   saving_dir <- "/home/yuri/liri/puzzle/"
+  scaling_factor <- max(c(occur_rs, occur_sp)) / max(c(different, similar))
   png(paste0(saving_dir, "chr_", chr, "_rs_sp", ".png"), width = 2400, height = 1800, res = 300)
-  
   # First, draw the black and green lines (so they appear behind)
   plot(pos_mb, different * scaling_factor, type = 'l', col = 'darkgray',
        ylab = "Occurrences", xlab = paste("chr ", chr, " (Mb)"), bty = "n", xaxt = "n", ylim = c(0, max(occur_rs, occur_sp) + 5))
@@ -182,7 +182,6 @@ for (chr in 1:22) {
   diff_pos_rs_gt_sp <- pos[diff_rs_gt_sp]
   diff_pos <- pos[as.logical(different)]
   similar_pos <-pos[as.logical(similar)]
-  print(similar_pos)
   # Combine all different positions into a data frame with the current chromosome
   # Only create the data frame if diff_pos_sp_gt_rs has entries
   if(length(diff_pos_sp_gt_rs) > 0) {
@@ -219,26 +218,19 @@ for (chr in 1:22) {
     )
     similar_pos_all <- rbind(similar_pos_all, chr_similar_pos)
   }
-  
-  
-  # Append to the cumulative data frame
-  diff_rs_gt_sp_all <- rbind(diff_rs_gt_sp_all, chr_rs_gt_sp_pos)
-  diff_sp_gt_rs_all <- rbind(diff_sp_gt_rs_all, chr_sp_gt_rs_pos)
-  diff_pos_all <- rbind(diff_pos_all, chr_diff_pos)
-  similar_pos_all <- rbind(similar_pos_all, chr_similar_pos)
 }  
 
 write.csv(diff_pos_all, "different_positions_all.csv", row.names = FALSE, quote = FALSE)
 write.csv(diff_rs_gt_sp_all, "diff_rs_gt_sp_all_pos.csv", row.names = FALSE, quote = FALSE)
 write.csv(diff_sp_gt_rs_all, "diff_sp_gt_rs_all_pos.csv", row.names = FALSE, quote = FALSE)
-write.csv(similar_pos_all,"similar_pos_all .csv", row.names = FALSE, quote = FALSE)
+write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALSE)
 
   
   #Enrichment analysis for similar and different positions
   ## Retrieve gene information (chromosome, start, end positions, gene names)
   comparisions <- c("similar positions", "different positions", "different positions (rs > sp)", "different positions (sp > rs)")
 
-  #ensembl = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+  ensembl = useMart("ensembl", dataset = "hsapiens_gene_ensembl", host = "https://useast.ensembl.org")
   
   gene_gr <- getBM(
     attributes = c("ensembl_gene_id", "external_gene_name", "chromosome_name", "start_position", "end_position"),
@@ -252,7 +244,6 @@ write.csv(similar_pos_all,"similar_pos_all .csv", row.names = FALSE, quote = FAL
     gene_id = gene_gr$ensembl_gene_id,
     gene_name = gene_gr$external_gene_name
   )
-  if (!is.null(similar_pos) && !(is.null(diff_pos)) && length(diff_pos) != 0 && length(similar_pos) != 0) {
   for (comp in comparisions) {
     if(comp == "similar positions") {
     ## Create GenomicRanges object for the SNVs
@@ -323,9 +314,7 @@ write.csv(similar_pos_all,"similar_pos_all .csv", row.names = FALSE, quote = FAL
     )
     
     go_results_df <- organize_enrichment_results(go_results)
-    print(head(go_results_df))
-    
-    go_results_file <- paste0("go_results_", comp)
+    go_results_file <- paste0("go_results_2dp_", gsub(" ", "_", comp))
     if(!is.null(go_results_df)) {
       write.csv(go_results_df, paste0(go_results_file, ".csv"), quote = FALSE, row.names = FALSE)
     
@@ -353,7 +342,7 @@ write.csv(similar_pos_all,"similar_pos_all .csv", row.names = FALSE, quote = FAL
     )
     
     kegg_results_df <- organize_enrichment_results(kegg_results)
-    kegg_results_file <- paste0("kegg_results_", comp)
+    kegg_results_file <- paste0("kegg_results_2dp_", gsub(" ", "_", comp))
     if(!is.null(kegg_results_df)) {
       write.csv(kegg_results_df, paste0(kegg_results_file, ".csv"), quote = FALSE, row.names = FALSE)
     ##Visualize the enrichment results
@@ -370,17 +359,17 @@ write.csv(similar_pos_all,"similar_pos_all .csv", row.names = FALSE, quote = FAL
     print(dotplot(kegg_results, showCategory = 10, title = title_kegg))
     dev.off()
     } else {
-      print(paste0("No significant results for comp ", comp))
+      print(paste0("KEGG: No significant results for comp ", comp))
     }
     }
     else {
-      print(paste0("No entrez ids for comp ", comp))
+      print(paste0("KEGG: No entrez ids for comp ", comp))
     } 
     } else {
       print(paste0("No overlapping genes for comp ", comp))
     } 
   }
-  } 
+
 
 
 #Extra
