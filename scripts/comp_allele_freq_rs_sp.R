@@ -9,6 +9,7 @@ library(org.Hs.eg.db)
 library(enrichplot)
 library(KEGGREST)
 library(AnnotationDbi)
+library(DOSE)
 
 organize_enrichment_results <- function(enrichResult)  {
   #Filters for significant results adjusted by multiple comparisions
@@ -42,7 +43,7 @@ vep_combined <- data.frame()
 diff_vars_combined <- data.frame()
 rsvars_only_combined <- data.frame()
 spvars_only_combined <- data.frame()
-
+snv_ids_combined <- c()
 # Loop through chromosomes 1 to 22
 for (chr in 1:22) {
   # File paths for current chromosome
@@ -86,9 +87,12 @@ for (chr in 1:22) {
   
   # VEP preparation
   vep <- inner_join(rs, diff_vars, by = c("SNP" = "var", "allele"))
+  snv_ids <- vep$SNP
+  snv_ids <- snv_ids[grep("^rs", snv_ids)]
+  snv_ids_combined <- c(snv_ids_combined, snv_ids)
   vep <- vep %>%
     mutate(SNP = paste(CHR, BP, sep = ":")) %>%
-    select(SNP, CHR, BP, allele, freq_rs)
+    dplyr::select(SNP, CHR, BP, allele, freq_rs)
   
   subset_not_50 <- subset(vep, freq_rs != 50)
   subset_50_even <- subset(vep, freq_rs == 50 & (1:nrow(vep)) %% 2 == 0)
@@ -110,9 +114,9 @@ for (chr in 1:22) {
   colnames(vep_a2) <- c("SNP", "CHR", "BP", "A1", "freq_A1")
   
   vep_chr <- inner_join(vep_a1, vep_a2, by = c("SNP", "CHR", "BP")) %>%
-    select(SNP, CHR, BP, A1, A2) %>%
+    dplyr::select(SNP, CHR, BP, A1, A2) %>%
     mutate(BP2 = BP, strand = 1, allele = paste(A2, A1, sep = "/")) %>%
-    select(SNP, CHR, BP, BP2, strand, allele) %>%
+    dplyr::select(SNP, CHR, BP, BP2, strand, allele) %>%
     arrange(CHR, BP)
   
   # Append to combined VEP data frame
@@ -246,3 +250,43 @@ gene_gr <- GRanges(
   } else {
     print(paste0("No overlapping genes"))
   } 
+  
+  # Ensure there are SNP IDs to process
+  if (length(snv_ids_combined) > 0) {
+    # SNP Disease-Gene Network Visualization
+    dgn_results <- enrichDGNv(snv_ids_combined)
+    
+    # Save results
+    if (!is.null(dgn_results)) {
+      # Save as CSV
+      snp_disease_file <- paste0("results_disease_allele_freq.csv")
+      dgn_results_df <- organize_enrichment_results(dgn_results)
+      write.csv(dgn_results_df, snp_disease_file, quote = FALSE, row.names = FALSE)
+      
+      # Create bar plot
+      barplot_file <- paste0("barplot_disease_allele_freq.png")
+      png(barplot_file, width = 1920, height = 1080, res = 150)
+      print(barplot(
+        dgn_results,
+        title = paste0("SNP-Disease Dot Plot (high allele frequency difference between RS and SP)"),
+        showCategory = 10  # Number of categories to show
+      ))
+      dev.off()
+      
+      # Create dot plot
+      dotplot_file <- paste0("dotplot_disease_allele_freq.png")
+      png(dotplot_file, width = 1920, height = 1080, res = 150)
+      print(dotplot(
+        dgn_results,
+        title = paste0("SNP-Disease Dot Plot (high allele frequency difference between RS and SP)"),
+        showCategory = 10  # Number of categories to show
+      ))
+    } else {
+      print(paste0("SNP-DGNV: No significant results for allele freq"))
+    }
+  } else {
+    print(paste0("No SNP IDs available for allele freq"))
+  }
+  
+
+
