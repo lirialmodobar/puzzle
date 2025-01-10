@@ -20,6 +20,7 @@ library(org.Hs.eg.db)
 library(enrichplot)
 library(KEGGREST)
 library(AnnotationDbi)
+library(DOSE)
 
 
 detect_ZeroCrossing <- function(signal, movwin_length, z){
@@ -45,9 +46,10 @@ organize_enrichment_results <- function(enrichResult)  {
   #Orders by gene ratio and then p.adjust
   
   ###Filter for significant results 
-  
-  results_df <- enrichResult@result
-  results_significant <-results_df[results_df$p.adjust < 0.05,]
+  if (!is.null(enrichResult@result)) {
+    results_df <- enrichResult@result
+    results_df <- enrichResult@result
+    results_significant <-results_df[results_df$p.adjust < 0.05,]
   
   ###Order by p.adjust and gene ratio
   if (!is.null(results_significant) && nrow(results_significant) != 0) {
@@ -61,8 +63,10 @@ organize_enrichment_results <- function(enrichResult)  {
   results_significant <- results_significant[order(results_significant$p.adjust, -results_significant$GeneRatio), ]
   return(results_significant)
   }
-}
-
+  } else {
+    print("no results")
+  } 
+} 
 #Initializing df to save data from all chrs
 diff_rs_gt_sp_all <- data.frame(chr = integer(), pos = integer())
 diff_sp_gt_rs_all <- data.frame(chr = integer(), pos = integer())
@@ -76,27 +80,27 @@ for (chr in 1:22) {
   freqs_rs <- paste0("/home/yuri/liri/puzzle_sdumont/rs/nat/chr_info_unfilt/count_info/freqs_chr_", chr, "_nat_rs.txt") 
   count_nat_rs <- read.table(freqs_rs, h=F)
   count_nat_rs <- count_nat_rs[order(count_nat_rs[,3]),]
-  count_nat_rs <- count_nat_rs[,c(2,3,6)]
+  count_nat_rs <- count_nat_rs[,c(1, 2,3,6)]
   count_nat_rs <- count_nat_rs[!duplicated(count_nat_rs),]
-  colnames(count_nat_rs) <- c("chrom","bp", "score")
+  colnames(count_nat_rs) <- c("rsid", "chrom","bp", "score")
   count_nat_rs$chrom <- paste("chr", count_nat_rs$chrom, sep='')
   count_nat_rs$end <- c(count_nat_rs$bp[2:length(count_nat_rs$bp)] - 1, count_nat_rs$bp[length(count_nat_rs$bp)] + 1)
-  count_nat_rs <- count_nat_rs[,c(1,2,4,3)]
+  count_nat_rs <- count_nat_rs[,c(1,2,3,5,4)]
   count_nat_rs$score <- count_nat_rs$score*0.116
-  colnames(count_nat_rs) <- c("chrom", "start", "end", "score")
+  colnames(count_nat_rs) <- c("rsid", "chrom", "start", "end", "score")
   
   ## NAT SP
   freqs_sp <- paste0("/home/yuri/liri/puzzle_sdumont/sp/nat/chr_info_unfilt/count_info/freqs_chr_", chr, "_nat_sp.txt") 
   count_nat_sp <- read.table(freqs_sp, h=F)
   count_nat_sp <- count_nat_sp[order(count_nat_sp[,3]),]
-  count_nat_sp <- count_nat_sp[,c(2,3,6)]
+  count_nat_sp <- count_nat_sp[,c(1,2,3,6)]
   count_nat_sp <- count_nat_sp[!duplicated(count_nat_sp),]
-  colnames(count_nat_sp) <- c("chrom","bp", "score")
+  colnames(count_nat_sp) <- c("rsid", "chrom","bp", "score")
   count_nat_sp$chrom <- paste("chr", count_nat_sp$chrom, sep='')
   count_nat_sp$end <- c(count_nat_sp$bp[2:length(count_nat_sp$bp)] - 1, count_nat_sp$bp[length(count_nat_sp$bp)] + 1)
-  count_nat_sp <- count_nat_sp[,c(1,2,4,3)]
+  count_nat_sp <- count_nat_sp[,c(1,2,3,5,4)]
   count_nat_sp$score <- count_nat_sp$score*0.156
-  colnames(count_nat_sp) <- c("chrom", "start", "end", "score")
+  colnames(count_nat_sp) <- c("rsid", "chrom", "start", "end", "score")
   
   ## Check position indexing
   if (sum(count_nat_rs$start - count_nat_sp$start) != 0) {
@@ -138,7 +142,7 @@ for (chr in 1:22) {
     max_occur <- max(c(count_nat_rs$score, count_nat_sp$score))
   }
   
-  
+  rsids <- count_nat_rs$rsid
   occur_rs <- (count_nat_rs$score)
   occur_sp <- (count_nat_sp$score)
 
@@ -153,7 +157,7 @@ for (chr in 1:22) {
   similar[is.na(similar)] <- 0
   diff_mean <- mean(diff)
   diff_sd <- sd(diff)
-  different <- abs(diff - diff_mean) > 2 * diff_sd
+  different <- abs(diff - diff_mean) > 3 * diff_sd
   different <- as.numeric(different)
   diff_sp_gt_rs <- which(diff < 0 & different == 1)
   diff_rs_gt_sp <- which(diff > 0 & different == 1)
@@ -184,12 +188,19 @@ for (chr in 1:22) {
   diff_pos_rs_gt_sp <- pos[diff_rs_gt_sp]
   diff_pos <- pos[as.logical(different)]
   similar_pos <-pos[as.logical(similar)]
+  diff_snp_sp_gt_rs <- rsids[diff_sp_gt_rs]
+  diff_snp_rs_gt_sp <- rsids[diff_rs_gt_sp]
+  diff_snp <- rsids[as.logical(different)]
+  similar_snp <- rsids[as.logical(similar)]
+  
+  
   # Combine all different positions into a data frame with the current chromosome
   # Only create the data frame if diff_pos_sp_gt_rs has entries
   if(length(diff_pos_sp_gt_rs) > 0) {
     chr_sp_gt_rs_pos <- data.frame(
       chr = chr,
-      position = diff_pos_sp_gt_rs
+      position = diff_pos_sp_gt_rs,
+      rsid = diff_snp_sp_gt_rs
     )
     diff_sp_gt_rs_all <- rbind(diff_sp_gt_rs_all, chr_sp_gt_rs_pos)
   }
@@ -198,7 +209,8 @@ for (chr in 1:22) {
   if(length(diff_pos_rs_gt_sp) > 0) {
     chr_rs_gt_sp_pos <- data.frame(
       chr = chr,
-      position = diff_pos_rs_gt_sp
+      position = diff_pos_rs_gt_sp,
+      rsid = diff_snp_rs_gt_sp
     )
     diff_rs_gt_sp_all <- rbind(diff_rs_gt_sp_all, chr_rs_gt_sp_pos)
   }
@@ -207,7 +219,8 @@ for (chr in 1:22) {
   if(length(diff_pos) > 0) {
     chr_diff_pos <- data.frame(
       chr = chr,
-      position = diff_pos
+      position = diff_pos,
+      rsid = diff_snp
     )
     diff_pos_all <- rbind(diff_pos_all, chr_diff_pos)
   }
@@ -216,7 +229,8 @@ for (chr in 1:22) {
   if(length(similar_pos) > 0) {
     chr_similar_pos <- data.frame(
       chr = chr,
-      position = similar_pos
+      position = similar_pos,
+      rsid = similar_snp
     )
     similar_pos_all <- rbind(similar_pos_all, chr_similar_pos)
   }
@@ -321,9 +335,9 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
       write.csv(go_results_df, paste0(go_results_file, ".csv"), quote = FALSE, row.names = FALSE)
     
     ##Visualize the enrichment results
-    title_go <- paste0("Top enriched GO terms for ", comp)
+    title_go <- paste0("Top enriched GO terms for comp", comp)
     ### Bar plot for GO enrichment results
-    png(paste0(saving_dir, "barplot_", go_results_file, ".png"), width = 1920, height = 1080, res = 150)
+    png(paste0(saving_dir, "barplot_", go_results_file, ".png"), width = 1920, height = 1080, res = 115)
     print(barplot(go_results, showCategory = 10, title = title_go))  # Top 20 enriched GO terms
     dev.off()
     
@@ -372,7 +386,61 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
     } 
   }
 
-
+  # Define SNP comparisons
+  comparisions_snps <- c("similar positions snps", "different positions snps", 
+                         "different positions snps (rs > sp)", "different positions snps (sp > rs)")
+  
+  for (comps in comparisions_snps) {
+    # Select appropriate SNP data based on the comparison
+    if (comps == "similar positions snps") {
+      snv_ids <- similar_pos_all$rsid
+    } else if (comps == "different positions snps") {
+      print("oi")
+      snv_ids <- diff_pos_all$rsid
+    } else if (comps == "different positions snps (rs > sp)") {
+      snv_ids <- diff_rs_gt_sp_all$rsid
+    } else if (comps == "different positions snps (sp > rs)") {
+      snv_ids <- diff_sp_gt_rs_all$rsid
+    }
+    
+    # Ensure there are SNP IDs to process
+    if (length(snv_ids) > 0) {
+      # SNP Disease-Gene Network Visualization
+        dgn_results <- enrichDGNv(snv_ids)
+        
+        # Save results
+        if (!is.null(dgn_results)) {
+          # Save as CSV
+          snp_disease_file <- paste0("results_disease_2dp_", gsub(" ", "_", comps), ".csv")
+          dgn_results_df <- organize_enrichment_results(dgn_results)
+          write.csv(dgn_results_df, snp_disease_file, quote = FALSE, row.names = FALSE)
+          
+          # Create bar plot
+          barplot_file <- paste0("barplot_disease_2dp_", gsub(" ", "_", comps), ".png")
+          png(barplot_file, width = 1920, height = 1080, res = 150)
+          print(barplot(
+            dgn_results,
+            title = paste0("SNP-Disease Bar Plot for comp ", comps),
+            showCategory = 10  # Number of categories to show
+          ))
+          dev.off()
+          
+          # Create dot plot
+          dotplot_file <- paste0("dotplot_disease_2dp_", gsub(" ", "_", comps), ".png")
+          png(dotplot_file, width = 1920, height = 1080, res = 150)
+          print(dotplot(
+            dgn_results,
+            title = paste0("SNP-Disease Dot Plot for ", comps),
+            showCategory = 10  # Number of categories to show
+          ))
+        } else {
+          print(paste0("SNP-DGNV: No significant results for comp ", comps))
+        }
+    } else {
+      print(paste0("No SNP IDs available for comp", comps))
+    }
+  }
+  
 
 #Extra
 
