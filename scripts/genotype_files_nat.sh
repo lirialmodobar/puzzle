@@ -91,23 +91,38 @@ for ID in $INDIVIDUALS; do
     sort -k3,3n "${haps_file}" -o "${haps_file}"
 
     # Run ShapeIt conversion
-    echo "Converting $haps_file to VCF format..."
-    $SHAPEIT -convert --input-haps "$haps_prefix" --output-vcf "$output_vcf"
-#    rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.haps"
- #   rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.sample"
+  #  echo "Converting $haps_file to VCF format..."
+   $SHAPEIT -convert --input-haps "$haps_prefix" --output-vcf "$output_vcf"
+   rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.hap"
+   rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.samples"
 done
 
 #Juntar todos os vcfs daquele cromossomo em um so
 ulimit -n 10000 #aumentar limite de arquivos abertos de uma vez para poder fazer essa parte
     #Comprimir
-    bgzip $VCF_DIR/*.vcf
+    bgzip $VCF_DIR/*${CHR}_${STATE}_haps_nat.vcf
 
     #Indexar
-    for VCF in $VCF_DIR/*.vcf.gz; do $BCFTOOLS index "$VCF"; done
+    for VCF in $VCF_DIR/*${CHR}_${STATE}_haps_nat.vcf.gz; do $BCFTOOLS index "$VCF"; done
 
     #Juntar
-    $BCFTOOLS  merge -O z -o "$VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz" $VCF_DIR/*.vcf.gz
-#    rm $VCF_DIR/C*
+if [ "$STATE" = "rs" ]; then
+    $BCFTOOLS  merge -O z -o $VCF_DIR/all_C10_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C10*${CHR}_${STATE}_haps_nat.vcf.gz
+    $BCFTOOLS  merge -O z -o $VCF_DIR/all_C11_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C11*${CHR}_${STATE}_haps_nat.vcf.gz
+    $BCFTOOLS index $VCF_DIR/all_C10_chr_${CHR}_nat_${STATE}.vcf.gz
+    $BCFTOOLS index $VCF_DIR/all_C11_chr_${CHR}_nat_${STATE}.vcf.gz
+    $BCFTOOLS  merge -O z -o $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/all_C*_chr_${CHR}_nat_${STATE}.vcf.gz
+fi
+if [ "$STATE" = "sp" ]; then
+    $BCFTOOLS  merge -O z -o $VCF_DIR/all_C20_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C20*${CHR}_${STATE}_haps_nat.vcf.gz
+    $BCFTOOLS  merge -O z -o $VCF_DIR/all_C21_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C21*${CHR}_${STATE}_haps_nat.vcf.gz
+    $BCFTOOLS index $VCF_DIR/all_C20_chr_${CHR}_nat_${STATE}.vcf.gz
+    $BCFTOOLS index $VCF_DIR/all_C21_chr_${CHR}_nat_${STATE}.vcf.gz
+    $BCFTOOLS  merge -O z -o $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/all_C*_chr_${CHR}_nat_${STATE}.vcf.gz
+fi
+
+    rm $VCF_DIR/C*
+    rm $VCF_DIR/all*
 
 #Ter um haps com todas as amostras daquele cromossomo
     $BCFTOOLS convert --hapsample "$HAPS_DIR/chr_${CHR}_nat_${STATE}"  "$VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz"
@@ -115,10 +130,11 @@ ulimit -n 10000 #aumentar limite de arquivos abertos de uma vez para poder fazer
 #Ter um vcf com todos os cromossomos e amostras, assim como bed bim fam (tem que ter rodado na ordem de cromossomos)
 if [ "$CHR" -eq 22 ]; then
         # Merge all VCFs from chr1 to chr22 into one VCF
-        $BCFTOOLS merge -O z -o "$VCF_DIR/all_chr_nat_${STATE}.vcf.gz" $VCF_DIR/chr_*_nat_${STATE}.vcf.gz
+	for VCF in $VCF_DIR/chr_*_nat_${STATE}.vcf.gz; do $BCFTOOLS index "$VCF"; done
+        #$BCFTOOLS merge -O z -o "$VCF_DIR/all_chr_nat_${STATE}.vcf.gz" $VCF_DIR/chr_*_nat_${STATE}.vcf.gz #same samples, but some files have fewer samples: no merge or concat
         # Remove individual chromosome VCF files
-        rm $VCF_DIR/chr_*_nat_${STATE}.vcf.gz
+        #rm $VCF_DIR/chr_*_nat_${STATE}.vcf.gz
         #Ter um bed bim fam com todas as amostras daquele cromossomo
-        $PLINK  --vcf "$VCF_DIR/all_chr_nat_${STATE}.vcf.gz" --make-bed --out "$PLINK_FILES_DIR/chr_${CHR}_nat_${STATE}"
+        #$PLINK  --vcf "$VCF_DIR/all_chr_nat_${STATE}.vcf.gz" --make-bed --out "$PLINK_FILES_DIR/chr_${CHR}_nat_${STATE}" #se um dia tiver o merge ou se precisar dos bed bim fam separados
 fi
 echo "fim"
