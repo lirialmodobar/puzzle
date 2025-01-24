@@ -149,8 +149,8 @@ subset_dataframe <- function(df, row_A_index, df2 = NULL) {
   
   # Initialize an empty list to store subsets
   subset_list <- list()
- condition_1 <- !is.null(df2) && nrow(y_values) == 0 && y_0_matters(df2, min, max)
-  condition_2 <- is.null(df2) && nrow(y_values) == 0 && y_0_matters(df, min, max)
+ condition_1 <- !is.null(df2) && nrow(y_values) == 0 && y_0_matters(df2, min_val, max_val)
+  condition_2 <- is.null(df2) && nrow(y_values) == 0 && y_0_matters(df, min_val, max_val)
   if ( condition_1) {
     subset_list[[length(subset_list) + 1]] <- df2
   } else if (condition_2){
