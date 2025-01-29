@@ -34,6 +34,8 @@ bcftools=/usr/local/bin/bcftools			#BCFtools v1.14
 #Working directory and scripts dir
 WD=/workspace/puzzle
 SCRIPTS_DIR=$WD/scripts
+TEMP_DIR=$WD/temp
+mkdir -p $TEMP_DIR
 
 #Initial parameters:
 cutoff_freq=$1
@@ -42,24 +44,23 @@ cutoff_freq=$1
 for state in "rs" "sp"; do
 
         #Define input and output_directories
-	INPUT_HAP_DIR=$WD/$state/nat/chr_info_unfilt/haps_nat
+	INPUT_HAP_DIR=$WD/$state/nat/chr_info_unfilt/haps_simplified
         INPUT_VCF_DIR=$WD/$state/nat/chr_info_unfilt/vcf_nat
         OUTPUT_DIR=$WD/$state/nat/chr_info_unfilt/seq_info/assembled
-	TEMP_DIR=$WD/temp
         mkdir -p $OUTPUT_DIR
 	mkdir -p $TEMP_DIR
 
  	#Create array with cutoff_lengths for all chrs (cutoff_length is explained further below and needed for the steps)
 	array_name=cutoffs_${state}
 	declare -n state_array=$array_name
-        readarray state_array < $WD/$state/nat/chr_info_unfilt/cutoff_length
+        readarray state_array < $WD/$state/nat/chr_info_unfilt/cutoff_length_${state}.txt
 
 	#Determine number of haplotypes to be generated
 	if [ "$state" = "rs" ]; then
-  		n_haps=$(ls $WD/output_collapse | grep C1 | wc -l) #LA: output_collapse = 2 files per individual, matching mother and father haplotypes; C1 = beggining of ID for rs individuals
+  		n_haps=$(ls $WD/output_collapse/chr_1 | grep C1 | wc -l) #LA: output_collapse = 2 files per individual, matching mother and father haplotypes; C1 = beggining of ID for rs individuals
   		n_haps=$(echo "$n_haps * 15.6 / 100" | bc) #15.6 = native-american ancestry % (ADMIXTURE)
 	else
-  		n_haps=$(ls $WD/output_collapse | grep C2 | wc -l) #C2: beggining of ID for sp individuals
+  		n_haps=$(ls $WD/output_collapse/chr_1 | grep C2 | wc -l) #C2: beggining of ID for sp individuals
   		n_haps=$(echo "$n_haps * 11.6 / 100" | bc) #LA: 11.6 = native-american ancestry % (ADMIXTURE)
 	fi
 
@@ -102,7 +103,7 @@ for state in "rs" "sp"; do
 		j=$[ $i + 1 ]
 		#Combine two consecutively numbered haplotypes to generate a diploid
 		python   $SCRIPTS_DIR/02.trans.to.vcf.py \
-		$INPUT_VCF_DIR/chr_${chr}_nat_${state}.vcf.gz \
+		$INPUT_VCF_DIR/dedup_chr_${chr}_nat_${state}.vcf.gz \
 		$TEMP_DIR/101.nat_${state}_chr${chr}.${i}.${cutoff_freq}.${cutoff_length}.txt.gz \
 		$TEMP_DIR/101.nat_${state}_chr${chr}.${j}.${cutoff_freq}.${cutoff_length}.txt.gz \
 		$TEMP_DIR/201.nat_${state}_chr${chr}.${i}.${j} \
