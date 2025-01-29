@@ -241,12 +241,11 @@ write.csv(diff_rs_gt_sp_all, "diff_rs_gt_sp_all_pos.csv", row.names = FALSE, quo
 write.csv(diff_sp_gt_rs_all, "diff_sp_gt_rs_all_pos.csv", row.names = FALSE, quote = FALSE)
 write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALSE)
 
-  
   #Enrichment analysis for similar and different positions
   ## Retrieve gene information (chromosome, start, end positions, gene names)
   comparisions <- c("similar positions", "different positions", "different positions (rs > sp)", "different positions (sp > rs)")
 
-  ensembl = useMart("ensembl", dataset = "hsapiens_gene_ensembl", host = "https://asia.ensembl.org")
+  ensembl = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
   
   gene_gr <- getBM(
     attributes = c("ensembl_gene_id", "external_gene_name", "chromosome_name", "start_position", "end_position"),
@@ -312,11 +311,15 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
     if(!is.null(gene_info) && length(gene_info) != 0) {
     ## Get the list of gene names from the overlaps
     genes_list_go <- unique(gene_info)  # Remove duplicates
+    write.csv(genes_list_go, paste0("genes_", gsub(" ", "_", comp), ".csv"), quote = FALSE, row.names = FALSE)
+    
     
     ## Convert to ENTREZ ids (necessary for KEGG enrichment)
     
     entrez_mapping <- AnnotationDbi::select(org.Hs.eg.db, keys = overlap_gene_data$ensembl_id, columns = c("ENSEMBL", "ENTREZID"), keytype = "ENSEMBL")
     entrez_ids <- unique(entrez_mapping$ENTREZID)
+    write.csv(entrez_ids, paste0("genes_kegg_", gsub(" ", "_", comp), ".csv"), quote = FALSE, row.names = FALSE)
+    
     
     ##Perform Pathway Enrichment Analysis (GO/KEGG)
     
@@ -330,7 +333,7 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
     )
     
     go_results_df <- organize_enrichment_results(go_results)
-    go_results_file <- paste0("go_results_2dp_", gsub(" ", "_", comp))
+    go_results_file <- paste0("go_results_3dp_", gsub(" ", "_", comp))
     if(!is.null(go_results_df)) {
       write.csv(go_results_df, paste0(go_results_file, ".csv"), quote = FALSE, row.names = FALSE)
     
@@ -338,12 +341,12 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
     title_go <- paste0("Top enriched GO terms for comp", comp)
     ### Bar plot for GO enrichment results
     png(paste0(saving_dir, "barplot_", go_results_file, ".png"), width = 1920, height = 1080, res = 115)
-    print(barplot(go_results, showCategory = 10, title = title_go))  # Top 20 enriched GO terms
+    print(barplot(go_results, showCategory = 10, title = title_go, x = "GeneRatio"))  # Top 20 enriched GO terms
     dev.off()
     
     ### Dot plot for GO enrichment results
     png(paste0(saving_dir, "dotplot_", go_results_file, ".png"), width = 1920, height = 1080, res = 150)
-    print(dotplot(go_results, showCategory = 10, title = title_go))
+    print(dotplot(go_results, showCategory = 10, title = title_go, x = "GeneRatio", size = "Count"))
     dev.off()
     } else {
       print(paste0("GO: No significant results for comp ", comp))
@@ -358,7 +361,7 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
     )
     
     kegg_results_df <- organize_enrichment_results(kegg_results)
-    kegg_results_file <- paste0("kegg_results_2dp_", gsub(" ", "_", comp))
+    kegg_results_file <- paste0("kegg_results_3dp_", gsub(" ", "_", comp))
     if(!is.null(kegg_results_df)) {
       write.csv(kegg_results_df, paste0(kegg_results_file, ".csv"), quote = FALSE, row.names = FALSE)
     ##Visualize the enrichment results
@@ -368,11 +371,11 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
     
     ### Bar plot for KEGG pathway enrichment results
     png(paste0(saving_dir, "barplot_", kegg_results_file, ".png"), width = 1920, height = 1080, res = 150)
-    print(barplot(kegg_results, showCategory = 10, title = title_kegg))  # Top 20 enriched KEGG pathways
+    print(barplot(kegg_results, showCategory = 10, title = title_kegg, x = "GeneRatio"))  # Top 20 enriched KEGG pathways
     dev.off()
     ### Dot plot for KEGG enrichment results
     png(paste0(saving_dir, "dotplot_", kegg_results_file, ".png"), width = 1920, height = 1080, res = 150)
-    print(dotplot(kegg_results, showCategory = 10, title = title_kegg))
+    print(dotplot(kegg_results, showCategory = 10, title = title_kegg, x = "GeneRatio", size = "Count"))
     dev.off()
     } else {
       print(paste0("KEGG: No significant results for comp ", comp))
@@ -411,26 +414,29 @@ write.csv(similar_pos_all,"similar_pos_all.csv", row.names = FALSE, quote = FALS
         # Save results
         if (!is.null(dgn_results)) {
           # Save as CSV
-          snp_disease_file <- paste0("results_disease_2dp_", gsub(" ", "_", comps), ".csv")
+          snp_disease_file <- paste0("results_disease_3dp_", gsub(" ", "_", comps), ".csv")
           dgn_results_df <- organize_enrichment_results(dgn_results)
           write.csv(dgn_results_df, snp_disease_file, quote = FALSE, row.names = FALSE)
           
           # Create bar plot
-          barplot_file <- paste0("barplot_disease_2dp_", gsub(" ", "_", comps), ".png")
+          barplot_file <- paste0("barplot_disease_3dp_", gsub(" ", "_", comps), ".png")
           png(barplot_file, width = 1920, height = 1080, res = 150)
           print(barplot(
             dgn_results,
             title = paste0("SNP-Disease Bar Plot for comp ", comps),
+            x = "GeneRatio", 
             showCategory = 10  # Number of categories to show
           ))
           dev.off()
           
           # Create dot plot
-          dotplot_file <- paste0("dotplot_disease_2dp_", gsub(" ", "_", comps), ".png")
+          dotplot_file <- paste0("dotplot_disease_3dp_", gsub(" ", "_", comps), ".png")
           png(dotplot_file, width = 1920, height = 1080, res = 150)
           print(dotplot(
             dgn_results,
             title = paste0("SNP-Disease Dot Plot for ", comps),
+            x = "GeneRatio",
+            size = "Count",
             showCategory = 10  # Number of categories to show
           ))
         } else {
