@@ -93,17 +93,17 @@ perform_go_enrichment <- function(genes_list) {
   # Perform GO enrichment analysis
   go_results <- enrichGO(
     gene = genes_list,
+    keyType = "ENSEMBL",
     OrgDb = org.Hs.eg.db,  # Human genome annotations
-    keyType = "SYMBOL",  # Or use "ENSEMBL" depending on your input
-    ont = "BP",  # Biological process; change to "MF" or "CC" for molecular function or cellular component
-    pvalueCutoff = 0.05
+    ont = c("ALL")
   )
-  
-  # Organize the results
+    # Organize the results
+  all_go_results_df <- go_results@result
   go_results_df <- organize_enrichment_results(go_results)
   return(list(
     go_results_df = go_results_df,
-    go_results = go_results
+    go_results = go_results,
+    all_go_results_df = all_go_results_df
   ))
 }
 
@@ -113,22 +113,24 @@ perform_kegg_enrichment <- function(entrez_ids, organism = "hsa", pvalue_cutoff 
     organism = organism,
     pvalueCutoff = pvalue_cutoff
   )
-  
+  all_kegg_results_df <- kegg_results@result
   kegg_results_df <- organize_enrichment_results(kegg_results)
   return(list(
     kegg_results_df = kegg_results_df,
-    kegg_results = kegg_results
+    kegg_results = kegg_results,
+    all_kegg_results_df = all_kegg_results_df
   ))
 }
 
 perform_dgn_enrichment <- function(snv_ids) {
     # SNP Disease-Gene Network Visualization
     dgn_results <- enrichDGNv(snv_ids)
-    
+    all_dgn_results_df <- dgn_results@result
       dgn_results_df <- organize_enrichment_results(dgn_results)
       return(list(
         dgn_results_df = dgn_results_df,
-        dgn_results = dgn_results
+        dgn_results = dgn_results,
+        all_dgn_results_df = all_dgn_results_df
       ))
 }
 
@@ -137,12 +139,12 @@ generate_enrichment_plots <- function(enrich_result, output_dir, plot_title, plo
   if (length(enrich_result) > 0) {
     # Bar plot
     barplot_file <- paste0(output_dir, "barplot_", plot_file, ".png")
-    png(barplot_file, width = 1920, height = 1080, res = 150)
-    print(barplot(enrich_result, showCategory = 10, title = plot_title, x = "GeneRatio"))
+    png(barplot_file, width = 1920, height = 2060, res = 150)
+    print(barplot(enrich_result, showCategory = 20, title = plot_title, x = "GeneRatio"))
     dev.off()
     
     # Extract pathway data
-    barplot_object <- print(barplot(enrich_result, showCategory = 10, title = plot_title, x = "GeneRatio"))
+    barplot_object <- print(barplot(enrich_result, showCategory = 20, title = plot_title, x = "GeneRatio"))
     barplot_pathway_id <- barplot_object[["data"]][["ID"]]
     barplot_pathway_desc <- barplot_object[["data"]][["Description"]]
     barplot_pathways <- data.frame(barplot_pathway_id, barplot_pathway_desc)
@@ -152,7 +154,7 @@ generate_enrichment_plots <- function(enrich_result, output_dir, plot_title, plo
     # Dot plot
     dotplot_file <- paste0(output_dir, "dotplot_", plot_file, ".png")
     png(dotplot_file, width = 1920, height = 1080, res = 150)
-    print(dotplot(enrich_result, showCategory = 10, title = plot_title, size = "Count", x = "GeneRatio"))
+    print(dotplot(enrich_result, showCategory = 20, title = plot_title, size = "Count", x = "GeneRatio"))
     dev.off()
   } 
 }
@@ -221,9 +223,9 @@ snv_gr_freq <- GRanges(
   )
 )
 
-genes_list_go_freq <- find_overlapping_genes(snv_gr_freq, gene_gr, "freq_all_")
-write.csv(genes_list_go_freq, paste0(freq_go_dir, "genes_go_all_freq.csv"), quote = FALSE, row.names = FALSE)
-  
+genes_list_freq <- find_overlapping_genes(snv_gr_freq, gene_gr, "freq_all_")
+write.csv(genes_list_freq, paste0(freq_go_dir, "genes_all_freq.csv"), quote = FALSE, row.names = FALSE)
+genes_ensembl_ids <- unique(freq_all_overlap_gene_data$ensembl_id)  
 ### Convert to ENTREZ ids (necessary for KEGG enrichment)
   
 entrez_ids_freq <- get_entrez_ids(freq_all_overlap_gene_data)
@@ -231,9 +233,10 @@ write.csv(entrez_ids_freq, paste0(freq_kegg_dir, "genes_kegg_all_freq.csv"), quo
   
 ### GO
   
-go_results_list_freq <- perform_go_enrichment(genes_list_go_freq)
+go_results_list_freq <- perform_go_enrichment(genes_ensembl_ids)
 go_results_df_freq <- go_results_list_freq$go_results_df
 go_results_freq <- go_results_list_freq$go_results
+all_go_results_freq <- go_results_list_freq$all_go_results_df
 
   if(!is.null(go_results_df_freq)) {
     write.csv(go_results_df_freq, paste0(freq_go_dir, "go_results_all_freq.csv"), quote = FALSE, row.names = FALSE)
@@ -251,6 +254,7 @@ go_results_freq <- go_results_list_freq$go_results
 kegg_results_list_freq <- perform_kegg_enrichment(entrez_ids_freq)
 kegg_results_df_freq <- kegg_results_list_freq$kegg_results_df
 kegg_results_freq <-kegg_results_list_freq$kegg_results
+all_kegg_results_freq <- kegg_results_list_freq$all_kegg_results_df
 
 if(!is.null(kegg_results_df_freq)) {
       write.csv(kegg_results_df_freq, paste0(freq_kegg_dir, "kegg_results_freq_all.csv"), quote = FALSE, row.names = FALSE)
@@ -273,6 +277,8 @@ if (length(snv_ids_freq) > 0) {
   dgn_results_list_freq <- perform_dgn_enrichment(snv_ids_freq)
   dgn_results_df_freq <- dgn_results_list_freq$dgn_results_df
   dgn_results_freq <-dgn_results_list_freq$dgn_results
+  all_dgn_results_freq <- dgn_results_list_freq$all_dgn_results_df
+  
   # Save results
   if (!is.null(dgn_results_freq)) {
     # Save as CSV
@@ -290,7 +296,7 @@ if (length(snv_ids_freq) > 0) {
 
 ##Enrichment analysis for occurrences 
 
-comparisions <- c("different positions", "different positions (rs > sp)", "different positions (sp > rs)")
+comparisions <- c("different positions","different positions (rs > sp)","different positions (sp > rs)")
 
 for (comp in comparisions) {
  if (comp == "different positions") {
@@ -323,8 +329,9 @@ for (comp in comparisions) {
   
     ### Find Genes Overlapping SNVs
   
-    genes_list_go_occur <- find_overlapping_genes(snv_gr_occur, gene_gr, "occur_")
-    write.csv(genes_list_go_occur, paste0(occur_go_dir, "genes_", gsub(" ", "_", comp), ".csv"), quote = FALSE, row.names = FALSE)
+    genes_list_occur <- find_overlapping_genes(snv_gr_occur, gene_gr, "occur_")
+    write.csv(genes_list_occur, paste0(occur_go_dir, "genes_", comp_clean, ".csv"), quote = FALSE, row.names = FALSE)
+    genes_ensembl_ids <- unique(occur_overlap_gene_data$ensembl_id)  
     
     
     ### Convert to ENTREZ ids (necessary for KEGG enrichment)
@@ -334,9 +341,11 @@ for (comp in comparisions) {
     
     
     ### GO
-    go_results_list_occur <- perform_go_enrichment(genes_list_go_occur)
+    go_results_list_occur <- perform_go_enrichment(genes_ensembl_ids)
     go_results_df_occur <- go_results_list_occur$go_results_df
     assign(paste0("go_results_df_occur_", comp_clean), go_results_df_occur)
+    all_go_results_occur <- go_results_list_occur$all_go_results_df
+    assign(paste0("all_go_results_occur_", comp_clean), all_go_results_occur)
     go_results_occur <- go_results_list_occur$go_results
     go_results_file <- paste0("go_results_3dp_",  comp_clean)
   
@@ -355,7 +364,8 @@ for (comp in comparisions) {
       kegg_results_list_occur <- perform_kegg_enrichment(entrez_ids_occur)
       kegg_results_df_occur <- kegg_results_list_occur$kegg_results_df
       assign(paste0("kegg_results_df_occur_", comp_clean),kegg_results_df_occur)
-      
+      all_kegg_results_occur <- kegg_results_list_occur$all_kegg_results_df
+      assign(paste0("all_kegg_results_df_occur_", comp_clean), all_kegg_results_occur)
       kegg_results_occur <- kegg_results_list_occur$kegg_results
       kegg_results_file <- paste0("kegg_results_3dp_", comp_clean)
       if(!is.null(kegg_results_df_occur)) {
@@ -379,11 +389,11 @@ comparisions_snvs <- c("different positions snvs",
 for (comps in comparisions_snvs) {
   #### Select appropriate SNP data based on the comparison
   if (comps == "different positions snvs") {
-    snv_ids_occur <- diff_pos_all$rsid
+    snv_ids_occur <- occur_diff_all$rsid
   } else if (comps == "different positions snvs (rs > sp)") {
-    snv_ids_occur <- diff_rs_gt_sp_all$rsid
+    snv_ids_occur <- occur_rs_gt_sp$rsid
   } else if (comps == "different positions snvs (sp > rs)") {
-    snv_ids_occur <- diff_sp_gt_rs_all$rsid
+    snv_ids_occur <- occur_sp_gt_rs$rsid
   }
 
   comps_clean <-  gsub("_+", "_", gsub(" ", "_", gsub("\\(|\\)", "", gsub(">", "_", comps))))
@@ -392,7 +402,8 @@ for (comps in comparisions_snvs) {
     dgn_results_list_occur <- perform_dgn_enrichment(snv_ids_occur)
     dgn_results_df_occur <- dgn_results_list_occur$dgn_results_df
     assign(paste0("dgn_results_df_occur_", comps_clean), dgn_results_df_occur)
-    
+    all_dgn_results_occur <- dgn_results_list_occur$all_dgn_results_df
+    assign(paste0("all_dgn_results_df_occur_", comps_clean), all_dgn_results_occur)
     dgn_results_occur <- dgn_results_list_occur$dgn_results
     if (!is.null(dgn_results_occur)) {
       # Save as CSV
@@ -412,10 +423,12 @@ for (comps in comparisions_snvs) {
 ## Detailed results
 
 pathways_in_plot <- list(
-  go_freq    = list(go_freq_barplot_pathways, go_results_df_freq, c(1,2,3,4,5,10,11,6,7,8,9)),
+  go_freq    = list(go_freq_barplot_pathways, go_results_df_freq, c(1,2,3,4,5,6,11,12,7,8,9,10)),
   kegg_freq  = list(kegg_freq_barplot_pathways, kegg_results_df_freq, c(1,2,3,4,5,12,13,6,7,8,9,10,11)),
   dgn_freq   = list(dgn_freq_barplot_pathways, dgn_results_df_freq, c(1,2,3,4,5,10,11,6,7,8,9)),
-  go_occur_rs_gt_sp  = list(go_occur_different_positions_rs_sp_barplot_pathways, go_results_df_occur_different_positions_rs_sp, c(1,2,3,4,5,10,11,6,7,8,9)),
+  go_occur_rs_gt_sp  = list(go_occur_different_positions_rs_sp_barplot_pathways, go_results_df_occur_different_positions_rs_sp, c(1,2,3,4,5,6,11,12,7,8,9,10)),
+  go_occur_sp_gt_rs  = list(go_occur_different_positions_sp_rs_barplot_pathways, go_results_df_occur_different_positions_sp_rs, c(1,2,3,4,5,6,11,12,7,8,9,10)),
+  go_occur_diff  = list(go_occur_different_positions_barplot_pathways, go_results_df_occur_different_positions, c(1,2,3,4,5,6,11,12,7,8,9,10)),
   dgn_occur_diff = list(dgn_occur_different_positions_snvs_barplot_pathways, dgn_results_df_occur_different_positions_snvs, c(1,2,3,4,5,10,11,6,7,8,9)),
   dgn_occur_rs_gt_sp = list(dgn_occur_different_positions_snvs_rs_sp_barplot_pathways, dgn_results_df_occur_different_positions_snvs_rs_sp, c(1,2,3,4,5,10,11,6,7,8,9)),
   dgn_occur_sp_gt_rs = list(dgn_occur_different_positions_snvs_sp_rs_barplot_pathways, dgn_results_df_occur_different_positions_snvs_sp_rs, c(1,2,3,4,5,10,11,6,7,8,9))
@@ -429,6 +442,8 @@ pathways_go_plot_freq    <- pathways_in_plot_processed$go_freq
 pathways_kegg_plot_freq  <- pathways_in_plot_processed$kegg_freq
 pathways_dgn_plot_freq   <- pathways_in_plot_processed$dgn_freq
 pathways_go_plot_occur_rs_sp    <- pathways_in_plot_processed$go_occur_rs_gt_sp
+pathways_go_plot_occur_sp_rs    <- pathways_in_plot_processed$go_occur_sp_gt_rs
+pathways_go_plot_occur_diff    <- pathways_in_plot_processed$go_occur_diff
 pathways_dgn_plot_occur_diff   <- pathways_in_plot_processed$dgn_occur_diff
 pathways_dgn_plot_occur_rs_sp   <- pathways_in_plot_processed$dgn_occur_rs_gt_sp
 pathways_dgn_plot_occur_sp_rs   <- pathways_in_plot_processed$dgn_occur_sp_gt_rs
@@ -440,3 +455,6 @@ write.csv(pathways_go_plot_occur_rs_sp, paste0(occur_go_dir, "pathways_go_plot_o
 write.csv(pathways_dgn_plot_occur_diff, paste0(occur_dgn_dir, "pathways_dgn_plot_occur_diff.csv"), row.names = FALSE, quote = FALSE)
 write.csv(pathways_dgn_plot_occur_rs_sp, paste0(occur_dgn_dir, "pathways_dgn_plot_occur_rs_sp.csv"), row.names = FALSE, quote = FALSE)
 write.csv(pathways_dgn_plot_occur_sp_rs, paste0(occur_dgn_dir, "pathways_dgn_plot_occur_sp_rs.csv"), row.names = FALSE, quote = FALSE)
+write.csv(pathways_go_plot_occur_diff, paste0(occur_dgn_dir, "pathways_go_plot_occur_diff.csv"), row.names = FALSE, quote = FALSE)
+write.csv(pathways_go_plot_occur_rs_sp, paste0(occur_dgn_dir, "pathways_go_plot_occur_rs_sp.csv"), row.names = FALSE, quote = FALSE)
+write.csv(pathways_go_plot_occur_sp_rs, paste0(occur_dgn_dir, "pathways_go_plot_occur_sp_rs.csv"), row.names = FALSE, quote = FALSE)
