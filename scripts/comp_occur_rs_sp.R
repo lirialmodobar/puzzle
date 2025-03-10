@@ -3,7 +3,7 @@ library(dplyr)
 library(tidyr)
 
 occur_dir <- "/home/yuri/liri/puzzle/comp_occur/all/3dp/"
-
+plot_dir <- "/home/yuri/liri/puzzle/rs_sp_plots/3dp/"
 
 diff_all_chr <- c()
 pos_all <- c()
@@ -137,7 +137,7 @@ diff_snp_rs_gt_sp_all_chr <- rsids_all[diff_rs_gt_sp_all_chr]
 diff_snp_all_chr <- rsids_all[as.logical(different_all_chr)]
 
 diff_chr_sp_gt_rs_all_chr <- chr_all[diff_sp_gt_rs_all_chr]
-diff_chr_rs_gt_sp_all_chr <- chr_all[diff_rs_gt_sp_all_chr]
+diff_chr_rs_gt_rs_all_chr <- chr_all[diff_rs_gt_sp_all_chr]
 diff_chr_all_chr <- chr_all[as.logical(different_all_chr)]
 
 
@@ -180,20 +180,34 @@ for (chr in chromosomes_with_differences) {
     plot_data <- get(plot_data_var, envir = .GlobalEnv)
     
     scaling_factor <- max(c(plot_data$occur_rs, plot_data$occur_sp)) 
-    png(paste0(saving_dir, "chr_", chr, "_rs_sp_all", ".png"), width = 2400, height = 1800, res = 300)
+    png(paste0(plot_dir, "chr_", chr, "_rs_sp_all", ".png"), width = 2400, height = 1800, res = 300)
     # First, draw the black and green lines (so they appear behind)
     plot(plot_data$pos_mb, is_different * scaling_factor, type = 'l', col = 'darkgray',
-         ylab = "Occurrences", xlab = paste("chr ", chr, " (Mb)"), bty = "n", xaxt = "n", ylim = c(0, max(plot_data$occur_rs, plot_data$occur_sp) + 5))
+         ylab = "Ocorrências ponderadas", xlab = paste("chr ", chr, " (Mb)"), bty = "n", xaxt = "n", ylim = c(0, max(plot_data$occur_rs, plot_data$occur_sp) + 5))
     # Then, draw the blue and red lines
     lines(plot_data$pos_mb, plot_data$occur_rs, col = 'blue')
     lines(plot_data$pos_mb, plot_data$occur_sp, col = 'red')
     
     # Add legend and axis as usual
-    legend(x = "top", legend = c("RS", "SP", "Different"), fill = c("blue", "red", "darkgray"), ncol = 3, bty = "n")
+    legend(x = "top", legend = c("RS", "SP", "Diferente"), fill = c("blue", "red", "darkgray"), ncol = 3, bty = "n")
     x_values <- c(1, seq(20, max(plot_data$pos_mb) + 20, by = 20))
     x_labels <- x_values
     axis(1, at = x_values, labels = x_labels)
     dev.off()
   }
 }
-  
+
+chrs_2_more_regions <- c(4,18)
+for (chr in chrs_2_more_regions) {
+all_chr_pos_diff <- data.frame(chr_all, pos_all, different_all_chr)
+chr_all_pos_diff <- subset(all_chr_pos_diff, chr_all == chr)
+assign(paste0("chr_", chr, "_pos_diff"), chr_all_pos_diff)
+}
+diff_4 <- subset(chr_4_pos_diff, pos_all >= 88535068)
+diff_4_2 <- subset(diff_4, pos_all > 89206177 & pos_all <= 90635324)
+diff_18 <- subset(chr_18_pos_diff, pos_all >= 69472017)
+diff_18_2 <- subset(diff_18, pos_all > 69515429 & pos_all <= 72514646)
+chr_4_rsids_region1 <- subset(all_chr_diff_pos, chr == 4 & position >= 88535068 & position <= 89206177)
+chr_4_rsids_region2 <- subset(all_chr_diff_pos, chr == 4 & position >= 90394425 & position <= 90635324)
+chr_18_rsids_region1 <- subset(all_chr_diff_pos, chr == 18 & position >= 69472017 & position <= 69515429)
+chr_18_rsids_region2 <- subset(all_chr_diff_pos, chr == 18 & position >= 70206844 & position <= 72514646)
