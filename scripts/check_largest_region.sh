@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 WD=/mnt/genetica_1/liriel #set working dir
 label="unk" #change to whatever label you're analysing
 LABEL_DIR=$WD/unk #change to dir with the chr files of the label

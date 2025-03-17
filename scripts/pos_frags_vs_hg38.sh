@@ -1,4 +1,4 @@
-WD=/home/yuri/liri/puzzle/109_preliminar_oct23/109_10jan24 #sets the working directory
+WD=/mnt/genetica_1/liriel #sets the working directory
 INFOS=$WD/infos
 if [ ! -f $INFOS/hg38_chr_start_end.txt ]; then
     curl -s "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/chromInfo.txt.gz" | gunzip | grep -E 'chr([1-9]|1[0-9]|2[0-2])\b' | sort -V | awk '{print $1"\t"1"\t"$2}' > $INFOS/hg38_chr_start_end.txt
