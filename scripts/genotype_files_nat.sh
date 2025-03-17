@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Definir os arquivos de entrada e saída
+# Input, output, tools
 CHR="$1"
 STATE="$2"
 WD="/home/yuri/liri/puzzle_sdumont"
@@ -14,13 +14,13 @@ SHAPEIT=/home/yuri/Downloads/shapeit.v2.904.3.10.0-693.11.6.el7.x86_64/bin/shape
 BCFTOOLS=/usr/bin/bcftools
 PLINK=/usr/local/bin/plink #v1.9
 
-# Criar diretório de saída se não existir
+# Create output directories if they dont exist
 mkdir -p "$HAPS_DIR"
 mkdir -p "$VCF_DIR"
 mkdir -p "$PLINK_FILES_DIR"
 mkdir -p "$HAPS_SIMPLIFIED_DIR"
 
-#Funcoes
+#Functions
 
 haps_alleles_to_0_1() {
     local haps_alleles="$1"  # Input file
@@ -45,98 +45,98 @@ haps_alleles_to_0_1() {
 }
 
 
-# Obter lista de IDs únicos sem duplicação de _A e _B
+# Unique IDs whithout _A e _B
 INDIVIDUALS=$(cut -f1 "$UNFILT_FILE" | sed 's/_.$//' | sort -u)
 
-# Iterar sobre cada indivíduo
-#for ID in $INDIVIDUALS; do
- #  echo "Processando indivíduo: $ID"
 
-    # Filtrar os fragmentos NAT do indivíduo (_A e _B)
-#    grep -E "^${ID}_[AB]" "$UNFILT_FILE" > "$WD/${ID}_${CHR}_${STATE}_fragments.txt"
+for ID in $INDIVIDUALS; do
+   echo "Processando indivíduo: $ID"
 
-    # Extrair as coordenadas dos fragmentos
- #  awk '{print $2, $3, $4}' "$WD/${ID}_${CHR}_${STATE}_fragments.txt" > "$WD/${ID}_${CHR}_${STATE}_coords.txt"
+    # Filter for NAT fragments 
+    grep -E "^${ID}_[AB]" "$UNFILT_FILE" > "$WD/${ID}_${CHR}_${STATE}_fragments.txt"
 
-  # rm "$WD/${ID}_${CHR}_${STATE}_fragments.txt"
-    # Subsetar o arquivo .haps para os fragmentos do indivíduo
-  #   while read -r chrom initial_pos final_pos; do
-   #                     awk -v ip="$initial_pos" -v fp="$final_pos" '$3 >= ip && $3 <= fp {print $0}' "$HAPS_FILE" >> "$WD/${ID}_${CHR}_${STATE}_subset.haps"
-    # done < "$WD/${ID}_${CHR}_${STATE}_coords.txt"
+    # Extract coordinates
+   awk '{print $2, $3, $4}' "$WD/${ID}_${CHR}_${STATE}_fragments.txt" > "$WD/${ID}_${CHR}_${STATE}_coords.txt"
 
-   #rm "$WD/${ID}_${CHR}_${STATE}_coords.txt"
+   rm "$WD/${ID}_${CHR}_${STATE}_fragments.txt"
+    # Subset haps file for the haplotypes of one individual
+     while read -r chrom initial_pos final_pos; do
+                        awk -v ip="$initial_pos" -v fp="$final_pos" '$3 >= ip && $3 <= fp {print $0}' "$HAPS_FILE" >> "$WD/${ID}_${CHR}_${STATE}_subset.haps"
+     done < "$WD/${ID}_${CHR}_${STATE}_coords.txt"
 
-   # Manter somente o individuo atual no haps
-   #col_number=$(head -n 1 "$HAPS_FILE" | tr '\t' '\n' | nl -v 6 | grep -i "$ID_A" | awk '{print $1}')
-   #awk -v col_num="$col_number" -v OFS="\t" '{print $1, $2, $3, $4, $5, $col_num, $(col_num+1)}' "$WD/${ID}_${CHR}_${STATE}_subset.haps" > "$WD/${ID}_${CHR}_${STATE}_subset_final.txt"
-   #rm "$WD/${ID}_${CHR}_${STATE}_subset.haps"
+   rm "$WD/${ID}_${CHR}_${STATE}_coords.txt"
 
-   #Voltar alelos de letras pra 0 e 1
-#   haps_alleles_to_0_1 "$WD/${ID}_${CHR}_${STATE}_subset_final.txt" "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.haps"
-   #rm "$WD/${ID}_${CHR}_${STATE}_subset_final.txt"
+   # Keep only current individual in haps file
+   col_number=$(head -n 1 "$HAPS_FILE" | tr '\t' '\n' | nl -v 6 | grep -i "$ID_A" | awk '{print $1}')
+   awk -v col_num="$col_number" -v OFS="\t" '{print $1, $2, $3, $4, $5, $col_num, $(col_num+1)}' "$WD/${ID}_${CHR}_${STATE}_subset.haps" > "$WD/${ID}_${CHR}_${STATE}_subset_final.txt"
+   rm "$WD/${ID}_${CHR}_${STATE}_subset.haps"
 
-   #Criar arquivos .sample e converter haps para vcf
- #  haps_prefix="${HAPS_DIR}/${ID}_${CHR}_${STATE}_haps_nat"
-  # haps_file="${haps_prefix}.haps"
+   #Alleles in 0/1
+   haps_alleles_to_0_1 "$WD/${ID}_${CHR}_${STATE}_subset_final.txt" "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.haps"
+   rm "$WD/${ID}_${CHR}_${STATE}_subset_final.txt"
+
+   #Create .sample file and convert haps to vcf
+   haps_prefix="${HAPS_DIR}/${ID}_${CHR}_${STATE}_haps_nat"
+   haps_file="${haps_prefix}.haps"
 
     # Define the .sample file
-   # sample_file="${haps_prefix}.sample"
+    sample_file="${haps_prefix}.sample"
 
     # Create the .sample file
-    #echo "Creating .sample file for $haps_file"
-    #echo -e "ID_1\tID_2\tmissing" > "$sample_file"
-    #echo -e "0\t0\t0" >> "$sample_file"
-    #echo -e "${ID}\t${ID}\t0" >> "$sample_file"
+    echo "Creating .sample file for $haps_file"
+    echo -e "ID_1\tID_2\tmissing" > "$sample_file"
+    echo -e "0\t0\t0" >> "$sample_file"
+    echo -e "${ID}\t${ID}\t0" >> "$sample_file"
 
     # Define the output VCF file
-    #output_vcf="${VCF_DIR}/${ID}_${CHR}_${STATE}_haps_nat.vcf"
-    #sort -k3,3n "${haps_file}" -o "${haps_file}"
+    output_vcf="${VCF_DIR}/${ID}_${CHR}_${STATE}_haps_nat.vcf"
+    sort -k3,3n "${haps_file}" -o "${haps_file}"
 
     # Run ShapeIt conversion
-    #echo "Converting $haps_file to VCF format..."
-   #$SHAPEIT -convert --input-haps "$haps_prefix" --output-vcf "$output_vcf"
-   #rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.hap"
-   #rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.samples"
-#done
+    echo "Converting $haps_file to VCF format..."
+    $SHAPEIT -convert --input-haps "$haps_prefix" --output-vcf "$output_vcf"
+    rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.hap"
+    rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.samples"
+done
 
-#Juntar todos os vcfs daquele cromossomo em um so
-ulimit -n 10000 #aumentar limite de arquivos abertos de uma vez para poder fazer essa parte
-    #Comprimir
- #   bgzip $VCF_DIR/*${CHR}_${STATE}_haps_nat.vcf
+#All vcfs of a chromosome into one
+ulimit -n 10000 #increase limit of open files
+    #Compress
+    bgzip $VCF_DIR/*${CHR}_${STATE}_haps_nat.vcf
 
-    #Indexar
-  #  for VCF in $VCF_DIR/*${CHR}_${STATE}_haps_nat.vcf.gz; do $BCFTOOLS index "$VCF"; done
+    #Index
+    for VCF in $VCF_DIR/*${CHR}_${STATE}_haps_nat.vcf.gz; do $BCFTOOLS index "$VCF"; done
 
-    #Juntar
+    #Merge
 if [ "$STATE" = "rs" ]; then
- #   $BCFTOOLS  merge -O z -o $VCF_DIR/all_C10_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C10*${CHR}_${STATE}_haps_nat.vcf.gz
-  #  $BCFTOOLS  merge -O z -o $VCF_DIR/all_C11_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C11*${CHR}_${STATE}_haps_nat.vcf.gz
-   # $BCFTOOLS index $VCF_DIR/all_C10_chr_${CHR}_nat_${STATE}.vcf.gz
-    #$BCFTOOLS index $VCF_DIR/all_C11_chr_${CHR}_nat_${STATE}.vcf.gz
-    #$BCFTOOLS  merge -O z -o $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/all_C*_chr_${CHR}_nat_${STATE}.vcf.gz
+    $BCFTOOLS  merge -O z -o $VCF_DIR/all_C10_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C10*${CHR}_${STATE}_haps_nat.vcf.gz
+    $BCFTOOLS  merge -O z -o $VCF_DIR/all_C11_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C11*${CHR}_${STATE}_haps_nat.vcf.gz
+    $BCFTOOLS index $VCF_DIR/all_C10_chr_${CHR}_nat_${STATE}.vcf.gz
+    $BCFTOOLS index $VCF_DIR/all_C11_chr_${CHR}_nat_${STATE}.vcf.gz
+    $BCFTOOLS  merge -O z -o $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/all_C*_chr_${CHR}_nat_${STATE}.vcf.gz
     $BCFTOOLS  index $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz
     $BCFTOOLS  norm -d all $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz  -O z -o $VCF_DIR/dedup_chr_${CHR}_nat_${STATE}.vcf.gz
     $BCFTOOLS index $VCF_DIR/dedup_chr_${CHR}_nat_${STATE}.vcf.gz
 fi
 if [ "$STATE" = "sp" ]; then
- #   $BCFTOOLS  merge -O z -o $VCF_DIR/all_C20_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C20*${CHR}_${STATE}_haps_nat.vcf.gz
-  #  $BCFTOOLS  merge -O z -o $VCF_DIR/all_C21_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C21*${CHR}_${STATE}_haps_nat.vcf.gz
-   # $BCFTOOLS index $VCF_DIR/all_C20_chr_${CHR}_nat_${STATE}.vcf.gz
-    #$BCFTOOLS index $VCF_DIR/all_C21_chr_${CHR}_nat_${STATE}.vcf.gz
-    #$BCFTOOLS  merge -O z -o $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/all_C*_chr_${CHR}_nat_${STATE}.vcf.gz
-     $BCFTOOLS  index $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz
-    $BCFTOOLS  norm -d all $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz  -O z -o $VCF_DIR/dedup_chr_${CHR}_nat_${STATE}.vcf.gz
-    $BCFTOOLS index $VCF_DIR/dedup_chr_${CHR}_nat_${STATE}.vcf.gz
+   $BCFTOOLS  merge -O z -o $VCF_DIR/all_C20_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C20*${CHR}_${STATE}_haps_nat.vcf.gz
+   $BCFTOOLS  merge -O z -o $VCF_DIR/all_C21_chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/C21*${CHR}_${STATE}_haps_nat.vcf.gz
+   $BCFTOOLS index $VCF_DIR/all_C20_chr_${CHR}_nat_${STATE}.vcf.gz
+   $BCFTOOLS index $VCF_DIR/all_C21_chr_${CHR}_nat_${STATE}.vcf.gz
+   $BCFTOOLS  merge -O z -o $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz $VCF_DIR/all_C*_chr_${CHR}_nat_${STATE}.vcf.gz
+   $BCFTOOLS  index $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz
+   $BCFTOOLS  norm -d all $VCF_DIR/chr_${CHR}_nat_${STATE}.vcf.gz  -O z -o $VCF_DIR/dedup_chr_${CHR}_nat_${STATE}.vcf.gz
+   $BCFTOOLS index $VCF_DIR/dedup_chr_${CHR}_nat_${STATE}.vcf.gz
 
 fi
 
- #   rm $VCF_DIR/C*
-  #  rm $VCF_DIR/all*
-#rm $VCF_DIR/chr*
+rm $VCF_DIR/C*
+rm $VCF_DIR/all*
+rm $VCF_DIR/chr*
 
-#Ter um haps com todas as amostras daquele cromossomo
+#Haps with all the samples from the chromosome, already only segments from our desired ancestry
     $BCFTOOLS convert --hapsample "$HAPS_DIR/chr_${CHR}_nat_${STATE}"  "$VCF_DIR/dedup_chr_${CHR}_nat_${STATE}.vcf.gz"
-#Ter um haps modificado de input para pipeline reconstruct
+#Get adapted haps to use as input for the pipeline
     samples_file="$HAPS_DIR/chr_${CHR}_nat_${STATE}.samples"
     out1_samples_file="$HAPS_SIMPLIFIED_DIR/chr_${CHR}_1_nat_${STATE}.samples"
     out2_samples_file="$HAPS_SIMPLIFIED_DIR/chr_${CHR}_2_nat_${STATE}.samples"
@@ -209,23 +209,12 @@ for sample_file in "${!sample_files[@]}"; do
     gzip "$output_file"
 
     # Clean up intermediate files
-    #rm "$HAPS_SIMPLIFIED_DIR/haps_indexes_${CHR}_nat_${STATE}"
-    #rm "$HAPS_SIMPLIFIED_DIR/ind_cols_${file_prefix}"
-    #rm "$HAPS_SIMPLIFIED_DIR/first_haps_${file_prefix}"
-    #rm "$geno_columns_file"
-    #rm "$header_file"
-    #rm "$intermediate_file"
+    rm "$HAPS_SIMPLIFIED_DIR/haps_indexes_${CHR}_nat_${STATE}"
+    rm "$HAPS_SIMPLIFIED_DIR/ind_cols_${file_prefix}"
+    rm "$HAPS_SIMPLIFIED_DIR/first_haps_${file_prefix}"
+    rm "$geno_columns_file"
+    rm "$header_file"
+    rm "$intermediate_file"
 done
- #rm "$HAPS_SIMPLIFIED_DIR/temp_chr_${CHR}_nat_${STATE}.hap"
-
-#Ter um vcf com todos os cromossomos e amostras, assim como bed bim fam (tem que ter rodado na ordem de cromossomos)
-#if [ "$CHR" -eq 22 ]; then
-        # Merge all VCFs from chr1 to chr22 into one VCF
-	#for VCF in $VCF_DIR/chr_*_nat_${STATE}.vcf.gz; do $BCFTOOLS index "$VCF"; done
-        #$BCFTOOLS merge -O z -o "$VCF_DIR/all_chr_nat_${STATE}.vcf.gz" $VCF_DIR/chr_*_nat_${STATE}.vcf.gz #same samples, but some files have fewer samples: no merge or concat
-        # Remove individual chromosome VCF files
-        #rm $VCF_DIR/chr_*_nat_${STATE}.vcf.gz
-        #Ter um bed bim fam com todas as amostras daquele cromossomo
-        #$PLINK  --vcf "$VCF_DIR/all_chr_nat_${STATE}.vcf.gz" --make-bed --out "$PLINK_FILES_DIR/chr_${CHR}_nat_${STATE}" #se um dia tiver o merge ou se precisar dos bed bim fam separados
-#fi
+rm "$HAPS_SIMPLIFIED_DIR/temp_chr_${CHR}_nat_${STATE}.hap"
 echo "fim"
