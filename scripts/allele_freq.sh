@@ -1,4 +1,4 @@
-WD=/mnt/genetica_1/liriel
+WD=/home/yuri/liri/puzzle_sdumont
 #HAPS_SAMPLE_DIR=$WD/bhrc_haps_hg38
 
 # Check if all three arguments are provided
@@ -65,7 +65,7 @@ allele_freq(){
 
 ##Main script
 
-#find_vars_within_pos_range $INPUT_FILE "$WD/infos/haps_geno_header_${chr}.txt" "$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
+find_vars_within_pos_range $INPUT_FILE "$WD/infos/haps_geno_header_${chr}.txt" "$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
 
 cohaps="$INPUT_DIR/seq_info/cohaps_chr_${chr}_${anc}_${state}.txt"
 

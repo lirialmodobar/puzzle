@@ -1,11 +1,11 @@
 #!/bin/bash
 
-WD=/prj/unifesp/pgt/liriel.almodobar/puzzle
+WD=/home/yuri/liri/puzzle_sdumont
 
 chr=$1
 
 # Define the input files directory
-INPUT_FILES=/prj/unifesp/pgt/liriel.almodobar/puzzle/output_collapse/chr_${chr}
+INPUT_FILES=/home/yuri/liri/puzzle_sdumont/output_collapse/chr_${chr}
 
 # Function to process states and ancestries
 process_states_ancs() {
@@ -15,9 +15,9 @@ process_states_ancs() {
 	if [ "$state" = "rs_sp" ]; then
 		grep -w "$label" "$INFOS/all_anc_${chr}.txt" | grep -v -E "C20361_A|C20361_B|C20776_A|C20776_B" | awk '{print $0 ($1 ~ /^C1/ ? "\trs" : "\tsp")}' > "$ANC_DIR/${label_lower}_${state}_${chr}.txt"
 	elif [ "$state" = "rs" ]; then
-		awk '{if ($6 == "rs") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_${chr}.txt > $ANC_DIR/"$label_lower"_"$state"_${chr}.txt
+		awk '{if ($6 == "rs") print $0}' "$WD/rs_sp/${label_lower}/${label_lower}_rs_sp_${chr}.txt" > "$ANC_DIR/${label_lower}_${state}_${chr}.txt"
 	else
-		awk '{if ($6 == "sp") print $0}' $WD/rs_sp/$label_lower/"$label_lower"_rs_sp_${chr}.txt > $ANC_DIR/"$label_lower"_"$state"_${chr}.txt
+		awk '{if ($6 == "sp") print $0}' "$WD/rs_sp/${label_lower}/${label_lower}_rs_sp_${chr}.txt" > "$ANC_DIR/${label_lower}_${state}_${chr}.txt"
 	fi
 }
 
@@ -27,14 +27,15 @@ process_chromosome() {
     local label=$2
     local ANC_DIR=$3
 
-    awk -v chr="$chr" -v OFS="\t" '{ if ($2 == chr) {print}}' "${ANC_DIR}/${label}_${state}_all.txt" | sort -k3,3nb -k4,4nbr > "$WD/$chr_${label}_temp.txt"
+    awk -v chr=$chr -v OFS="\t" '{ if ($2 == chr) {print}}' "${ANC_DIR}/${label}_${state}_${chr}.txt" | sort -k3,3nb -k4,4nbr > "$WD/${chr}_${label}_temp.txt"
 
-    if [ -s "$WD/$chr_${label}_temp.txt" ]; then
-        awk '!seen[$3]++' "$WD/$chr_${label}_temp.txt" | awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%d\tNA\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), $5, $6; next} {printf "%s\t%d\t%d\t%d\t%d\t%d\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), ($3 <= a) ? 0 : 1, $5, $6; a=$4}' > "$ANC_DIR/chr_info_filt/chr_${chr}_${label}_${state}_filt.txt"
+    if [ -s "$WD/${chr}_${label}_temp.txt" ]; then
+        awk '!seen[$3]++' "$WD/${chr}_${label}_temp.txt" | awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%d\tNA\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), $5, $6; next} {printf "%s\t%d\t%d\t%d\t%d\t%d\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), ($3 <= a) ? 0 : 1, $5, $6; a=$4}' > "$ANC_DIR/chr_info_filt/chr_${chr}_${label}_${state}_filt.txt"
 
-        awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%d\tNA\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), $5, $6; next} {printf "%s\t%d\t%d\t%d\t%d\t%d\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), ($3 <= a) ? 0 : 1, $5, $6; a=$4}' "$WD/$chr_${label}_temp.txt" > "$ANC_DIR/chr_info_unfilt/chr_${chr}_${label}_${state}_unfilt.txt"
+        awk 'NR==1 {a=$4; printf "%s\t%d\t%d\t%d\t%d\tNA\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), $5, $6; next} {printf "%s\t%d\t%d\t%d\t%d\t%d\t%s\t%s\n", $1, $2, $3, $4, ($4-$3), ($3 <= a) ? 0 : 1, $5, $6; a=$4}' "$WD/${chr}_${label}_temp.txt" > "$ANC_DIR/chr_info_unfilt/chr_${chr}_${label}_${state}_unfilt.txt"
+	echo "$ANC_DIR/chr_info_unfilt/chr_${chr}_${label}_${state}_unfilt.txt"
     fi
-    rm "$WD/$chr_${label}_temp.txt"
+    rm "$WD/${chr}_${label}_temp.txt"
 }
 
 
@@ -49,6 +50,7 @@ INFOS="$WD/infos"
 # List files in the input directory and save the results to a file
 ls "$INPUT_FILES" > "$WD/collapse_results_${chr}.txt"
 
+echo "$WD/collapse_results_${chr}.txt"
 # Process each file listed in 'collapse_results.txt'
 while read collapse; do
     FILE_NAME=$(echo "$collapse" | head -n 1 | sed "s/.bed//g")
@@ -56,7 +58,7 @@ while read collapse; do
 done < "$WD/collapse_results_${chr}.txt"
 
 # Remove the temporary file 'collapse_results.txt'
-rm "$WD/collapse_results_{chr}.txt"
+rm "$WD/collapse_results_${chr}.txt"
 
 #Define an array of states
 states=("rs_sp" "rs" "sp")
@@ -74,7 +76,7 @@ for state in "${states[@]}"; do
 	for label in "${labels[@]}"; do
     		label_lower="${label,,}"
     		ANC_DIR="$STATE_DIR/$label_lower"
-
+		echo "$ANC_DIR"
    	 	# Create a directory for the label if it doesn't exist
     		if [ ! -d "$ANC_DIR" ]; then
         		mkdir "$ANC_DIR"
