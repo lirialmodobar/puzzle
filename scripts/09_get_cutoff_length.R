@@ -1,5 +1,5 @@
 library(dplyr)
-unfilt_frags_dir <- "/home/yuri/liri/puzzle_sdumont/rs/nat/chr_info_unfilt"
+unfilt_frags_dir <- "/home/yuri/liri/puzzle_sdumont/rs/nat/chr_info_unfilt" #change to sp if doing it for another state
 setwd(unfilt_frags_dir)
 files <- list.files(unfilt_frags_dir, full.names = TRUE)
 files <- files[1:22] #removing dirs and files that are not unfilt frags
