@@ -77,14 +77,14 @@ for state in "rs"; do
 	# Assemble haplotypes using extracted  gene pools
 
 
- 	#"01.inte.genome.cutoff.py" integrates gene pool across multiple files to generate an haplotype.
-	# python   01.inte.genome.cutoff.py   <Output haplotype>   <Missing rate cutoff>   <Length cutoff>   <Gene pool 1>   …   < Gene pool n>
+ 	#"inte.genome.cutoff.py" integrates gene pool across multiple files to generate an haplotype.
+	# python inte.genome.cutoff.py   <Output haplotype>   <Missing rate cutoff>   <Length cutoff>   <Gene pool 1>   …   < Gene pool n>
 	# Length cutoff: The maximum length that can be extended at one time when obtaining segments on a haplotype (e.g., 6000.0 bp).
 	# Can input one or more gene pool files by appending them to the script parameters in sequence.
 
 		for i in $(seq 1 $n_haps)    # Generate n_haps haplotypes
 		do
-			python $SCRIPTS_DIR/01.inte.genome.cutoff.py  \
+			python $SCRIPTS_DIR/inte.genome.cutoff.py  \
 			$TEMP_DIR/101.nat_${state}_chr${chr}.${i}.${cutoff_freq}.${cutoff_length}.txt.gz \
 			${cutoff_freq} \
 			${cutoff_length} \
@@ -97,14 +97,14 @@ for state in "rs"; do
 	echo "Step 2: Generate ancestral individuals using assembled ancestral haplotypes"
 
 	# Generate individuals from the assembled haplotypes
-	# "02.trans.to.vcf.py" converts two haplotypes into a VCF-format individual.
-	# python   trans.to.vcf.py   <Input gzipped VCF file>   <haplotype 1>   < haplotype 2>   <Sample ID>   <Output individual>
+	# "trans.to.vcf.py" converts two haplotypes into a VCF-format individual.
+	# python trans.to.vcf.py   <Input gzipped VCF file>   <haplotype 1>   < haplotype 2>   <Sample ID>   <Output individual>
 
 		for i in $(seq 1 2 $n_haps)
 		do
 		j=$[ $i + 1 ]
 		#Combine two consecutively numbered haplotypes to generate a diploid
-		$python   $SCRIPTS_DIR/02.trans.to.vcf.py \
+		$python   $SCRIPTS_DIR/trans.to.vcf.py \
 		$INPUT_VCF_DIR/dedup_chr_${chr}_nat_${state}.vcf.gz \
 		$TEMP_DIR/101.nat_${state}_chr${chr}.${i}.${cutoff_freq}.${cutoff_length}.txt.gz \
 		$TEMP_DIR/101.nat_${state}_chr${chr}.${j}.${cutoff_freq}.${cutoff_length}.txt.gz \
