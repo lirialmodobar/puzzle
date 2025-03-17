@@ -4,12 +4,11 @@
 CHR="$1"
 STATE="$2"
 WD="/home/yuri/liri/puzzle_sdumont"
-UNFILT_FILE="$WD/$STATE/nat/chr_info_unfilt/chr_${CHR}_nat_${STATE}_unfilt.txt"  # Substituir pelo caminho do arquivo real
-HAPS_FILE="$WD/infos/haps_geno_header_${CHR}.txt"   # Substituir pelo caminho do arquivo .haps real
-HAPS_DIR="$WD/$STATE/nat/chr_info_unfilt/haps_nat" #haps separado por chr
+UNFILT_FILE="$WD/$STATE/nat/chr_info_unfilt/chr_${CHR}_nat_${STATE}_unfilt.txt"  # replace with path to file
+HAPS_FILE="$WD/infos/haps_geno_header_${CHR}.txt"   # replace with path to .haps
+HAPS_DIR="$WD/$STATE/nat/chr_info_unfilt/haps_nat" #haps separated by chr from anc
 HAPS_SIMPLIFIED_DIR=$HAPS_DIR/haps_simplified
-VCF_DIR="$WD/$STATE/nat/chr_info_unfilt/vcf_nat" #vcf todas amostras todos cromossomos
-PLINK_FILES_DIR="$WD/$STATE/nat/chr_info_unfilt/vcf_nat/plink_files" #bed bim fam todas amostras todos cromossomos
+VCF_DIR="$WD/$STATE/nat/chr_info_unfilt/vcf_nat" #vcf all samples all chr from anc
 SHAPEIT=/home/yuri/Downloads/shapeit.v2.904.3.10.0-693.11.6.el7.x86_64/bin/shapeit #v2
 BCFTOOLS=/usr/bin/bcftools
 PLINK=/usr/local/bin/plink #v1.9
@@ -17,7 +16,6 @@ PLINK=/usr/local/bin/plink #v1.9
 # Create output directories if they dont exist
 mkdir -p "$HAPS_DIR"
 mkdir -p "$VCF_DIR"
-mkdir -p "$PLINK_FILES_DIR"
 mkdir -p "$HAPS_SIMPLIFIED_DIR"
 
 #Functions
@@ -95,8 +93,8 @@ for ID in $INDIVIDUALS; do
     # Run ShapeIt conversion
     echo "Converting $haps_file to VCF format..."
     $SHAPEIT -convert --input-haps "$haps_prefix" --output-vcf "$output_vcf"
-    rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.hap"
-    rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.samples"
+    rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.haps"
+    rm "$HAPS_DIR/${ID}_${CHR}_${STATE}_haps_nat.sample"
 done
 
 #All vcfs of a chromosome into one
@@ -217,4 +215,5 @@ for sample_file in "${!sample_files[@]}"; do
     rm "$intermediate_file"
 done
 rm "$HAPS_SIMPLIFIED_DIR/temp_chr_${CHR}_nat_${STATE}.hap"
+rm "$HAPS_SIMPLIFIED_DIR/haps_cols_${CHR}_nat_${STATE}.txt"
 echo "fim"
