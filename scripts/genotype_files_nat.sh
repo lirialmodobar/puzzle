@@ -16,7 +16,7 @@ PLINK=/usr/local/bin/plink #v1.9
 # Create output directories if they dont exist
 mkdir -p "$HAPS_DIR"
 mkdir -p "$VCF_DIR"
-mkdir -p "$HAPS_SIMPLIFIED_DIR"
+#mkdir -p "$HAPS_SIMPLIFIED_DIR"
 
 #Functions
 
@@ -49,7 +49,7 @@ INDIVIDUALS=$(cut -f1 "$UNFILT_FILE" | sed 's/_.$//' | sort -u)
 
 for ID in $INDIVIDUALS; do
    echo "Processando indivíduo: $ID"
-   for HAP in A, B; do
+   for HAP in A B; do
 
     # Filter for NAT fragments 
     grep -E "^${ID}_${HAP}" "$UNFILT_FILE" > "$WD/${ID}_${HAP}_${CHR}_${STATE}_fragments.txt"
@@ -66,8 +66,8 @@ for ID in $INDIVIDUALS; do
    rm "$WD/${ID}_${HAP}_${CHR}_${STATE}_coords.txt"
 
    # Keep only current individual in haps file
-   col_number=$(head -n 1 "$HAPS_FILE" | tr '\t' '\n' | nl -v 6 | grep -i "$ID_A" | awk '{print $1}')
-   awk -v col_num="$col_number" -v hap = "$HAP" -v OFS="\t" '{hapA = $col_num hapB = $(col_num+1) if(hap == A) {hapB = .} else if(hap == B) {hapA = .} {print $1, $2, $3, $4, $5, hapA, hapB}}' "$WD/${ID}_${HAP}_${CHR}_${STATE}_subset.haps" > "$WD/${ID}_${HAP}_${CHR}_${STATE}_subset_final.txt"
+   col_number=$(head -n 1 "$HAPS_FILE" | tr '\t' '\n' | nl -v 6 | grep -i "${ID}_A" | awk '{print $1}')
+   awk -v col_num="$col_number" -v hap="$HAP" -v OFS="\t" '{hapA=$col_num; hapB=$(col_num+1); if(hap=="A") {hapB="."} else if(hap=="B") {hapA= "."}; {print $1, $2, $3, $4, $5, hapA, hapB}}' "$WD/${ID}_${HAP}_${CHR}_${STATE}_subset.haps" > "$WD/${ID}_${HAP}_${CHR}_${STATE}_subset_final.txt"
    rm "$WD/${ID}_${HAP}_${CHR}_${STATE}_subset.haps" 
 
    #Alleles in 0/1
@@ -75,7 +75,7 @@ for ID in $INDIVIDUALS; do
    rm "$WD/${ID}_${HAP}_${CHR}_${STATE}_subset_final.txt"
  done
 
-cat "${HAPS_DIR}/${ID}_A_${CHR}_${STATE}_haps_nat" "${HAPS_DIR}/${ID}_B_${CHR}_${STATE}_haps_nat".haps | sort -k3,3n > "${HAPS_DIR}/${ID}_AB_${CHR}_${STATE}_haps_nat"
+cat "${HAPS_DIR}/${ID}_A_${CHR}_${STATE}_haps_nat.haps" "${HAPS_DIR}/${ID}_B_${CHR}_${STATE}_haps_nat.haps" | sort -k3,3n > "${HAPS_DIR}/${ID}_AB_${CHR}_${STATE}_haps_nat"
 
    #Create .sample file 
    haps_prefix="${HAPS_DIR}/${ID}_AB_${CHR}_${STATE}_haps_nat"
@@ -139,6 +139,16 @@ rm $VCF_DIR/chr*
 
 #Haps with all the samples from the chromosome, already only segments from our desired ancestry
     $BCFTOOLS convert --hapsample "$HAPS_DIR/chr_${CHR}_nat_${STATE}"  "$VCF_DIR/dedup_chr_${CHR}_nat_${STATE}.vcf.gz"
+
+# Passo final: Transformar em binário (1 = NAT, 0 = Não NAT)
+# Onde houver dado (0 ou 1), vira 1. Onde for missing (.), vira 0.
+
+$BCFTOOLS +setGT $VCF_DIR/dedup_chr_${CHR}_nat_${STATE}.vcf.gz -- -t . -n 0 | \
+$BCFTOOLS +setGT - -- -t q -n 1 \
+-O z -o $VCF_DIR/binary_ancestry_chr_${CHR}_nat_${STATE}.vcf.gz
+
+$BCFTOOLS index $VCF_DIR/binary_ancestry_chr_${CHR}_nat_${STATE}.vcf.gz
+
 #Get adapted haps to use as input for the pipeline
    # samples_file="$HAPS_DIR/chr_${CHR}_nat_${STATE}.samples"
    # out1_samples_file="$HAPS_SIMPLIFIED_DIR/chr_${CHR}_1_nat_${STATE}.samples"
